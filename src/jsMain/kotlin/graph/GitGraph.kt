@@ -21,6 +21,9 @@ class GitGraph {
     }
 
     fun addCommit(): Commit {
+        if (head.isDetached && head.swimlane == -1) {
+            head.swimlane = globalSwimlaneCounter++
+        }
         val swimlane = head.targetBranch?.swimlane ?: head.swimlane
         val currentBranch = currentBranch()
         val commit = Commit(calcCommitId(currentBranch), globalCommitNumber++, swimlane, head.commit)
@@ -72,7 +75,7 @@ class GitGraph {
             val targetCommit = commits.find { it.id == id }
             if (targetCommit != null) {
                 // a commit id was given to check out: create a detached HEAD
-                head.swimlane = globalSwimlaneCounter++
+                head.swimlane = -1 // calculate new swimlane as soon as a new commit is added
                 moveBranch(head, head.commit, targetCommit)
                 head.targetBranch = null
             }
