@@ -81,7 +81,6 @@ val App = functionalComponent<RProps> { _ ->
                     }
                     if (zoom > 3.0) zoom = 3.0
                     if (zoom < 0.5) zoom = 0.5
-                    console.log(zoom)
                     canvas.setZoom(zoom)
                     event.preventDefault()
                     event.stopPropagation()
