@@ -5,7 +5,7 @@ import fabricjs.FabricCircle
 import fabricjs.Point
 import fabricjs.fabric
 
-class CommitCircle(val id: String, private val centerPosition: fabric.Point) :
+class CommitCircle(id: String, private val centerPosition: fabric.Point) :
     Renderable {
 
     var isLostInReflog: Boolean = false

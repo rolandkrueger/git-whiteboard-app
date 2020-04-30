@@ -8,7 +8,6 @@ class GitGraph {
     val commits = mutableListOf<Commit>()
     val branches = mutableListOf<Branch>()
     val tags = mutableListOf<Tag>()
-    var currentBranch: Branch
     var head: Head
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
@@ -17,31 +16,48 @@ class GitGraph {
         val initialCommit = Commit("m1", globalCommitNumber++, 0)
         commits.add(initialCommit)
         head = Head(initialCommit)
-        currentBranch = Branch("master", globalSwimlaneCounter++, counter = 2, commit = initialCommit)
-        currentBranch.isActive = true
-        initialCommit.addBranch(currentBranch)
-        branches.add(currentBranch)
-        head.targetBranch = currentBranch
+        branches.add(head)
+        addBranch("master", 2)
     }
 
     fun addCommit(): Commit {
         val swimlane = head.targetBranch?.swimlane ?: head.swimlane
-
+        val currentBranch = currentBranch()
         val commit = Commit(calcCommitId(currentBranch), globalCommitNumber++, swimlane, head.commit)
         moveBranch(currentBranch, currentBranch.commit, commit)
-        currentBranch.commit = commit
-        head.commit = commit
         commits.add(commit)
         return commit
     }
 
+    /**
+     * Calculates the current branch based on the HEAD pointer. If the HEAD is detached, return the HEAD as a result.
+     * Otherwise return the currently checked out branch.
+     */
+    private fun currentBranch(): Branch {
+        return if (head.isDetached) {
+            head
+        } else {
+            head.targetBranch!!
+        }
+    }
+
     private fun moveBranch(branch: Branch, from: Commit, to: Commit) {
         from.removeBranch(branch)
+        to.removeBranch(head)
         to.addBranch(branch)
+        to.addBranch(head)
+        branch.commit = to
+        head.commit = to
     }
 
     fun addBranch(id: String) {
-        branches.add(Branch(id, globalSwimlaneCounter++, commit = head.commit))
+        addBranch(id, 1)
+    }
+
+    private fun addBranch(id: String, counter: Int) {
+        val branch = Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter)
+        branches.add(branch)
+        head.commit.addBranch(branch)
         checkout(id)
     }
 
@@ -50,22 +66,14 @@ class GitGraph {
     fun checkout(id: String) {
         val targetBranch = branches.find { it.id == id }
         if (targetBranch != null) {
-            currentBranch.isActive = false
-            targetBranch.isActive = true
-            currentBranch.commit.removeBranch(head)
-            targetBranch.commit.addBranch(targetBranch)
-            currentBranch = targetBranch
-            head.commit = currentBranch.commit
-            head.targetBranch = currentBranch
+            moveBranch(head, head.commit, targetBranch.commit)
+            head.targetBranch = targetBranch
         } else {
             val targetCommit = commits.find { it.id == id }
             if (targetCommit != null) {
-                currentBranch.isActive = false
-                currentBranch = head
+                // a commit id was given to check out: create a detached HEAD
                 head.swimlane = globalSwimlaneCounter++
-                head.commit.removeBranch(head)
-                targetCommit.addBranch(head)
-                head.commit = targetCommit
+                moveBranch(head, head.commit, targetCommit)
                 head.targetBranch = null
             }
         }
@@ -73,8 +81,8 @@ class GitGraph {
 
     fun merge(targetBranchId: String) {
         val targetBranch = branches.find { it.id == targetBranchId }
-        if (targetBranch != null && targetBranch != currentBranch) {
-            val mergeCommitId = "${currentBranch.commit.id}${targetBranch.commit.id}"
+        if (targetBranch != null && targetBranch != currentBranch()) {
+            val mergeCommitId = "${currentBranch().commit.id}${targetBranch.commit.id}"
             val mergeCommit = addCommit()
             mergeCommit.id = mergeCommitId
             mergeCommit.mergedCommit = targetBranch.commit
@@ -83,7 +91,8 @@ class GitGraph {
 
     fun calculateLostCommits() {
         commits.forEach {
-            it.commitCircle.isLostInReflog = true }
+            it.commitCircle.isLostInReflog = true
+        }
         val resetLostInReflog: (Commit) -> Unit = { it.isLostInReflog = false }
 
         branches.forEach {
@@ -108,10 +117,10 @@ class GitGraph {
 
 class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null) {
     var isLostInReflog = false
-    set(value) {
-        commitCircle.isLostInReflog = value
-        field = value
-    }
+        set(value) {
+            commitCircle.isLostInReflog = value
+            field = value
+        }
 
     var mergedCommit: Commit? = null
     val branches = mutableSetOf<Branch>()
@@ -134,8 +143,6 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
 }
 
 open class Branch(val id: String, var swimlane: Int, var counter: Int = 1, var commit: Commit) {
-    var isActive: Boolean = false
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false

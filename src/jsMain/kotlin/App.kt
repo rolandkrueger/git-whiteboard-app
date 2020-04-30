@@ -282,11 +282,11 @@ private fun renderGraph(graph: GitGraph, canvas: FabricCanvas) {
                 if (branch != graph.head) {
                     val yOffset = index * (CommitLabel.LABEL_HEIGHT + 5)
                     val branchCommitCircle = it.commitCircle
-                    val labelText = if (branch.isActive) "*${branch.id}*" else branch.id
+                    val labelText = if (branch == graph.head.targetBranch) "*${branch.id}*" else branch.id
                     val label = BranchLabel(
                         labelText,
                         branchCommitCircle.getRightDockPoint() + labelOffset + Point(0, yOffset),
-                        branch.isActive
+                        branch == graph.head.targetBranch
                     )
                     label.render(canvas)
                     label.onDoubleClick {
