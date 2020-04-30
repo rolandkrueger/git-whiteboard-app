@@ -17,6 +17,7 @@ external class fabric {
         override fun off(eventName: String, handler: (e: IEvent) -> Unit): Any
         override fun off(eventName: Any, handler: (e: IEvent) -> Unit): Any
         override fun off(): Any
+        fun set(key: String, value: String)
     }
 
     class Canvas(id: String) : Object, ICanvasOptions {

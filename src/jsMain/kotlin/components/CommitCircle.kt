@@ -11,11 +11,11 @@ class CommitCircle(val id: String, private val centerPosition: fabric.Point) :
     var isLostInReflog: Boolean = false
         set(value) {
             if (value) {
-                circle.fill = "#CCC"
-                circle.stroke = "#CCC"
+                circle.set("fill", "#CCC")
+                circle.set("stroke", "#CCC")
             } else {
-                circle.fill = "#A081EF"
-                circle.stroke = "#423462"
+                circle.set("fill", "#A081EF")
+                circle.set("stroke", "#423462")
             }
             field = value
         }
