@@ -22,8 +22,8 @@ import kotlin.browser.document
 val scope = MainScope()
 
 val App = functionalComponent<RProps> { _ ->
-    val (currentGraph, setGraph) = useState(GitGraph())
     val (currentCanvas, setCanvas) = useState(FabricCanvas(""))
+    val (currentGraph, setGraph) = useState(GitGraph(currentCanvas))
 
     useEffect(dependencies = listOf()) {
         scope.launch {
@@ -102,7 +102,6 @@ val App = functionalComponent<RProps> { _ ->
                             value = "Add commit"
                             onClickFunction = {
                                 currentGraph.addCommit()
-                                renderGraph(currentGraph, currentCanvas)
                             }
                         }
                     }
@@ -269,7 +268,6 @@ private fun renderGraph(graph: GitGraph, canvas: FabricCanvas) {
                 Line(mergedCommit.commitCircle.getUpperDockPoint(), commit.commitCircle.getLowerDockPoint()).render(canvas)
             }
         }
-        commit.commitCircle.render(canvas)
         commit.commitCircle.onDoubleClick {
             graph.checkout(commit.id)
             renderGraph(graph, canvas)
@@ -337,7 +335,7 @@ private fun renderGraph(graph: GitGraph, canvas: FabricCanvas) {
 }
 
 private fun resetGraph(setGraph: RSetState<GitGraph>, canvas: FabricCanvas) {
-    val gitGraph = GitGraph()
+    val gitGraph = GitGraph(canvas)
     setGraph(gitGraph)
     renderGraph(gitGraph, canvas)
 }

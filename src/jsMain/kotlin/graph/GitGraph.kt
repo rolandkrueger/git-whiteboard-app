@@ -1,10 +1,12 @@
 package graph
 
 import components.CommitCircle
+import components.Renderable
 import config.GitGraphConfiguration
+import fabricjs.FabricCanvas
 import fabricjs.Point
 
-class GitGraph {
+class GitGraph(private val canvas: FabricCanvas) {
     val commits = mutableListOf<Commit>()
     val branches = mutableListOf<Branch>()
     val tags = mutableListOf<Tag>()
@@ -14,6 +16,7 @@ class GitGraph {
 
     init {
         val initialCommit = Commit("m1", globalCommitNumber++, 0)
+        initialCommit.render(canvas)
         commits.add(initialCommit)
         head = Head(initialCommit)
         branches.add(head)
@@ -29,6 +32,7 @@ class GitGraph {
         val commit = Commit(calcCommitId(currentBranch), globalCommitNumber++, swimlane, head.commit)
         moveBranch(currentBranch, currentBranch.commit, commit)
         commits.add(commit)
+        commit.render(canvas)
         return commit
     }
 
@@ -118,7 +122,7 @@ class GitGraph {
     }
 }
 
-class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null) {
+class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null) : Renderable {
     var isLostInReflog = false
         set(value) {
             commitCircle.isLostInReflog = value
@@ -140,6 +144,10 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
 
     fun removeBranch(branch: Branch) {
         branches.remove(branch)
+    }
+
+    override fun render(canvas: FabricCanvas) {
+        commitCircle.render(canvas)
     }
 
     override fun toString(): String = id
