@@ -1,22 +1,22 @@
-import components.*
-import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
-import fabricjs.Point
-import fabricjs.plus
 import graph.GitGraph
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
+import kotlinx.html.canvas
 import kotlinx.html.id
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
-import react.*
+import react.RProps
 import react.dom.canvas
 import react.dom.div
 import react.dom.input
+import react.functionalComponent
+import react.useEffect
+import react.useState
 import kotlin.browser.document
 
 val scope = MainScope()
@@ -221,7 +221,10 @@ val App = functionalComponent<RProps> { _ ->
                         attrs {
                             value = "Reset history"
                             onClickFunction = {
-                                setGraph(GitGraph(currentCanvas))
+                                currentCanvas.clear()
+                                val newGraph = GitGraph(currentCanvas)
+                                newGraph.initGraph()
+                                setGraph(newGraph)
                             }
                         }
                     }
