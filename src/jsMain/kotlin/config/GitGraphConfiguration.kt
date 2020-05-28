@@ -6,7 +6,7 @@ class GitGraphConfiguration {
     companion object {
         val leftOffset = 150
         val commitDistance = 70
-        val bottomOffset = 550
+        val bottomOffset = 440
         val swimlaneDistance = 80
         val commitRadius = 25
         val labelHeight = 24
