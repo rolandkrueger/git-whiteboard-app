@@ -1,29 +1,29 @@
-import components.*
-import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
-import fabricjs.Point
-import fabricjs.plus
 import graph.GitGraph
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
+import kotlinx.html.canvas
 import kotlinx.html.id
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
-import react.*
+import react.RProps
 import react.dom.canvas
 import react.dom.div
 import react.dom.input
+import react.functionalComponent
+import react.useEffect
+import react.useState
 import kotlin.browser.document
 
 val scope = MainScope()
 
 val App = functionalComponent<RProps> { _ ->
-    val (currentGraph, setGraph) = useState(GitGraph())
     val (currentCanvas, setCanvas) = useState(FabricCanvas(""))
+    val (currentGraph, setGraph) = useState(GitGraph(currentCanvas))
 
     useEffect(dependencies = listOf()) {
         scope.launch {
@@ -88,8 +88,9 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             setCanvas(canvas)
-            resetGraph(setGraph, canvas)
-            renderGraph(currentGraph, canvas)
+            val gitGraph = GitGraph(canvas)
+            gitGraph.initGraph()
+            setGraph(gitGraph)
         }
     }
 
@@ -102,7 +103,6 @@ val App = functionalComponent<RProps> { _ ->
                             value = "Add commit"
                             onClickFunction = {
                                 currentGraph.addCommit()
-                                renderGraph(currentGraph, currentCanvas)
                             }
                         }
                     }
@@ -127,7 +127,6 @@ val App = functionalComponent<RProps> { _ ->
                                             document.getElementById("branchNameInput") as HTMLInputElement?
                                         if (input?.value != null && input.value.isNotEmpty()) {
                                             currentGraph.addBranch(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
                                         }
                                     }
                                 }
@@ -155,7 +154,6 @@ val App = functionalComponent<RProps> { _ ->
                                             document.getElementById("checkoutBranchNameInput") as HTMLInputElement?
                                         if (input?.value != null && input.value.isNotEmpty()) {
                                             currentGraph.checkout(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
                                         }
                                     }
                                 }
@@ -183,7 +181,6 @@ val App = functionalComponent<RProps> { _ ->
                                             document.getElementById("mergeBranchNameInput") as HTMLInputElement?
                                         if (input?.value != null && input.value.isNotEmpty()) {
                                             currentGraph.merge(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
                                         }
                                     }
                                 }
@@ -211,7 +208,6 @@ val App = functionalComponent<RProps> { _ ->
                                             document.getElementById("tagNameInput") as HTMLInputElement?
                                         if (input?.value != null && input.value.isNotEmpty()) {
                                             currentGraph.addTag(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
                                         }
                                     }
                                 }
@@ -225,7 +221,10 @@ val App = functionalComponent<RProps> { _ ->
                         attrs {
                             value = "Reset history"
                             onClickFunction = {
-                                resetGraph(setGraph, currentCanvas)
+                                currentCanvas.clear()
+                                val newGraph = GitGraph(currentCanvas)
+                                newGraph.initGraph()
+                                setGraph(newGraph)
                             }
                         }
                     }
@@ -244,100 +243,4 @@ val App = functionalComponent<RProps> { _ ->
             }
         }
     }
-}
-
-private fun renderGraph(graph: GitGraph, canvas: FabricCanvas) {
-    canvas.clear()
-
-    graph.calculateLostCommits()
-    graph.commits.forEach { commit ->
-        val parent = commit.parent
-        if (parent != null) {
-            if (commit.swimlane == parent.swimlane) {
-                Line(
-                    parent.commitCircle.getUpperDockPoint(),
-                    commit.commitCircle.getLowerDockPoint()
-                ).render(canvas)
-            } else {
-                Line(
-                    parent.commitCircle.getRightDockPoint(),
-                    commit.commitCircle.getLowerDockPoint()
-                ).render(canvas)
-            }
-            val mergedCommit = commit.mergedCommit
-            if (mergedCommit != null) {
-                Line(mergedCommit.commitCircle.getUpperDockPoint(), commit.commitCircle.getLowerDockPoint()).render(canvas)
-            }
-        }
-        commit.commitCircle.render(canvas)
-        commit.commitCircle.onDoubleClick {
-            graph.checkout(commit.id)
-            renderGraph(graph, canvas)
-        }
-
-        val labelOffset = Point(20, -1 * CommitCircle.RADIUS + CommitLabel.LABEL_HEIGHT / 2)
-
-        graph.commits.forEach {
-            it.branches.forEachIndexed { index, branch ->
-                if (branch != graph.head) {
-                    val yOffset = index * (CommitLabel.LABEL_HEIGHT + 5)
-                    val branchCommitCircle = it.commitCircle
-                    val labelText = if (branch == graph.head.targetBranch) "*${branch.id}*" else branch.id
-                    val label = BranchLabel(
-                        labelText,
-                        branchCommitCircle.getRightDockPoint() + labelOffset + Point(0, yOffset),
-                        branch == graph.head.targetBranch
-                    )
-                    label.render(canvas)
-                    label.onDoubleClick {
-                        graph.checkout(branch.id)
-                        renderGraph(graph, canvas)
-                    }
-                    Line(branchCommitCircle.getRightDockPoint(), label.getLeftDockPoint()).render(canvas)
-
-                    val headBranch = graph.head.targetBranch
-                    if (headBranch != null && headBranch == branch) {
-                        val headLabel =
-                            HeadLabel(label.getRightDockPoint() + Point(15, CommitLabel.LABEL_HEIGHT / -2))
-                        headLabel.render(canvas)
-                        Line(label.getRightDockPoint(), headLabel.getLeftDockPoint()).render(canvas)
-                    }
-                }
-            }
-        }
-
-        val headBranch = graph.head.targetBranch
-        if (headBranch == null) {
-            val headCommit = graph.head.commit
-            val yOffset = if (headCommit.branches.size > 0) {
-                (headCommit.branches.size - 1) * (CommitLabel.LABEL_HEIGHT + 5)
-            } else {
-                0
-            }
-
-            val headLabel = HeadLabel(headCommit.commitCircle.getRightDockPoint() + labelOffset + Point(0, yOffset))
-            headLabel.render(canvas)
-            Line(headCommit.commitCircle.getRightDockPoint(), headLabel.getLeftDockPoint()).render(canvas)
-        }
-
-        graph.tags.forEach { tag ->
-            val tagLabel = TagLabel(
-                tag.id,
-                tag.commit.commitCircle.getRightDockPoint() + labelOffset
-                        + Point(0, tag.commit.branches.size * (CommitLabel.LABEL_HEIGHT + 5))
-            )
-            tagLabel.render(canvas)
-            tagLabel.onDoubleClick {
-                graph.checkout(tag.commit.id)
-                renderGraph(graph, canvas)
-            }
-            Line(tag.commit.commitCircle.getRightDockPoint(), tagLabel.getLeftDockPoint()).render(canvas)
-        }
-    }
-}
-
-private fun resetGraph(setGraph: RSetState<GitGraph>, canvas: FabricCanvas) {
-    val gitGraph = GitGraph()
-    setGraph(gitGraph)
-    renderGraph(gitGraph, canvas)
 }
