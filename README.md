@@ -4,15 +4,19 @@ The Git Whiteboard App is a web application that allows you to quickly and easil
 
 This project was first developed as part of the two We-Ship-It-Days at the [Mannheim offices of Trivadis Germany GmbH](https://www.oio.de/).
 
-## How to run
+## Try it out
 
-Run the following command on the console:
+You can try out the pre-built version of the Git Whiteboard App in directory `/try-it-out`. Just open the `index.html` file in your browser.
+
+## How to build and run
+
+To build the app, run the following command on the console:
 
 ```
 ./gradlew run
 ```
 
-Then visit `http://localhost:9090` in your browser. 
+Then visit `http://localhost:9090` in your browser. You need to have a JDK installed for this. 
 
 ## Motivation
 One problem that arises with any Git training is that when explaining Git functionality, it is relatively cumbersome for the trainer to adequately illustrate the dynamics of a Git history as it evolves. To date, a trainer has only the following three tools to visually demonstrate the creation of a Git History. Each of these three has its own specific drawbacks:
