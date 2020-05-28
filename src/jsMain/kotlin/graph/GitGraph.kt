@@ -1,10 +1,6 @@
 package graph
 
-import components.*
-import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
-import fabricjs.Point
-import fabricjs.plus
 
 class GitGraph(private val canvas: FabricCanvas) {
     private val checkoutHandler: (Commit) -> (() -> Unit)
@@ -12,7 +8,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     private val branches = mutableListOf<AbstractBranch>()
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
-    var head: Head
+    private var head: Head
 
     init {
         head = Head(Commit("", 0, 0))
@@ -159,7 +155,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         }
     }
 
-    fun calculateLostCommits() {
+    private fun calculateLostCommits() {
         fun traverseHistory(commit: Commit, callback: (Commit) -> Unit) {
             callback(commit)
             if (commit.parent != null) {
@@ -177,7 +173,6 @@ class GitGraph(private val canvas: FabricCanvas) {
         }
         traverseHistory(head.commit, resetLostInReflog)
     }
-
 
     private fun calcCommitId(branch: AbstractBranch) = "${branch.id.first()}${branch.counter++}"
 
