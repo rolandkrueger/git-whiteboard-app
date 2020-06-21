@@ -17,6 +17,6 @@ class GitGraphConfiguration {
          */
         val labelOffset = Point(20, -1 * commitRadius + labelHeight / 2)
 
-        val labelYOffxet = labelHeight + 5
+        val labelYOffset = labelHeight + 5
     }
 }

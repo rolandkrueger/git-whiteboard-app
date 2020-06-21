@@ -91,7 +91,7 @@ abstract class CommitLabel protected constructor(
         setPosition(
             commit.commitCircle.getRightDockPoint()
                     + GitGraphConfiguration.labelOffset
-                    + Point(0, (commit.branches.size - 1) * GitGraphConfiguration.labelYOffxet), canvas
+                    + Point(0, (commit.branches.size - 1) * GitGraphConfiguration.labelYOffset), canvas
         )
         setLinePosition(canvas, commit.commitCircle.getRightDockPoint(), getLeftDockPoint())
     }
