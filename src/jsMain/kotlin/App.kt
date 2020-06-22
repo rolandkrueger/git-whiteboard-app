@@ -3,6 +3,7 @@ import graph.GitGraph
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.html.id
+import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
@@ -14,6 +15,8 @@ import react.useEffect
 import react.useState
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.dom.addClass
+import kotlin.dom.removeClass
 
 val scope = MainScope()
 
@@ -77,14 +80,43 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             setCanvas(canvas)
-            val gitGraph = GitGraph(canvas)
+            var gitGraph = GitGraph(canvas)
             gitGraph.initGraph()
             setGraph(gitGraph)
 
-            val addCommitButton = document.getElementById("addCommitButton") as HTMLButtonElement
-            addCommitButton.onclick = {
+            doWhenButtonClicked("expandPanelButton") {
+                hideElements("collapsedControlPanel")
+                showElements("expandedControlPanel")
+            }
+            doWhenButtonClicked("hidePanelButton") {
+                hideElements("expandedControlPanel")
+                showElements("collapsedControlPanel")
+            }
+
+            doWhenLinkClicked("generalTabControl") {
+                activateTab("generalTab", "commitTab", "refsTab", "aboutTab")
+            }
+            doWhenLinkClicked("commitTabControl") {
+                activateTab("commitTab", "generalTab", "refsTab", "aboutTab")
+            }
+            doWhenLinkClicked("refsTabControl") {
+                activateTab("refsTab", "generalTab", "commitTab", "aboutTab")
+            }
+            doWhenLinkClicked("aboutTabControl") {
+                activateTab("aboutTab", "generalTab", "commitTab", "refsTab")
+            }
+
+            doWhenButtonClicked("clearGraphButton") {
+                canvas.clear()
+                val newGraph = GitGraph(canvas)
+                newGraph.initGraph()
+                gitGraph = newGraph
+            }
+
+            doWhenButtonClicked("addCommitButton") {
                 gitGraph.addCommit()
             }
+
         }
     }
 
@@ -244,5 +276,36 @@ val App = functionalComponent<RProps> { _ ->
             width = ""
             height = ""
         }
+    }
+}
+
+private fun doWhenButtonClicked(buttonId: String, clickHandler: () -> Unit) {
+    val buttonElement = document.getElementById(buttonId) as HTMLButtonElement
+    buttonElement.onclick = { clickHandler() }
+}
+
+private fun doWhenLinkClicked(linkId: String, clickHandler: () -> Unit) {
+    val buttonElement = document.getElementById(linkId) as HTMLAnchorElement
+    buttonElement.onclick = { clickHandler() }
+}
+
+private fun hideElements(vararg elementIds: String) {
+    elementIds.forEach {
+        document.getElementById(it)?.addClass("hidden")
+    }
+}
+
+private fun showElements(vararg elementIds: String) {
+    elementIds.forEach {
+        document.getElementById(it)?.removeClass("hidden")
+    }
+}
+
+private fun activateTab(activeTabId: String, vararg otherTabIds: String) {
+    showElements(activeTabId)
+    hideElements(*otherTabIds)
+    document.getElementById("${activeTabId}Control")?.parentElement?.addClass("is-active")
+    otherTabIds.forEach {
+        document.getElementById("${it}Control")?.parentElement?.removeClass("is-active")
     }
 }
