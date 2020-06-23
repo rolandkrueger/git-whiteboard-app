@@ -19,7 +19,7 @@ class Line(start: Point, end: Point) : Renderable {
         canvas.sendToBack(line)
     }
 
-    fun removeFrom(canvas: FabricCanvas) {
+    override fun removeFrom(canvas: FabricCanvas) {
         canvas.remove(line)
     }
 }

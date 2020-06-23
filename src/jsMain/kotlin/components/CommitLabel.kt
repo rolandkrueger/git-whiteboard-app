@@ -119,6 +119,11 @@ abstract class CommitLabel protected constructor(
     fun getLeftDockPoint(): Point = Point(position.x, position.y + GitGraphConfiguration.labelHeight / 2)
     fun getRightDockPoint(): Point = Point(position.x + labelWidth, position.y + GitGraphConfiguration.labelHeight / 2)
 
+    override fun removeFrom(canvas: FabricCanvas) {
+        canvas.remove(rectangle, fabricTextObject)
+        line.removeFrom(canvas)
+    }
+
     companion object {
         fun calcLabelWidth(text: String) = text.length * 10 + 10
     }
