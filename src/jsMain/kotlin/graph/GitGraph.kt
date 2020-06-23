@@ -6,6 +6,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     private val checkoutHandler: (Commit) -> (() -> Unit)
     private val commits = mutableListOf<Commit>()
     private val branches = mutableListOf<AbstractBranch>()
+    private val tags = mutableListOf<AbstractBranch>()
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
     private var head: Head
@@ -115,6 +116,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         tag.onDoubleClick {
             checkout(tag.commit.id)
         }
+        tags.add(tag)
     }
 
     fun checkout(id: String) {
@@ -169,6 +171,9 @@ class GitGraph(private val canvas: FabricCanvas) {
         val resetLostInReflog: (Commit) -> Unit = { it.isLostInReflog = false }
 
         branches.forEach {
+            traverseHistory(it.commit, resetLostInReflog)
+        }
+        tags.forEach {
             traverseHistory(it.commit, resetLostInReflog)
         }
         traverseHistory(head.commit, resetLostInReflog)
