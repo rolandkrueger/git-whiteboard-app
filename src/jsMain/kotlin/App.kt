@@ -113,6 +113,10 @@ val App = functionalComponent<RProps> { _ ->
                 activateTab("aboutTab", "generalTab", "commitTab", "mergeTab", "refsTab")
             }
 
+            doWhenButtonClicked("runGCButton") {
+                gitGraph.runGarbageCollection()
+            }
+
             doWhenButtonClicked("clearGraphButton") {
                 ConfirmationDialog.showConfirmationDialog("Are you sure?",
                     "Do you really want to reset your graph and start over?") {
