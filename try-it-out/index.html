@@ -3,19 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.12.0/js/all.js"></script>
     <title>Git Whiteboard App</title>
+
+    <style>
+        .fullscreenCanvas {
+            position: fixed;
+            min-height: 100%;
+            min-width: 100%;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            resize: none;
+            z-index: 0;
+        }
+
+        html, body {
+            overflow: hidden;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .controlPanel {
+            position: fixed;
+            height: 100%;
+            z-index: 10;
+            border-right-style: solid;
+            border-right-color: #DDD;
+            border-right-width: 1px;
+            background-color: white;
+            opacity: 90%;
+            box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, .1), 0 0 0 1px rgba(10, 10, 10, .02);
+        }
+
+        .expandedControlPanel {
+            width: 520px;
+            animation-duration: 1s;
+            animation-timing-function: linear;
+            overflow: auto;
+        }
+
+        .collapsedControlPanel {
+            width: 47px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-<section class="section">
-    <div id="root"></div>
-    <div>
-        Check out branch with double-click on branch label.<br>
-        Zoom with Ctrl+Mouse Wheel, move with click and drag.
+<div id="collapsedControlPanel" class="controlPanel collapsedControlPanel hidden">
+    <button id="expandPanelButton" class="button is-text" title="Show control panel">
+        <span class="icon">
+            <i class="fa fa-chevron-right"></i>
+        </span>
+    </button>
+</div>
+
+<div id="expandedControlPanel" class="controlPanel expandedControlPanel">
+    <!-- Control panel headline -->
+    <div class="container is-fluid">
+        <nav class="level">
+            <!-- Left side -->
+            <div class="level-left">
+                <div class="level-item">
+                    <p class="subtitle is-5">
+                        <strong>Git Whiteboard App</strong>
+                    </p>
+                </div>
+
+            </div>
+            <!-- Right side -->
+            <div class="level-right">
+                <p class="level-item">
+                    <button id="hidePanelButton" class="button is-text" title="Hide control panel">
+                        <span class="icon">
+                            <i class="fa fa-chevron-left"></i>
+                        </span>
+                    </button>
+                </p>
+            </div>
+        </nav>
+
+        <hr>
+
+        <!-- Main control panel -->
+        <div class="box">
+            <article class="media">
+                <div class="media-left">
+                    <span class="icon"><i class="fas fa-gamepad fa-2x" style="color: cornflowerblue"></i></span>
+                </div>
+                <div class="media-content">
+                    <div class="content">
+                        <h1 class="title is-5">Control Panel</h1>
+                    </div>
+                </div>
+            </article>
+
+            <div class="tabs">
+                <ul>
+                    <li class="is-active"><a id="generalTabControl">General</a></li>
+                    <li><a id="commitTabControl">Commits</a></li>
+                    <li><a id="refsTabControl">Refs</a></li>
+                    <li><a id="mergeTabControl">Merge</a></li>
+                    <li><a id="aboutTabControl">About</a></li>
+                </ul>
+            </div>
+
+            <div id="generalTab">
+                <div class="panel-block">
+                    Check out branch with double-click on branch label.<br>
+                    Zoom with Ctrl+Mouse Wheel, move with click and drag.
+                </div>
+                <div class="field">
+                    <button id="runGCButton" class="button is-outlined is-fullwidth" disabled>
+                        <span class="icon">
+                            <i class="fa fa-trash"></i>
+                        </span>
+                        <span>Run garbage collection</span>
+                    </button>
+                </div>
+                <div class="field">
+                    <button id="clearGraphButton" class="button is-outlined is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-eraser"></i>
+                        </span>
+                        <span>Clear graph</span>
+                    </button>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" checked disabled>
+                            Show lost commits
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="commitTab" class="hidden">
+                <div class="field">
+                    <button id="addCommitButton" class="button is-outlined is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Add commit</span>
+                    </button>
+                </div>
+
+                <div class="field">
+                    <button id="amendCommitButton" class="button is-outlined is-fullwidth" disabled>
+                        <span class="icon">
+                            <i class="fas fa-band-aid"></i>
+                        </span>
+                        <span>Amend commit</span>
+                    </button>
+                </div>
+
+                <label class="label">Cherry-pick commit</label>
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input id="cherryPickInput" class="input" type="text" placeholder="Commit ID" disabled>
+                    </p>
+                    <p class="control">
+                        <button id="cherryPickButton" class="button is-success" disabled>
+                                <span class="icon">
+                                    <i class="far fa-hand-lizard"></i>
+                                </span>
+                        </button>
+                    </p>
+                </div>
+
+                <label class="label">Check out</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="checkoutCommitInput" class="input" type="text"
+                               placeholder="Commit ID or branch name">
+                    </div>
+                    <div class="control">
+                        <button id="checkoutCommitButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-level-down-alt"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="refsTab" class="hidden">
+                <label class="label">Add branch</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="addBranchInput" class="input" type="text" placeholder="Branch name">
+                    </div>
+                    <div class="control">
+                        <button id="addBranchButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-code-branch"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+                <label class="label">Checkout branch</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="checkoutBranchInput" class="input" type="text"
+                               placeholder="Commit ID or branch name">
+                    </div>
+                    <div class="control">
+                        <button id="checkoutBranchButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-level-down-alt"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+                <label class="label">Delete branch</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="deleteBranchInput" class="input" type="text" placeholder="Branch name" disabled>
+                    </div>
+                    <div class="control">
+                        <button id="delteBranchButton" class="button is-success" disabled>
+                                <span class="icon">
+                                    <i class="fa fa-trash"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <label class="label">Add tag</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="addTagInput" class="input" type="text" placeholder="Tag name">
+                    </div>
+                    <div class="control">
+                        <button id="addTagButton" class="button is-warning">
+                                <span class="icon">
+                                    <i class="fas fa-tag"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+                <label class="label">Delete tag</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="deleteTagInput" class="input" type="text" placeholder="Tag name" disabled>
+                    </div>
+                    <div class="control">
+                        <button id="deleteTagButton" class="button is-warning" disabled>
+                                <span class="icon">
+                                    <i class="fa fa-trash"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mergeTab" class="hidden">
+                <label class="label">Merge branch</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="mergeBranchInput" class="input" type="text" placeholder="Branch name">
+                    </div>
+                    <div class="control">
+                        <button id="mergeBranchButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-compress-alt"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="aboutTab" class="hidden">
+                <div class="content">
+                    <ul>
+                        <li>Fork and download this app on <a
+                                href="https://github.com/rolandkrueger/git-whiteboard-app">GitHub</a>.
+                        </li>
+                        <li>Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-</section>
+
+
+</div>
+
+<div id="root"></div>
 <script src="GitWhiteboardApp.js"></script>
 </body>
 </html>
