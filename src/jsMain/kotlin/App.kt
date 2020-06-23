@@ -60,6 +60,7 @@ val App = functionalComponent<RProps> { _ ->
             canvas.on("mouse:up") {
                 isDragging = false
                 canvas.selection = true
+                canvas.setZoom(canvas.getZoom())
             }
 
             canvas.on("mouse:wheel") {
