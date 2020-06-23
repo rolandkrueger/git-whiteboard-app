@@ -2,6 +2,10 @@
 
 The Git Whiteboard App is a web application that allows you to quickly and easily create Git graphs in your browser for demonstration purposes. The application is designed to provide all the visual possibilities that are usually required on a whiteboard to draw Git graphs: Commit graphs, HEAD, branch and tag labels, simplified commit IDs, separate graphs for local and remote repositories to demonstrate push and pull, etc. The handling must be quick and easy, so that during a Git training course, for example, you can create a simple demo Git graph with a few mouse clicks to explain a specific Git concept. The Git Whiteboard App's goal is to eliminate the need to use a whiteboard or flipchart to draw Git Graphs during a training session or lecture.
 
+This is the app in action. It shows a simple demo Git history which can be used to explain and demonstrate a number of Git features:
+
+![ScreenShot of the app](docs/img/screenshot1.png)
+
 This project was first developed as part of the two We-Ship-It-Days at the [Mannheim offices of Trivadis Germany GmbH](https://www.oio.de/).
 
 ## Try it out
