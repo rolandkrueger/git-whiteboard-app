@@ -43,7 +43,7 @@ open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit) :
         id,
         commit.commitCircle.getRightDockPoint() + GitGraphConfiguration.labelOffset + Point(
             0,
-            GitGraphConfiguration.labelYOffxet * commit.branches.size
+            GitGraphConfiguration.labelYOffset * commit.branches.size
         )
     )
 
