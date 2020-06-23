@@ -143,8 +143,16 @@ val App = functionalComponent<RProps> { _ ->
                 gitGraph.checkout(getUserInput("checkoutBranchInput"))
             }
 
+            doWhenButtonClicked("deleteBranchButton") {
+                gitGraph.deleteBranch(getUserInput("deleteBranchInput"))
+            }
+
             doWhenButtonClicked("addTagButton") {
                 gitGraph.addTag(getUserInput("addTagInput"))
+            }
+
+            doWhenButtonClicked("deleteTagButton") {
+                gitGraph.deleteTag(getUserInput("deleteTagInput"))
             }
 
             doWhenButtonClicked("mergeBranchButton") {

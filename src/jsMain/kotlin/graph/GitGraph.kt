@@ -194,4 +194,23 @@ class GitGraph(private val canvas: FabricCanvas) {
         commits.removeAll { it.commitCircle.isLostInReflog }
         canvas.renderAll()
     }
+
+    fun deleteTag(tagName: String) {
+        deleteRef(tagName, tags)
+    }
+
+    fun deleteBranch(branchName: String) {
+        deleteRef(branchName, branches)
+    }
+
+    private fun deleteRef(refName: String, refList: MutableList<AbstractBranch>) {
+        val targetRef = refList.find { it.id == refName }
+        if (targetRef != null) {
+            refList.remove(targetRef)
+            targetRef.commit.removeBranch(targetRef)
+            targetRef.removeFrom(canvas)
+        }
+        calculateLostCommits()
+        canvas.renderAll()
+    }
 }
