@@ -22,6 +22,8 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
             GitGraphConfiguration.bottomOffset - linePosition * GitGraphConfiguration.commitDistance
         )
     )
+    var parentLine: Line? = null
+    var mergedParentLine: Line? = null
 
     fun addBranch(branch: AbstractBranch) {
         branches.add(branch)
@@ -37,21 +39,30 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
         // draw line to parent commit(s)
         if (parent != null) {
             if (swimlane == parent.swimlane) {
-                Line(
+                parentLine = Line(
                     parent.commitCircle.getUpperDockPoint(),
                     commitCircle.getLowerDockPoint()
-                ).render(canvas)
+                )
+                parentLine?.render(canvas)
             } else {
-                Line(
+                parentLine = Line(
                     parent.commitCircle.getRightDockPoint(),
                     commitCircle.getLowerDockPoint()
-                ).render(canvas)
+                )
+                parentLine?.render(canvas)
             }
             val mergedCommit = mergedCommit
             if (mergedCommit != null) {
-                Line(mergedCommit.commitCircle.getUpperDockPoint(), commitCircle.getLowerDockPoint()).render(canvas)
+                mergedParentLine = Line(mergedCommit.commitCircle.getUpperDockPoint(), commitCircle.getLowerDockPoint())
+                mergedParentLine?.render(canvas)
             }
         }
+    }
+
+    override fun removeFrom(canvas: FabricCanvas) {
+        commitCircle.removeFrom(canvas)
+        parentLine?.removeFrom(canvas)
+        mergedParentLine?.removeFrom(canvas)
     }
 
     override fun toString(): String = id

@@ -184,4 +184,14 @@ class GitGraph(private val canvas: FabricCanvas) {
     override fun toString(): String {
         return commits.reversed().joinToString("\n")
     }
+
+    fun runGarbageCollection() {
+        commits.forEach {
+            if (it.commitCircle.isLostInReflog) {
+                it.removeFrom(canvas)
+            }
+        }
+        commits.removeAll { it.commitCircle.isLostInReflog }
+        canvas.renderAll()
+    }
 }

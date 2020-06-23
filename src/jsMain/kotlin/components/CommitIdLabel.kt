@@ -53,4 +53,8 @@ class CommitIdLabel(id: String, position: fabric.Point) : Renderable {
         canvas.add(rectangle)
         canvas.add(fabricTextObject)
     }
+
+    override fun removeFrom(canvas: FabricCanvas) {
+        canvas.remove(rectangle, fabricTextObject)
+    }
 }

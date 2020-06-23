@@ -12,8 +12,7 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
     abstract fun getLabel(): CommitLabel
 
     override fun render(canvas: FabricCanvas) {
-        val label = getLabel()
-        label.render(canvas)
+        getLabel().render(canvas)
     }
 
     fun onDoubleClick(handler: () -> Unit) {
@@ -33,6 +32,10 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
     fun attachToCommit(commit: Commit, canvas: FabricCanvas) {
         commit.addBranch(this)
         getLabel().attachToCommit(commit, canvas)
+    }
+
+    override fun removeFrom(canvas: FabricCanvas) {
+        getLabel().removeFrom(canvas)
     }
 }
 
