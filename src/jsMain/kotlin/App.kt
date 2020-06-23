@@ -11,6 +11,7 @@ import react.dom.canvas
 import react.functionalComponent
 import react.useEffect
 import react.useState
+import ui.ConfirmationDialog
 import ui.UiControl.Companion.activateTab
 import ui.UiControl.Companion.doWhenButtonClicked
 import ui.UiControl.Companion.doWhenLinkClicked
@@ -113,10 +114,13 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("clearGraphButton") {
-                canvas.clear()
-                val newGraph = GitGraph(canvas)
-                newGraph.initGraph()
-                gitGraph = newGraph
+                ConfirmationDialog.showConfirmationDialog("Are you sure?",
+                    "Do you really want to reset your graph and start over?") {
+                    canvas.clear()
+                    val newGraph = GitGraph(canvas)
+                    newGraph.initGraph()
+                    gitGraph = newGraph
+                }
             }
 
             doWhenButtonClicked("addCommitButton") {
