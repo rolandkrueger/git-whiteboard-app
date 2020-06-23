@@ -6,6 +6,7 @@ import kotlinx.html.id
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
 import react.RProps
@@ -94,16 +95,19 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenLinkClicked("generalTabControl") {
-                activateTab("generalTab", "commitTab", "refsTab", "aboutTab")
+                activateTab("generalTab", "commitTab", "refsTab", "mergeTab", "aboutTab")
             }
             doWhenLinkClicked("commitTabControl") {
-                activateTab("commitTab", "generalTab", "refsTab", "aboutTab")
+                activateTab("commitTab", "generalTab", "refsTab", "mergeTab", "aboutTab")
             }
             doWhenLinkClicked("refsTabControl") {
-                activateTab("refsTab", "generalTab", "commitTab", "aboutTab")
+                activateTab("refsTab", "generalTab", "commitTab", "mergeTab", "aboutTab")
+            }
+            doWhenLinkClicked("mergeTabControl") {
+                activateTab("mergeTab", "generalTab", "commitTab", "refsTab", "aboutTab")
             }
             doWhenLinkClicked("aboutTabControl") {
-                activateTab("aboutTab", "generalTab", "commitTab", "refsTab")
+                activateTab("aboutTab", "generalTab", "commitTab", "mergeTab", "refsTab")
             }
 
             doWhenButtonClicked("clearGraphButton") {
@@ -117,158 +121,27 @@ val App = functionalComponent<RProps> { _ ->
                 gitGraph.addCommit()
             }
 
+            doWhenButtonClicked("checkoutCommitButton") {
+                gitGraph.checkout(getUserInput("checkoutCommitInput"))
+            }
+
+            doWhenButtonClicked("addBranchButton") {
+                gitGraph.addBranch(getUserInput("addBranchInput"))
+            }
+
+            doWhenButtonClicked("checkoutBranchButton") {
+                gitGraph.checkout(getUserInput("checkoutBranchInput"))
+            }
+
+            doWhenButtonClicked("addTagButton") {
+                gitGraph.addTag(getUserInput("addTagInput"))
+            }
+
+            doWhenButtonClicked("mergeBranchButton") {
+                gitGraph.merge(getUserInput("mergeBranchInput"))
+            }
         }
     }
-
-//    div("columns") {
-//        div("column") {
-//            div("has-background-light") {
-//                div("field") {
-//                    input(InputType.button, classes = "input") {
-//                        attrs {
-//                            value = "Add commit"
-//                            onClickFunction = {
-//                                currentGraph.addCommit()
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                div("field") {
-//                    div("columns") {
-//                        div("column is-two-thirds") {
-//                            input(InputType.text, classes = "input") {
-//                                attrs {
-//                                    id = "branchNameInput"
-//                                    placeholder = "Branch name"
-//                                }
-//                            }
-//                        }
-//                        div("column") {
-//                            input(InputType.button, classes = "input") {
-//                                attrs {
-//                                    value = "Add branch"
-//                                    onClickFunction = {
-//                                        val input: HTMLInputElement? =
-//                                            document.getElementById("branchNameInput") as HTMLInputElement?
-//                                        if (input?.value != null && input.value.isNotEmpty()) {
-//                                            currentGraph.addBranch(input.value)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                div("field") {
-//                    div("columns") {
-//                        div("column is-two-thirds") {
-//                            input(InputType.text, classes = "input") {
-//                                attrs {
-//                                    id = "checkoutBranchNameInput"
-//                                    placeholder = "Branch name or commit ID to check out"
-//                                }
-//                            }
-//                        }
-//                        div("column") {
-//                            input(InputType.button, classes = "input") {
-//                                attrs {
-//                                    value = "Check out"
-//                                    onClickFunction = {
-//                                        val input: HTMLInputElement? =
-//                                            document.getElementById("checkoutBranchNameInput") as HTMLInputElement?
-//                                        if (input?.value != null && input.value.isNotEmpty()) {
-//                                            currentGraph.checkout(input.value)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                div("field") {
-//                    div("columns") {
-//                        div("column is-two-thirds") {
-//                            input(InputType.text, classes = "input") {
-//                                attrs {
-//                                    id = "mergeBranchNameInput"
-//                                    placeholder = "Branch name to merge into current branch"
-//                                }
-//                            }
-//                        }
-//                        div("column") {
-//                            input(InputType.button, classes = "input") {
-//                                attrs {
-//                                    value = "Merge"
-//                                    onClickFunction = {
-//                                        val input: HTMLInputElement? =
-//                                            document.getElementById("mergeBranchNameInput") as HTMLInputElement?
-//                                        if (input?.value != null && input.value.isNotEmpty()) {
-//                                            currentGraph.merge(input.value)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                div("field") {
-//                    div("columns") {
-//                        div("column is-two-thirds") {
-//                            input(InputType.text, classes = "input") {
-//                                attrs {
-//                                    id = "tagNameInput"
-//                                    placeholder = "Tag name"
-//                                }
-//                            }
-//                        }
-//                        div("column") {
-//                            input(InputType.button, classes = "input") {
-//                                attrs {
-//                                    value = "Create tag"
-//                                    onClickFunction = {
-//                                        val input: HTMLInputElement? =
-//                                            document.getElementById("tagNameInput") as HTMLInputElement?
-//                                        if (input?.value != null && input.value.isNotEmpty()) {
-//                                            currentGraph.addTag(input.value)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                div("field") {
-//                    input(InputType.button, classes = "input") {
-//                        attrs {
-//                            value = "Reset history"
-//                            onClickFunction = {
-//                                currentCanvas.clear()
-//                                val newGraph = GitGraph(currentCanvas)
-//                                newGraph.initGraph()
-//                                setGraph(newGraph)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        div("column is-three-quarters") {
-//            div("box") {
-//                attrs.id = "canvasBox"
-//                canvas("image") {
-//                    attrs {
-//                        id = "gitKannWas"
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     canvas("fullscreenCanvas") {
         attrs {
@@ -308,4 +181,9 @@ private fun activateTab(activeTabId: String, vararg otherTabIds: String) {
     otherTabIds.forEach {
         document.getElementById("${it}Control")?.parentElement?.removeClass("is-active")
     }
+}
+
+private fun getUserInput(inputFieldId: String): String {
+    val htmlInputElement = document.getElementById(inputFieldId) as HTMLInputElement?
+    return htmlInputElement?.value ?: ""
 }
