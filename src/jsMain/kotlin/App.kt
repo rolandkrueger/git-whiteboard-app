@@ -118,8 +118,10 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("clearGraphButton") {
-                ConfirmationDialog.showConfirmationDialog("Are you sure?",
-                    "Do you really want to reset your graph and start over?") {
+                ConfirmationDialog.showConfirmationDialog(
+                    "Are you sure?",
+                    "Do you really want to reset your graph and start over?"
+                ) {
                     canvas.clear()
                     val newGraph = GitGraph(canvas)
                     newGraph.initGraph()
@@ -144,7 +146,13 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("deleteBranchButton") {
-                gitGraph.deleteBranch(getUserInput("deleteBranchInput"))
+                val branchName = getUserInput("deleteBranchInput")
+                if (gitGraph.isBranchCheckedOut(branchName)) {
+                    // deleting checked out branches is not allowed by Git
+                    ConfirmationDialog.showMessageDialog("Cannot delete checked out branch", "Cannot delete branch which is currently checked out.")
+                } else {
+                    gitGraph.deleteBranch(branchName)
+                }
             }
 
             doWhenButtonClicked("addTagButton") {
