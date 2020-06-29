@@ -9,7 +9,7 @@ abstract class CommitLabel protected constructor(
     private val color: String,
     var position: fabric.Point,
     private val labelOpacity: Double = 1.0,
-    private val textColor: String = "#fff"
+    private val textColor: String = "#000"
 ) :
     Renderable {
 
@@ -71,13 +71,11 @@ abstract class CommitLabel protected constructor(
         set(value) {
             if (value) {
                 fabricTextObject.set("fontWeight", "bold")
-                fabricTextObject.set("fill", "#000")
                 fabricTextObject.set("text", "*${text}*")
                 labelWidth = calcLabelWidth("*${text}*")
                 rectangle.width = labelWidth
             } else {
                 fabricTextObject.set("fontWeight", "normal")
-                fabricTextObject.set("fill", "#fff")
                 fabricTextObject.set("text", text)
                 labelWidth = calcLabelWidth(text)
                 rectangle.width = labelWidth
@@ -129,9 +127,8 @@ abstract class CommitLabel protected constructor(
     }
 }
 
-class HeadLabel(position: Point) : CommitLabel("HEAD", "#4C95EF", position)
+class HeadLabel(position: Point) : CommitLabel("HEAD", "#7CA1EC", position, textColor = "#fff")
 
-class TagLabel(tagName: String, position: Point) : CommitLabel(tagName, "#BCBC25", position)
+class TagLabel(tagName: String, position: Point) : CommitLabel(tagName, "#FFE068", position)
 
-class BranchLabel(branchName: String, position: Point) :
-    CommitLabel(branchName, "#07BF3C", position)
+class BranchLabel(branchName: String, position: Point) : CommitLabel(branchName, "#6ECC84", position)
