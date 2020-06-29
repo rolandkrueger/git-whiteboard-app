@@ -127,7 +127,7 @@ class GitGraph(private val canvas: FabricCanvas) {
             // checking out a branch
             head.targetBranch?.headRemoved()
             head.targetBranch = targetBranch
-            targetBranch.checkedOut()
+            targetBranch.checkedOut(head)
             head.commit.removeBranch(head)
             head.attachToBranch(targetBranch, canvas)
         } else {
@@ -195,14 +195,14 @@ class GitGraph(private val canvas: FabricCanvas) {
     fun deleteTag(tagName: String) = deleteRef(tagName, tags)
     fun deleteBranch(branchName: String) = deleteRef(branchName, branches)
 
-    fun isBranchCheckedOut(branchName: String): Boolean =
-        if (head.isDetached) false else head.targetBranch?.id == branchName
+    fun isBranchCheckedOut(branchName: String): Boolean = findBranch(branchName)?.isCheckedOut() ?: false
 
     private fun deleteRef(refName: String, refList: MutableList<AbstractBranch>) {
         val targetRef = refList.find { it.id == refName }
         if (targetRef != null) {
             refList.remove(targetRef)
             targetRef.commit.removeBranch(targetRef)
+            targetRef.commit.repositionBranches(canvas)
             targetRef.removeFrom(canvas)
         }
         calculateLostCommits()
