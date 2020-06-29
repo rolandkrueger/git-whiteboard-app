@@ -122,12 +122,12 @@ class GitGraph(private val canvas: FabricCanvas) {
     fun checkout(id: String) {
         console.log("Checking out $id")
         val oldHeadCommit = head.commit
-        val targetBranch = branches.find { it.id == id }
+        val targetBranch = findBranch(id)
         if (targetBranch != null) {
             // checking out a branch
             head.targetBranch?.headRemoved()
             head.targetBranch = targetBranch
-            targetBranch.checkedOut()
+            targetBranch.checkedOut(head)
             head.commit.removeBranch(head)
             head.attachToBranch(targetBranch, canvas)
         } else {
@@ -150,7 +150,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     }
 
     fun merge(targetBranchId: String) {
-        val targetBranch = branches.find { it.id == targetBranchId }
+        val targetBranch = findBranch(targetBranchId)
         if (targetBranch != null && targetBranch != currentBranch()) {
             val mergeCommitId = "${currentBranch().commit.id}${targetBranch.commit.id}"
             addCommit(targetBranch.commit, mergeCommitId)
@@ -180,10 +180,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     }
 
     private fun calcCommitId(branch: AbstractBranch) = "${branch.id.first()}${branch.counter++}"
-
-    override fun toString(): String {
-        return commits.reversed().joinToString("\n")
-    }
+    override fun toString(): String = commits.reversed().joinToString("\n")
 
     fun runGarbageCollection() {
         commits.forEach {
@@ -194,4 +191,22 @@ class GitGraph(private val canvas: FabricCanvas) {
         commits.removeAll { it.commitCircle.isLostInReflog }
         canvas.renderAll()
     }
+
+    fun deleteTag(tagName: String) = deleteRef(tagName, tags)
+    fun deleteBranch(branchName: String) = deleteRef(branchName, branches)
+
+    fun isBranchCheckedOut(branchName: String): Boolean = findBranch(branchName)?.isCheckedOut() ?: false
+
+    private fun deleteRef(refName: String, refList: MutableList<AbstractBranch>) {
+        val targetRef = refList.find { it.id == refName }
+        if (targetRef != null) {
+            refList.remove(targetRef)
+            targetRef.commit.removeBranch(targetRef)
+            targetRef.commit.repositionBranches(canvas)
+            targetRef.removeFrom(canvas)
+        }
+        calculateLostCommits()
+    }
+
+    private fun findBranch(branchName: String): AbstractBranch? = branches.find { it.id == branchName }
 }

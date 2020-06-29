@@ -25,13 +25,8 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
     var parentLine: Line? = null
     var mergedParentLine: Line? = null
 
-    fun addBranch(branch: AbstractBranch) {
-        branches.add(branch)
-    }
-
-    fun removeBranch(branch: AbstractBranch) {
-        branches.remove(branch)
-    }
+    fun addBranch(branch: AbstractBranch) = branches.add(branch)
+    fun removeBranch(branch: AbstractBranch) = branches.remove(branch)
 
     override fun render(canvas: FabricCanvas) {
         commitCircle.render(canvas)

@@ -3,6 +3,7 @@ package ui
 import org.w3c.dom.HTMLButtonElement
 import ui.UiControl.Companion.doWhenButtonClicked
 import ui.UiControl.Companion.hideElements
+import ui.UiControl.Companion.showElements
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
@@ -37,8 +38,11 @@ class ConfirmationDialog private constructor(
                 hide()
             }
             hideElements("confirmationDialogOkButton")
+            showElements( "confirmationDialogYesButton", "confirmationDialogNoButton")
         } else {
             hideElements( "confirmationDialogYesButton", "confirmationDialogNoButton")
+            showElements("confirmationDialogOkButton")
+
         }
 
         doWhenButtonClicked("confirmationDialogOkButton") {

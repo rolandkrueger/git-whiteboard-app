@@ -9,6 +9,8 @@ import fabricjs.plus
 abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: Int = 1, var commit: Commit) :
     Renderable {
 
+    var head: Head? = null
+
     abstract fun getLabel(): CommitLabel
 
     override fun render(canvas: FabricCanvas) {
@@ -21,17 +23,22 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
 
     fun headRemoved() {
         getLabel().isActive = false
+        head = null
         console.log("HEAD removed from $id")
     }
 
-    fun checkedOut() {
+    fun checkedOut(head: Head) {
         getLabel().isActive = true
+        this.head = head
         console.log("HEAD moved to $id")
     }
+
+    fun isCheckedOut() = head != null
 
     fun attachToCommit(commit: Commit, canvas: FabricCanvas) {
         commit.addBranch(this)
         getLabel().attachToCommit(commit, canvas)
+        head?.attachToBranch(this, canvas)
     }
 
     override fun removeFrom(canvas: FabricCanvas) {

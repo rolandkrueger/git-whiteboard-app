@@ -118,8 +118,17 @@ abstract class CommitLabel protected constructor(
     fun getRightDockPoint(): Point = Point(position.x + labelWidth, position.y + GitGraphConfiguration.labelHeight / 2)
 
     override fun removeFrom(canvas: FabricCanvas) {
-        canvas.remove(rectangle, fabricTextObject)
         line.removeFrom(canvas)
+        canvas.remove(rectangle)
+        canvas.remove(fabricTextObject)
+        // FIXME: removing the label from the canvas does not properly work. Work around by setting the label's size to zero and moving it away
+        setPosition(Point(9999, 9999), canvas)
+        rectangle.width = 0
+        rectangle.height = 0
+        fabricTextObject.set("text", "")
+        rectangle.dirty = true
+        fabricTextObject.dirty = true
+        canvas.setZoom(canvas.getZoom())
     }
 
     companion object {
