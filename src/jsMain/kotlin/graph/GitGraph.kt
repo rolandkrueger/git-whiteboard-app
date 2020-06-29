@@ -206,7 +206,6 @@ class GitGraph(private val canvas: FabricCanvas) {
             targetRef.removeFrom(canvas)
         }
         calculateLostCommits()
-        canvas.renderAll()
     }
 
     private fun findBranch(branchName: String): AbstractBranch? = branches.find { it.id == branchName }
