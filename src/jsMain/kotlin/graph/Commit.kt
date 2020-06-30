@@ -7,7 +7,7 @@ import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
 import fabricjs.Point
 
-class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null) : Renderable {
+class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null, commitColor: String = "") : Renderable {
     var isLostInReflog = false
         set(value) {
             commitCircle.isLostInReflog = value
@@ -20,7 +20,8 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
         id, Point(
             GitGraphConfiguration.leftOffset + swimlane * GitGraphConfiguration.swimlaneDistance,
             GitGraphConfiguration.bottomOffset - linePosition * GitGraphConfiguration.commitDistance
-        )
+        ),
+        commitColor
     )
     var parentLine: Line? = null
     var mergedParentLine: Line? = null

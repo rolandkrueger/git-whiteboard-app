@@ -6,7 +6,7 @@ import fabricjs.FabricCanvas
 import fabricjs.Point
 import fabricjs.plus
 
-abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: Int = 1, var commit: Commit) :
+abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: Int = 1, var commit: Commit, val commitColor: String = "") :
     Renderable {
 
     var head: Head? = null
@@ -46,8 +46,8 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
     }
 }
 
-open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit) :
-    AbstractBranch(id, swimlane, counter, commit) {
+open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit, commitColor: String) :
+    AbstractBranch(id, swimlane, counter, commit, commitColor) {
 
     private val branchLabel = BranchLabel(
         id,
@@ -79,7 +79,7 @@ open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit) :
     override fun toString(): String = "Branch $id -> $commit"
 }
 
-class Head(commit: Commit, var targetBranch: AbstractBranch? = null) : AbstractBranch("HEAD", 0, commit = commit) {
+class Head(commit: Commit, var targetBranch: AbstractBranch? = null) : AbstractBranch("HEAD", 0, commit = commit, commitColor = BranchColors.HEAD_COLOR) {
     val isDetached: Boolean
         get() = targetBranch == null
     private val headLabel = HeadLabel(Point(0, 0))

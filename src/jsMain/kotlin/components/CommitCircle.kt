@@ -6,7 +6,7 @@ import fabricjs.FabricCircle
 import fabricjs.Point
 import fabricjs.fabric
 
-class CommitCircle(id: String, private val centerPosition: fabric.Point) :
+class CommitCircle(id: String, private val centerPosition: fabric.Point, private val commitColor: String) :
     Renderable {
 
     var isLostInReflog: Boolean = false
@@ -14,7 +14,7 @@ class CommitCircle(id: String, private val centerPosition: fabric.Point) :
             if (value) {
                 setColor("#CCC", "#CCC")
             } else {
-                setColor("#423462", "#A081EF")
+                setColor("#423462", commitColor)
             }
             field = value
         }
@@ -38,7 +38,7 @@ class CommitCircle(id: String, private val centerPosition: fabric.Point) :
                 fill = "#CCC"
                 stroke = "#CCC"
             } else {
-                fill = "#A081EF"
+                fill = commitColor
                 stroke = "#423462"
             }
             hasControls = false

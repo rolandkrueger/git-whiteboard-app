@@ -22,14 +22,15 @@ class GitGraph(private val canvas: FabricCanvas) {
         }
 
         console.log("Initialize a new Git graph")
-        val initialCommit = Commit("m1", globalCommitNumber++, 0)
+        val branchColor = BranchColors.nextColor()
+        val initialCommit = Commit("m1", globalCommitNumber++, 0, commitColor = branchColor)
         initialCommit.commitCircle.onDoubleClick(checkoutHandler(initialCommit))
         commits.add(initialCommit)
         head = Head(initialCommit)
         branches.add(head)
 
         initialCommit.render(canvas)
-        addBranch("master", 2)
+        addBranch("master", 2, branchColor)
         head.render(canvas)
     }
 
@@ -47,7 +48,9 @@ class GitGraph(private val canvas: FabricCanvas) {
         val currentBranch = currentBranch()
         val swimlane = head.targetBranch?.swimlane ?: head.swimlane
         val id = newCommitId ?: calcCommitId(currentBranch)
-        val commit = Commit(id, globalCommitNumber++, swimlane, head.commit)
+        val commit = Commit(id, globalCommitNumber++, swimlane, head.commit,
+            if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
+        )
         commit.mergedCommit = mergedParentCommit
         commit.render(canvas)
         commit.commitCircle.onDoubleClick(checkoutHandler(commit))
@@ -93,12 +96,12 @@ class GitGraph(private val canvas: FabricCanvas) {
     }
 
     fun addBranch(id: String): Branch {
-        return addBranch(id, 1)
+        return addBranch(id, 1, BranchColors.nextColor())
     }
 
-    private fun addBranch(id: String, counter: Int): Branch {
+    private fun addBranch(id: String, counter: Int, commitColor: String): Branch {
         console.log("Adding branch $id")
-        val branch = Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter)
+        val branch = Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor)
         branches.add(branch)
         head.commit.removeBranch(head)
         branch.onDoubleClick { checkout(id) }
