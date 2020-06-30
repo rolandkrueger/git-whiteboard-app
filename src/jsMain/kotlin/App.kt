@@ -165,7 +165,12 @@ val App = functionalComponent<RProps> { _ ->
 
             doWhenButtonClicked("addTagButton") {
                 val tagName = getUserInput("addTagInput").replace(" ", "_")
-                updateTagSelects(gitGraph.getTags())
+                if (gitGraph.doesTagExist(tagName)) {
+                    ConfirmationDialog.showMessageDialog("Tag already exists", "Cannot create tag $tagName: tag already exists.")
+                } else {
+                    gitGraph.addTag(tagName)
+                    updateTagSelects(gitGraph.getTags())
+                }
             }
 
             doWhenButtonClicked("deleteTagButton") {

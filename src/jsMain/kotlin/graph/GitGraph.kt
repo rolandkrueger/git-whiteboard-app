@@ -201,6 +201,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         canvas.renderAll()
     }
 
+    fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)
     fun deleteTag(tagName: String) = deleteRef(tagName, tags)
     fun deleteBranch(branchName: String) = deleteRef(branchName, branches)
 
