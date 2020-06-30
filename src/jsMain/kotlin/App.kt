@@ -141,8 +141,17 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("addBranchButton") {
-                gitGraph.addBranch(getUserInput("addBranchInput"))
-                updateBranchSelects(gitGraph.getBranches())
+                val branchName = getUserInput("addBranchInput").replace(" ", "_")
+                if (!gitGraph.isBranchNameValid(branchName)) {
+                    ConfirmationDialog.showMessageDialog(
+                        "Branch name '$branchName' is invalid",
+                        "The name of the branch starts with a letter that is already used by another branch or " +
+                                "by the HEAD reference as first letter. Namespaces (feature/*, bugfix/*) are not considered. "
+                    )
+                } else {
+                    gitGraph.addBranch(branchName)
+                    updateBranchSelects(gitGraph.getBranches())
+                }
             }
 
             doWhenButtonClicked("checkoutBranchButton") {
@@ -164,8 +173,16 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("addTagButton") {
-                gitGraph.addTag(getUserInput("addTagInput"))
-                updateTagSelects(gitGraph.getTags())
+                val tagName = getUserInput("addTagInput").replace(" ", "_")
+                if (gitGraph.doesTagExist(tagName)) {
+                    ConfirmationDialog.showMessageDialog(
+                        "Tag already exists",
+                        "Cannot create tag $tagName: tag already exists."
+                    )
+                } else {
+                    gitGraph.addTag(tagName)
+                    updateTagSelects(gitGraph.getTags())
+                }
             }
 
             doWhenButtonClicked("deleteTagButton") {
