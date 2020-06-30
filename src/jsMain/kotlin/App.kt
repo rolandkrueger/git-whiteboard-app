@@ -141,7 +141,7 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("addBranchButton") {
-                gitGraph.addBranch(getUserInput("addBranchInput"))
+                gitGraph.addBranch(getUserInput("addBranchInput").replace(" ", "_"))
                 updateBranchSelects(gitGraph.getBranches())
             }
 
@@ -164,7 +164,7 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("addTagButton") {
-                gitGraph.addTag(getUserInput("addTagInput"))
+                val tagName = getUserInput("addTagInput").replace(" ", "_")
                 updateTagSelects(gitGraph.getTags())
             }
 
