@@ -103,6 +103,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         console.log("Adding branch $id")
         val branch = Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor)
         branches.add(branch)
+        branches.sortBy { it.id }
         head.commit.removeBranch(head)
         branch.onDoubleClick { checkout(id) }
         branch.render(canvas)
@@ -112,6 +113,8 @@ class GitGraph(private val canvas: FabricCanvas) {
         return branch
     }
 
+    fun getBranches(): List<AbstractBranch> = branches
+
     fun addTag(id: String) {
         val tag = Tag(id, head.commit)
 
@@ -120,7 +123,10 @@ class GitGraph(private val canvas: FabricCanvas) {
             checkout(tag.commit.id)
         }
         tags.add(tag)
+        tags.sortBy { it.id }
     }
+
+    fun getTags(): List<AbstractBranch> = tags
 
     fun checkout(id: String) {
         console.log("Checking out $id")
@@ -204,6 +210,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         val targetRef = refList.find { it.id == refName }
         if (targetRef != null) {
             refList.remove(targetRef)
+            refList.sortBy { it.id }
             targetRef.commit.removeBranch(targetRef)
             targetRef.commit.repositionBranches(canvas)
             targetRef.removeFrom(canvas)

@@ -1,8 +1,6 @@
 package ui
 
-import org.w3c.dom.HTMLAnchorElement
-import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.*
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
@@ -44,6 +42,26 @@ class UiControl {
         fun getUserInput(inputFieldId: String): String {
             val htmlInputElement = document.getElementById(inputFieldId) as HTMLInputElement?
             return htmlInputElement?.value ?: ""
+        }
+
+        fun getSelectedOption(selectId: String): String {
+            val htmlSelectElement = document.getElementById(selectId) as HTMLSelectElement
+            return htmlSelectElement[htmlSelectElement.selectedIndex]?.innerHTML ?: ""
+        }
+
+        fun setSelectOptions(selectId: String, options: List<String>) {
+            val htmlSelectElement = document.getElementById(selectId) as HTMLSelectElement
+            htmlSelectElement.disabled = options.isEmpty()
+
+            for (i in 0..htmlSelectElement.childElementCount) {
+                htmlSelectElement.remove(0)
+            }
+
+            options.forEach {
+                val element = document.createElement("option") as HTMLOptionElement
+                element.innerHTML = it
+                htmlSelectElement.add(element)
+            }
         }
     }
 }
