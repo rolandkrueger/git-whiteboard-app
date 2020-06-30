@@ -48,7 +48,8 @@ class GitGraph(private val canvas: FabricCanvas) {
         val currentBranch = currentBranch()
         val swimlane = head.targetBranch?.swimlane ?: head.swimlane
         val id = newCommitId ?: calcCommitId(currentBranch)
-        val commit = Commit(id, globalCommitNumber++, swimlane, head.commit,
+        val commit = Commit(
+            id, globalCommitNumber++, swimlane, head.commit,
             if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
         )
         commit.mergedCommit = mergedParentCommit
@@ -101,7 +102,8 @@ class GitGraph(private val canvas: FabricCanvas) {
 
     private fun addBranch(id: String, counter: Int, commitColor: String): Branch {
         console.log("Adding branch $id")
-        val branch = Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor)
+        val branch =
+            Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor)
         branches.add(branch)
         branches.sortBy { it.id }
         head.commit.removeBranch(head)
@@ -188,7 +190,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         traverseHistory(head.commit, resetLostInReflog)
     }
 
-    private fun calcCommitId(branch: AbstractBranch) = "${branch.id.first()}${branch.counter++}"
+    private fun calcCommitId(branch: AbstractBranch) = "${branch.id.substringAfter('/').first()}${branch.counter++}"
     override fun toString(): String = commits.reversed().joinToString("\n")
 
     fun runGarbageCollection() {
@@ -206,6 +208,12 @@ class GitGraph(private val canvas: FabricCanvas) {
     fun deleteBranch(branchName: String) = deleteRef(branchName, branches)
 
     fun isBranchCheckedOut(branchName: String): Boolean = findBranch(branchName)?.isCheckedOut() ?: false
+    fun isBranchNameValid(branchName: String): Boolean {
+        return branchName.first() != 'H' &&
+                branches
+                    .map { it.id.substringAfter('/') }
+                    .none { it.startsWith(branchName.substringAfter('/').first()) }
+    }
 
     private fun deleteRef(refName: String, refList: MutableList<AbstractBranch>) {
         val targetRef = refList.find { it.id == refName }
