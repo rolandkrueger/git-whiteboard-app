@@ -120,7 +120,7 @@
                     Zoom with Ctrl+Mouse Wheel, move with click and drag.
                 </div>
                 <div class="field">
-                    <button id="runGCButton" class="button is-outlined is-fullwidth" disabled>
+                    <button id="runGCButton" class="button is-outlined is-fullwidth">
                         <span class="icon">
                             <i class="fa fa-trash"></i>
                         </span>
@@ -228,10 +228,10 @@
                 <label class="label">Delete branch</label>
                 <div class="field has-addons is-expanded">
                     <div class="control is-expanded">
-                        <input id="deleteBranchInput" class="input" type="text" placeholder="Branch name" disabled>
+                        <input id="deleteBranchInput" class="input" type="text" placeholder="Branch name">
                     </div>
                     <div class="control">
-                        <button id="delteBranchButton" class="button is-success" disabled>
+                        <button id="deleteBranchButton" class="button is-success">
                                 <span class="icon">
                                     <i class="fa fa-trash"></i>
                                 </span>
@@ -258,10 +258,10 @@
                 <label class="label">Delete tag</label>
                 <div class="field has-addons is-expanded">
                     <div class="control is-expanded">
-                        <input id="deleteTagInput" class="input" type="text" placeholder="Tag name" disabled>
+                        <input id="deleteTagInput" class="input" type="text" placeholder="Tag name">
                     </div>
                     <div class="control">
-                        <button id="deleteTagButton" class="button is-warning" disabled>
+                        <button id="deleteTagButton" class="button is-warning">
                                 <span class="icon">
                                     <i class="fa fa-trash"></i>
                                 </span>
@@ -298,8 +298,23 @@
             </div>
         </div>
     </div>
+</div>
 
-
+<div id="confirmationDialog" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p id="confirmationDialogTitle" class="modal-card-title"></p>
+        </header>
+        <section class="modal-card-body">
+            <span id="confirmationDialogMessage"></span>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="confirmationDialogOkButton" class="button is-success">Ok</button>
+            <button id="confirmationDialogYesButton" class="button is-success">Yes</button>
+            <button id="confirmationDialogNoButton" class="button">No, cancel</button>
+        </footer>
+    </div>
 </div>
 
 <div id="root"></div>
