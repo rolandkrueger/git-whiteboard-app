@@ -1,4 +1,5 @@
 import fabricjs.FabricCanvas
+import graph.AbstractBranch
 import graph.GitGraph
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -12,9 +13,11 @@ import react.functionalComponent
 import react.useEffect
 import react.useState
 import ui.ConfirmationDialog
+import ui.UiControl
 import ui.UiControl.Companion.activateTab
 import ui.UiControl.Companion.doWhenButtonClicked
 import ui.UiControl.Companion.doWhenLinkClicked
+import ui.UiControl.Companion.getSelectedOption
 import ui.UiControl.Companion.getUserInput
 import ui.UiControl.Companion.hideElements
 import ui.UiControl.Companion.showElements
@@ -139,32 +142,39 @@ val App = functionalComponent<RProps> { _ ->
 
             doWhenButtonClicked("addBranchButton") {
                 gitGraph.addBranch(getUserInput("addBranchInput"))
+                updateBranchSelects(gitGraph.getBranches())
             }
 
             doWhenButtonClicked("checkoutBranchButton") {
-                gitGraph.checkout(getUserInput("checkoutBranchInput"))
+                gitGraph.checkout(getSelectedOption("checkoutBranchInput"))
             }
 
             doWhenButtonClicked("deleteBranchButton") {
-                val branchName = getUserInput("deleteBranchInput")
+                val branchName = getSelectedOption("deleteBranchInput")
                 if (gitGraph.isBranchCheckedOut(branchName)) {
                     // deleting checked out branches is not allowed by Git
-                    ConfirmationDialog.showMessageDialog("Cannot delete checked out branch", "Cannot delete branch which is currently checked out.")
+                    ConfirmationDialog.showMessageDialog(
+                        "Cannot delete checked out branch",
+                        "Cannot delete branch which is currently checked out."
+                    )
                 } else {
                     gitGraph.deleteBranch(branchName)
+                    updateBranchSelects(gitGraph.getBranches())
                 }
             }
 
             doWhenButtonClicked("addTagButton") {
                 gitGraph.addTag(getUserInput("addTagInput"))
+                updateTagSelects(gitGraph.getTags())
             }
 
             doWhenButtonClicked("deleteTagButton") {
-                gitGraph.deleteTag(getUserInput("deleteTagInput"))
+                gitGraph.deleteTag(getSelectedOption("deleteTagInput"))
+                updateTagSelects(gitGraph.getTags())
             }
 
             doWhenButtonClicked("mergeBranchButton") {
-                gitGraph.merge(getUserInput("mergeBranchInput"))
+                gitGraph.merge(getSelectedOption("mergeBranchInput"))
             }
         }
     }
@@ -176,4 +186,20 @@ val App = functionalComponent<RProps> { _ ->
             height = ""
         }
     }
+}
+
+fun updateBranchSelects(branches: List<AbstractBranch>) {
+    val branchNames = branches
+        .map { it.id }
+        .filter { it != "HEAD" }
+
+    UiControl.setSelectOptions("checkoutBranchInput", branchNames)
+    UiControl.setSelectOptions("deleteBranchInput", branchNames)
+    UiControl.setSelectOptions("mergeBranchInput", branchNames)
+}
+
+fun updateTagSelects(tags: List<AbstractBranch>) {
+    val tagNames = tags.map { it.id }
+    UiControl.setSelectOptions("deleteTagInput", tagNames)
+
 }
