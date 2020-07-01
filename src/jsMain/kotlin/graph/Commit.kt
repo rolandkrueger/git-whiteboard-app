@@ -7,12 +7,19 @@ import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
 import fabricjs.Point
 
-class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null, commitColor: String = "") : Renderable {
+class Commit(
+    var id: String,
+    linePosition: Int,
+    val swimlane: Int,
+    val parent: Commit? = null,
+    commitColor: String = ""
+) : Renderable {
     var isLostInReflog = false
         set(value) {
             commitCircle.isLostInReflog = value
             field = value
         }
+        get() = commitCircle.isLostInReflog
 
     var mergedCommit: Commit? = null
     val branches = mutableSetOf<AbstractBranch>()
@@ -73,7 +80,7 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
 
     fun isAncestorOf(commit: Commit): Boolean = commit.isParentCommit(this)
 
-    private fun isParentCommit(commit: Commit) : Boolean{
+    private fun isParentCommit(commit: Commit): Boolean {
         if (parent == null) {
             // reached first commit in history
             return false
@@ -98,5 +105,15 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    fun show(doShow: Boolean, canvas: FabricCanvas) {
+        if (doShow) {
+            render(canvas)
+        } else {
+            commitCircle.removeFrom(canvas)
+            parentLine?.removeFrom(canvas)
+            mergedParentLine?.removeFrom(canvas)
+        }
     }
 }
