@@ -160,19 +160,33 @@ class GitGraph(private val canvas: FabricCanvas) {
         canvas.renderAll()
     }
 
-    fun merge(targetBranchId: String) {
-        val targetBranch = findBranch(targetBranchId)
-        if (targetBranch != null && targetBranch != currentBranch()) {
+    fun merge(noFF: Boolean, targetBranchId: String): Boolean {
+        val targetBranch = findBranch(targetBranchId) ?: throw IllegalStateException("target branch is null")
+        if (targetBranch == currentBranch() || targetBranch.commit.isAncestorOf(currentBranch().commit)) {
+            return false
+        }
+        return if (noFF || !currentBranch().commit.isAncestorOf(targetBranch.commit)) {
             val mergeCommitId = "${currentBranch().commit.id}${targetBranch.commit.id}"
             addCommit(targetBranch.commit, mergeCommitId)
+            true
+        } else {
+            // fast-forward current branch to target branch's commit
+            moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+            true
         }
     }
 
     private fun calculateLostCommits() {
-        fun traverseHistory(commit: Commit, callback: (Commit) -> Unit) {
+        fun traverseHistory(commit: Commit?, callback: (Commit) -> Unit) {
+            if (commit == null) {
+                return
+            }
             callback(commit)
             if (commit.parent != null) {
                 traverseHistory(commit.parent, callback)
+            }
+            if (commit.mergedCommit != null) {
+                traverseHistory(commit.mergedCommit, callback)
             }
         }
 

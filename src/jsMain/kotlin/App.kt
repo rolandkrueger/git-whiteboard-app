@@ -191,7 +191,9 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("mergeBranchButton") {
-                gitGraph.merge(getSelectedOption("mergeBranchInput"))
+                if (!gitGraph.merge(UiControl.isCheckboxChecked("noFFCheckbox"), getSelectedOption("mergeBranchInput"))) {
+                    ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch does not need to be merged.")
+                }
             }
         }
     }
