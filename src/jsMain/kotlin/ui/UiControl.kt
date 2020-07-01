@@ -40,8 +40,8 @@ class UiControl {
         }
 
         fun getUserInput(inputFieldId: String): String {
-            val htmlInputElement = document.getElementById(inputFieldId) as HTMLInputElement?
-            return htmlInputElement?.value ?: ""
+            val htmlInputElement = document.getElementById(inputFieldId) as HTMLInputElement
+            return htmlInputElement.value
         }
 
         fun getSelectedOption(selectId: String): String {
@@ -62,6 +62,11 @@ class UiControl {
                 element.innerHTML = it
                 htmlSelectElement.add(element)
             }
+        }
+
+        fun isCheckboxChecked(checkboxId: String): Boolean {
+            val checkbox = document.getElementById(checkboxId) as HTMLInputElement
+            return checkbox.checked
         }
     }
 }

@@ -71,4 +71,32 @@ class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: C
         }
     }
 
+    fun isAncestorOf(commit: Commit): Boolean = commit.isParentCommit(this)
+
+    private fun isParentCommit(commit: Commit) : Boolean{
+        if (parent == null) {
+            // reached first commit in history
+            return false
+        }
+        return if (parent == commit || mergedCommit == commit) {
+            true
+        } else {
+            parent.isParentCommit(commit) || (mergedCommit?.isParentCommit(commit) ?: false)
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class.js != other::class.js) return false
+
+        other as Commit
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 }
