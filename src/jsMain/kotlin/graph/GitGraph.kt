@@ -10,10 +10,11 @@ class GitGraph(private val canvas: FabricCanvas) {
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
     private var head: Head
+    private var showLostCommits = true
 
     init {
         head = Head(Commit("", 0, 0))
-        checkoutHandler = { commit -> { checkout(commit.id) } }
+        checkoutHandler = { commit -> { checkout(commit.id, showLostCommits) } }
     }
 
     fun initGraph() {
@@ -107,11 +108,11 @@ class GitGraph(private val canvas: FabricCanvas) {
         branches.add(branch)
         branches.sortBy { it.id }
         head.commit.removeBranch(head)
-        branch.onDoubleClick { checkout(id) }
+        branch.onDoubleClick { checkout(id, showLostCommits) }
         branch.render(canvas)
         branch.attachToCommit(head.commit, canvas)
         branch.render(canvas)
-        checkout(id)
+        checkout(id, showLostCommits)
         return branch
     }
 
@@ -122,7 +123,7 @@ class GitGraph(private val canvas: FabricCanvas) {
 
         tag.render(canvas)
         tag.onDoubleClick {
-            checkout(tag.commit.id)
+            checkout(tag.commit.id, showLostCommits)
         }
         tags.add(tag)
         tags.sortBy { it.id }
@@ -130,7 +131,7 @@ class GitGraph(private val canvas: FabricCanvas) {
 
     fun getTags(): List<AbstractBranch> = tags
 
-    fun checkout(id: String) {
+    fun checkout(id: String, doShowLostCommits: Boolean) {
         console.log("Checking out $id")
         val oldHeadCommit = head.commit
         val targetBranch = findBranch(id)
@@ -157,6 +158,7 @@ class GitGraph(private val canvas: FabricCanvas) {
         }
         oldHeadCommit.repositionBranches(canvas)
         calculateLostCommits()
+        showLostCommits(doShowLostCommits)
         canvas.renderAll()
     }
 
@@ -244,6 +246,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     private fun findBranch(branchName: String): AbstractBranch? = branches.find { it.id == branchName }
 
     fun showLostCommits(doShowLostCommits: Boolean) {
+        showLostCommits = doShowLostCommits
         commits.forEach {
             if (it.isLostInReflog) {
                 it.show(doShowLostCommits, canvas)

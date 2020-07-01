@@ -21,6 +21,7 @@ import ui.UiControl.Companion.doWhenLinkClicked
 import ui.UiControl.Companion.getSelectedOption
 import ui.UiControl.Companion.getUserInput
 import ui.UiControl.Companion.hideElements
+import ui.UiControl.Companion.isCheckboxChecked
 import ui.UiControl.Companion.showElements
 import kotlin.browser.document
 import kotlin.browser.window
@@ -138,7 +139,7 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("checkoutCommitButton") {
-                gitGraph.checkout(getUserInput("checkoutCommitInput"))
+                gitGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
             }
 
             doWhenButtonClicked("addBranchButton") {
@@ -156,7 +157,7 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("checkoutBranchButton") {
-                gitGraph.checkout(getSelectedOption("checkoutBranchInput"))
+                gitGraph.checkout(getSelectedOption("checkoutBranchInput"), isCheckboxChecked("showLostCommitsCheckbox"))
             }
 
             doWhenButtonClicked("deleteBranchButton") {
