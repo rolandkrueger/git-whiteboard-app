@@ -35,7 +35,12 @@ class GitGraph(private val canvas: FabricCanvas) {
         head.render(canvas)
     }
 
-    fun addCommit(mergedParentCommit: Commit? = null, newCommitId: String? = null) {
+    fun addCommit(
+        mergedParentCommit: Commit? = null,
+        newCommitId: String? = null,
+        commitIdSuffix: String = "",
+        commitColor: String? = null
+    ) {
         fun moveHeadTo(commit: Commit) {
             head.commit.removeBranch(head)
             head.commit = commit
@@ -48,10 +53,11 @@ class GitGraph(private val canvas: FabricCanvas) {
         }
         val currentBranch = currentBranch()
         val swimlane = head.targetBranch?.swimlane ?: head.swimlane
-        val id = newCommitId ?: calcCommitId(currentBranch)
+        val id = (newCommitId ?: calcCommitId(currentBranch)) + commitIdSuffix
+        val newCommitColor = commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
         val commit = Commit(
             id, globalCommitNumber++, swimlane, head.commit,
-            if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
+            newCommitColor
         )
         commit.mergedCommit = mergedParentCommit
         commit.render(canvas)
@@ -73,6 +79,9 @@ class GitGraph(private val canvas: FabricCanvas) {
         oldHeadCommit.repositionBranches(canvas)
         canvas.renderAll()
     }
+
+    fun doesCommitExist(id: String) = commits.any { it.id == id }
+    fun getCommitFor(id: String) = commits.find { it.id == id }
 
     /**
      * Calculates the current branch based on the HEAD pointer. If the HEAD is detached, return the HEAD as a result.

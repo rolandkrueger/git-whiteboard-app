@@ -138,6 +138,18 @@ val App = functionalComponent<RProps> { _ ->
                 gitGraph.addCommit()
             }
 
+            doWhenButtonClicked("cherryPickButton") {
+                val commitId = getUserInput("cherryPickInput")
+                if (!gitGraph.doesCommitExist(commitId)) {
+                    ConfirmationDialog.showMessageDialog(
+                        "Commit does not exist",
+                        "Unable to cherry-pick '$commitId': commit does not exist."
+                    )
+                } else {
+                    gitGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = gitGraph.getCommitFor(commitId)?.commitColor)
+                }
+            }
+
             doWhenButtonClicked("checkoutCommitButton") {
                 gitGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
             }
@@ -157,7 +169,10 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("checkoutBranchButton") {
-                gitGraph.checkout(getSelectedOption("checkoutBranchInput"), isCheckboxChecked("showLostCommitsCheckbox"))
+                gitGraph.checkout(
+                    getSelectedOption("checkoutBranchInput"),
+                    isCheckboxChecked("showLostCommitsCheckbox")
+                )
             }
 
             doWhenButtonClicked("deleteBranchButton") {
@@ -193,7 +208,11 @@ val App = functionalComponent<RProps> { _ ->
             }
 
             doWhenButtonClicked("mergeBranchButton") {
-                if (!gitGraph.merge(UiControl.isCheckboxChecked("noFFCheckbox"), getSelectedOption("mergeBranchInput"))) {
+                if (!gitGraph.merge(
+                        UiControl.isCheckboxChecked("noFFCheckbox"),
+                        getSelectedOption("mergeBranchInput")
+                    )
+                ) {
                     ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch does not need to be merged.")
                 }
             }

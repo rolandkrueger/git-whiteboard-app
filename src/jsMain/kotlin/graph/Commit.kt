@@ -12,7 +12,7 @@ class Commit(
     linePosition: Int,
     val swimlane: Int,
     val parent: Commit? = null,
-    commitColor: String = ""
+    val commitColor: String = ""
 ) : Renderable {
     var isLostInReflog = false
         set(value) {
