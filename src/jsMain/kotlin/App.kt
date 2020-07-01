@@ -16,6 +16,7 @@ import ui.ConfirmationDialog
 import ui.UiControl
 import ui.UiControl.Companion.activateTab
 import ui.UiControl.Companion.doWhenButtonClicked
+import ui.UiControl.Companion.doWhenCheckboxClicked
 import ui.UiControl.Companion.doWhenLinkClicked
 import ui.UiControl.Companion.getSelectedOption
 import ui.UiControl.Companion.getUserInput
@@ -195,6 +196,8 @@ val App = functionalComponent<RProps> { _ ->
                     ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch does not need to be merged.")
                 }
             }
+
+            doWhenCheckboxClicked("showLostCommitsCheckbox", gitGraph::showLostCommits)
         }
     }
 

@@ -242,4 +242,13 @@ class GitGraph(private val canvas: FabricCanvas) {
     }
 
     private fun findBranch(branchName: String): AbstractBranch? = branches.find { it.id == branchName }
+
+    fun showLostCommits(doShowLostCommits: Boolean) {
+        commits.forEach {
+            if (it.isLostInReflog) {
+                it.show(doShowLostCommits, canvas)
+            }
+        }
+        canvas.renderAll()
+    }
 }

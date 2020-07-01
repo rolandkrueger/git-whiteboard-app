@@ -30,6 +30,11 @@ class UiControl {
             buttonElement.onclick = { clickHandler() }
         }
 
+        fun doWhenCheckboxClicked(checkboxId: String, clickHandler: (Boolean) -> Unit) {
+            val checkboxElement = document.getElementById(checkboxId) as HTMLInputElement
+            checkboxElement.onclick = { clickHandler(checkboxElement.checked)}
+        }
+
         fun activateTab(activeTabId: String, vararg otherTabIds: String) {
             showElements(activeTabId)
             hideElements(*otherTabIds)
