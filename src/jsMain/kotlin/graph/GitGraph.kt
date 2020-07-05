@@ -277,7 +277,17 @@ class GitGraph(private val canvas: FabricCanvas) {
             }
         }
         commits.removeAll { it.commitCircle.isLostInReflog }
+        realignCommits()
         canvas.renderAll()
+    }
+
+    private fun realignCommits() {
+        commits.forEach {
+            if (it.parent?.swimlane == it.childCommit?.swimlane) {
+                it.swimlane = it.parent?.swimlane ?: it.childCommit?.swimlane ?: 0
+                it.rerender(canvas)
+            }
+        }
     }
 
     fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)

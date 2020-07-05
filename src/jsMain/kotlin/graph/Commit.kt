@@ -70,7 +70,7 @@ class Commit(
         removeFrom(canvas)
         swimlane++
         commitCircle = createCommitCircle()
-        childCommit?.reattachToParent(canvas)
+        childCommit?.rerender(canvas)
         render(canvas)
         branches.forEach {
             it.attachToCommit(this, canvas)
@@ -78,8 +78,10 @@ class Commit(
         repositionBranches(canvas)
     }
 
-    private fun reattachToParent(canvas: FabricCanvas) {
+    fun rerender(canvas: FabricCanvas) {
         removeFrom(canvas)
+        commitCircle = createCommitCircle()
+        childCommit?.rerender(canvas)
         render(canvas)
     }
 
