@@ -79,6 +79,8 @@ class GitGraph(private val canvas: FabricCanvas) {
             id, linePosition, swimlane, parentCommit,
             newCommitColor
         )
+        parentCommit?.childCommit = commit
+        mergedParentCommit?.childCommit = commit
         commit.mergedCommit = mergedParentCommit
         commit.render(canvas)
         commit.commitCircle.onDoubleClick(checkoutHandler(commit))

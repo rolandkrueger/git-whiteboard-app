@@ -26,6 +26,7 @@ class Commit(
     var commitCircle = createCommitCircle()
     var parentLine: Line? = null
     var mergedParentLine: Line? = null
+    var childCommit: Commit? = null
 
     fun addBranch(branch: AbstractBranch) = branches.add(branch)
     fun removeBranch(branch: AbstractBranch) = branches.remove(branch)
@@ -43,19 +44,20 @@ class Commit(
         val parent = parent
         // draw line to parent commit(s)
         if (parent != null) {
-            if (swimlane == parent.swimlane) {
-                parentLine = Line(
-                    parent.commitCircle.getUpperDockPoint(),
-                    commitCircle.getLowerDockPoint()
-                )
-                parentLine?.render(canvas)
-            } else {
-                parentLine = Line(
-                    parent.commitCircle.getRightDockPoint(),
-                    commitCircle.getLowerDockPoint()
-                )
-                parentLine?.render(canvas)
-            }
+            val dockPoint: Point =
+                if (swimlane == parent.swimlane) {
+                    parent.commitCircle.getUpperDockPoint()
+                } else if (swimlane < parent.swimlane) {
+                    parent.commitCircle.getUpperDockPoint()
+                }
+                else {
+                    parent.commitCircle.getUpperDockPoint()
+                }
+            parentLine = Line(
+                dockPoint,
+                commitCircle.getLowerDockPoint()
+            )
+            parentLine?.render(canvas)
             val mergedCommit = mergedCommit
             if (mergedCommit != null) {
                 mergedParentLine = Line(mergedCommit.commitCircle.getUpperDockPoint(), commitCircle.getLowerDockPoint())
@@ -68,11 +70,17 @@ class Commit(
         removeFrom(canvas)
         swimlane++
         commitCircle = createCommitCircle()
+        childCommit?.reattachToParent(canvas)
         render(canvas)
         branches.forEach {
             it.attachToCommit(this, canvas)
         }
         repositionBranches(canvas)
+    }
+
+    private fun reattachToParent(canvas: FabricCanvas) {
+        removeFrom(canvas)
+        render(canvas)
     }
 
     override fun removeFrom(canvas: FabricCanvas) {
