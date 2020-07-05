@@ -104,9 +104,6 @@ class GitGraph(private val canvas: FabricCanvas) {
 
     fun amendCommit() {
         val amendedCommitSwimlane = head.commit.swimlane + 1
-        if (globalSwimlaneCounter <= amendedCommitSwimlane) {
-            globalSwimlaneCounter = amendedCommitSwimlane + 1
-        }
         shiftCommitsToTheRight(amendedCommitSwimlane)
         addCommit(
             newCommitId = "${head.commit.id}*",
@@ -123,6 +120,9 @@ class GitGraph(private val canvas: FabricCanvas) {
         commits.forEach {
             if (it.swimlane >= swimlaneStart) {
                 it.shiftRight(canvas)
+            }
+            if (globalSwimlaneCounter <= it.swimlane) {
+                globalSwimlaneCounter = it.swimlane + 1
             }
         }
         branches.forEach {
