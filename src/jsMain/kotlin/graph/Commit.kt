@@ -9,8 +9,8 @@ import fabricjs.Point
 
 class Commit(
     var id: String,
-    linePosition: Int,
-    val swimlane: Int,
+    val linePosition: Int,
+    var swimlane: Int,
     val parent: Commit? = null,
     val commitColor: String = ""
 ) : Renderable {
@@ -23,18 +23,20 @@ class Commit(
 
     var mergedCommit: Commit? = null
     val branches = mutableSetOf<AbstractBranch>()
-    val commitCircle = CommitCircle(
+    var commitCircle = createCommitCircle()
+    var parentLine: Line? = null
+    var mergedParentLine: Line? = null
+
+    fun addBranch(branch: AbstractBranch) = branches.add(branch)
+    fun removeBranch(branch: AbstractBranch) = branches.remove(branch)
+
+    private fun createCommitCircle(): CommitCircle = CommitCircle(
         id, Point(
             GitGraphConfiguration.leftOffset + swimlane * GitGraphConfiguration.swimlaneDistance,
             GitGraphConfiguration.bottomOffset - linePosition * GitGraphConfiguration.commitDistance
         ),
         commitColor
     )
-    var parentLine: Line? = null
-    var mergedParentLine: Line? = null
-
-    fun addBranch(branch: AbstractBranch) = branches.add(branch)
-    fun removeBranch(branch: AbstractBranch) = branches.remove(branch)
 
     override fun render(canvas: FabricCanvas) {
         commitCircle.render(canvas)
@@ -60,6 +62,17 @@ class Commit(
                 mergedParentLine?.render(canvas)
             }
         }
+    }
+
+    fun shiftRight(canvas: FabricCanvas) {
+        removeFrom(canvas)
+        swimlane++
+        commitCircle = createCommitCircle()
+        render(canvas)
+        branches.forEach {
+            it.attachToCommit(this, canvas)
+        }
+        repositionBranches(canvas)
     }
 
     override fun removeFrom(canvas: FabricCanvas) {

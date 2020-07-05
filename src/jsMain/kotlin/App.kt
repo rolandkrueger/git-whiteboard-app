@@ -138,6 +138,10 @@ val App = functionalComponent<RProps> { _ ->
                 gitGraph.addCommit()
             }
 
+            doWhenButtonClicked("amendCommitButton") {
+                gitGraph.amendCommit()
+            }
+
             doWhenButtonClicked("cherryPickButton") {
                 val commitId = getUserInput("cherryPickInput")
                 if (!gitGraph.doesCommitExist(commitId)) {
