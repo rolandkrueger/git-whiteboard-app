@@ -70,7 +70,9 @@ class CommitCircle(id: String, private val centerPosition: fabric.Point, private
         idLabel.removeFrom(canvas)
     }
 
-    fun getUpperDockPoint() = centerPosition.subtract(fabric.Point(0, GitGraphConfiguration.commitRadius))
-    fun getLowerDockPoint() = centerPosition.add(fabric.Point(0, GitGraphConfiguration.commitRadius))
-    fun getRightDockPoint() = centerPosition.add(fabric.Point(GitGraphConfiguration.commitRadius, 0))
+    fun getUpperDockPoint() = centerPosition.subtract(Point(0, GitGraphConfiguration.commitRadius))
+    fun getLowerDockPoint() = centerPosition.add(Point(0, GitGraphConfiguration.commitRadius))
+    fun getRightDockPoint() = centerPosition.add(Point(GitGraphConfiguration.commitRadius, 0))
+    fun getLeftDockPoint() = centerPosition.subtract(Point(GitGraphConfiguration.commitRadius, 0))
+
 }

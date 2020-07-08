@@ -44,6 +44,10 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
     override fun removeFrom(canvas: FabricCanvas) {
         getLabel().removeFrom(canvas)
     }
+
+    fun shiftToNextSwimlane() {
+        swimlane += 1
+    }
 }
 
 open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit, commitColor: String) :

@@ -9,8 +9,8 @@ import fabricjs.Point
 
 class Commit(
     var id: String,
-    linePosition: Int,
-    val swimlane: Int,
+    val linePosition: Int,
+    var swimlane: Int,
     val parent: Commit? = null,
     val commitColor: String = ""
 ) : Renderable {
@@ -23,43 +23,66 @@ class Commit(
 
     var mergedCommit: Commit? = null
     val branches = mutableSetOf<AbstractBranch>()
-    val commitCircle = CommitCircle(
+    var commitCircle = createCommitCircle()
+    var parentLine: Line? = null
+    var mergedParentLine: Line? = null
+    var childCommit: Commit? = null
+
+    fun addBranch(branch: AbstractBranch) = branches.add(branch)
+    fun removeBranch(branch: AbstractBranch) = branches.remove(branch)
+
+    private fun createCommitCircle(): CommitCircle = CommitCircle(
         id, Point(
             GitGraphConfiguration.leftOffset + swimlane * GitGraphConfiguration.swimlaneDistance,
             GitGraphConfiguration.bottomOffset - linePosition * GitGraphConfiguration.commitDistance
         ),
         commitColor
     )
-    var parentLine: Line? = null
-    var mergedParentLine: Line? = null
-
-    fun addBranch(branch: AbstractBranch) = branches.add(branch)
-    fun removeBranch(branch: AbstractBranch) = branches.remove(branch)
 
     override fun render(canvas: FabricCanvas) {
         commitCircle.render(canvas)
         val parent = parent
         // draw line to parent commit(s)
         if (parent != null) {
-            if (swimlane == parent.swimlane) {
-                parentLine = Line(
-                    parent.commitCircle.getUpperDockPoint(),
-                    commitCircle.getLowerDockPoint()
-                )
-                parentLine?.render(canvas)
-            } else {
-                parentLine = Line(
-                    parent.commitCircle.getRightDockPoint(),
-                    commitCircle.getLowerDockPoint()
-                )
-                parentLine?.render(canvas)
-            }
+            val dockPoint: Point =
+                if (swimlane == parent.swimlane) {
+                    parent.commitCircle.getUpperDockPoint()
+                } else if (swimlane < parent.swimlane) {
+                    parent.commitCircle.getUpperDockPoint()
+                }
+                else {
+                    parent.commitCircle.getUpperDockPoint()
+                }
+            parentLine = Line(
+                dockPoint,
+                commitCircle.getLowerDockPoint()
+            )
+            parentLine?.render(canvas)
             val mergedCommit = mergedCommit
             if (mergedCommit != null) {
                 mergedParentLine = Line(mergedCommit.commitCircle.getUpperDockPoint(), commitCircle.getLowerDockPoint())
                 mergedParentLine?.render(canvas)
             }
         }
+    }
+
+    fun shiftRight(canvas: FabricCanvas) {
+        removeFrom(canvas)
+        swimlane++
+        commitCircle = createCommitCircle()
+        childCommit?.rerender(canvas)
+        render(canvas)
+        branches.forEach {
+            it.attachToCommit(this, canvas)
+        }
+        repositionBranches(canvas)
+    }
+
+    fun rerender(canvas: FabricCanvas) {
+        removeFrom(canvas)
+        commitCircle = createCommitCircle()
+        childCommit?.rerender(canvas)
+        render(canvas)
     }
 
     override fun removeFrom(canvas: FabricCanvas) {

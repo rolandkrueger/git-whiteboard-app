@@ -41,6 +41,26 @@ class GitGraph(private val canvas: FabricCanvas) {
         commitIdSuffix: String = "",
         commitColor: String? = null
     ) {
+        addCommit(
+            mergedParentCommit,
+            newCommitId,
+            commitIdSuffix,
+            commitColor,
+            head.commit,
+            head.targetBranch?.swimlane ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
+            globalCommitNumber++
+        )
+    }
+
+    private fun addCommit(
+        mergedParentCommit: Commit? = null,
+        newCommitId: String? = null,
+        commitIdSuffix: String = "",
+        commitColor: String? = null,
+        parentCommit: Commit?,
+        swimlane: Int,
+        linePosition: Int
+    ) {
         fun moveHeadTo(commit: Commit) {
             head.commit.removeBranch(head)
             head.commit = commit
@@ -49,16 +69,18 @@ class GitGraph(private val canvas: FabricCanvas) {
 
         val oldHeadCommit = head.commit
         if (head.isDetached && head.swimlane == -1) {
-            head.swimlane = globalSwimlaneCounter++
+            head.swimlane = swimlane
         }
         val currentBranch = currentBranch()
-        val swimlane = head.targetBranch?.swimlane ?: head.swimlane
         val id = (newCommitId ?: calcCommitId(currentBranch)) + commitIdSuffix
-        val newCommitColor = commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
+        val newCommitColor =
+            commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
         val commit = Commit(
-            id, globalCommitNumber++, swimlane, head.commit,
+            id, linePosition, swimlane, parentCommit,
             newCommitColor
         )
+        parentCommit?.childCommit = commit
+        mergedParentCommit?.childCommit = commit
         commit.mergedCommit = mergedParentCommit
         commit.render(canvas)
         commit.commitCircle.onDoubleClick(checkoutHandler(commit))
@@ -78,6 +100,36 @@ class GitGraph(private val canvas: FabricCanvas) {
 
         oldHeadCommit.repositionBranches(canvas)
         canvas.renderAll()
+    }
+
+    fun amendCommit() {
+        val amendedCommitSwimlane = head.commit.swimlane + 1
+        shiftCommitsToTheRight(amendedCommitSwimlane)
+        addCommit(
+            newCommitId = "${head.commit.id}*",
+            commitColor = head.commit.commitColor,
+            parentCommit = head.commit.parent,
+            swimlane = amendedCommitSwimlane,
+            linePosition = head.commit.linePosition
+        )
+        calculateLostCommits()
+        canvas.renderAll()
+    }
+
+    private fun shiftCommitsToTheRight(swimlaneStart: Int) {
+        commits.forEach {
+            if (it.swimlane >= swimlaneStart) {
+                it.shiftRight(canvas)
+            }
+            if (globalSwimlaneCounter <= it.swimlane) {
+                globalSwimlaneCounter = it.swimlane + 1
+            }
+        }
+        branches.forEach {
+            if (it.swimlane >= swimlaneStart) {
+                it.shiftToNextSwimlane()
+            }
+        }
     }
 
     fun doesCommitExist(id: String) = commits.any { it.id == id }
@@ -225,7 +277,17 @@ class GitGraph(private val canvas: FabricCanvas) {
             }
         }
         commits.removeAll { it.commitCircle.isLostInReflog }
+        realignCommits()
         canvas.renderAll()
+    }
+
+    private fun realignCommits() {
+        commits.forEach {
+            if (it.parent?.swimlane == it.childCommit?.swimlane) {
+                it.swimlane = it.parent?.swimlane ?: it.childCommit?.swimlane ?: 0
+                it.rerender(canvas)
+            }
+        }
     }
 
     fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)
