@@ -131,6 +131,11 @@ class GitGraph(private val canvas: FabricCanvas) {
                 it.shiftToNextSwimlane()
             }
         }
+        commits.forEach {
+            if (it.isLostInReflog) {
+                it.rerender(canvas)
+            }
+        }
     }
 
     fun doesCommitExist(id: String) = commits.any { it.id == id }
@@ -344,7 +349,11 @@ class GitGraph(private val canvas: FabricCanvas) {
     fun runGarbageCollection() {
         commits.forEach {
             if (it.commitCircle.isLostInReflog) {
+                if (it.parent?.childCommit == it) {
+                    it.parent.childCommit = null
+                }
                 it.removeFrom(canvas)
+                console.log("Remove lost commit $it")
             }
         }
         commits.removeAll { it.commitCircle.isLostInReflog }
@@ -359,6 +368,7 @@ class GitGraph(private val canvas: FabricCanvas) {
                 it.rerender(canvas)
             }
         }
+        currentBranch().attachToCommit(currentBranch().commit, canvas)
     }
 
     fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)

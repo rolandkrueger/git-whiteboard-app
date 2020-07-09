@@ -49,8 +49,7 @@ class Commit(
                     parent.commitCircle.getUpperDockPoint()
                 } else if (swimlane < parent.swimlane) {
                     parent.commitCircle.getUpperDockPoint()
-                }
-                else {
+                } else {
                     parent.commitCircle.getUpperDockPoint()
                 }
             parentLine = Line(
