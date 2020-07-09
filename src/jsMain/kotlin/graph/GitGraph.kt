@@ -249,10 +249,37 @@ class GitGraph(private val canvas: FabricCanvas) {
             }
             if (commonBaseCommit == currentBranch().commit) {
                 console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}: fast-forward ${currentBranch().id}")
+                moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
                 return true
             }
             console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}")
+            val newSwimlaneForRebasedBranch = targetBranch.swimlane
+            shiftCommitsToTheRight(targetBranch.swimlane)
+            currentBranch().swimlane = newSwimlaneForRebasedBranch
 
+            val commitsToBeRebased = ArrayList<Commit>()
+            var commit: Commit? = currentBranch().commit
+            do {
+                if (commit != null) {
+                    commitsToBeRebased.add(commit)
+                    commit = commit.parent
+                }
+            } while (commit != commonBaseCommit)
+
+            moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+            commitsToBeRebased.reverse()
+            commitsToBeRebased.forEach {
+                addCommit(
+                    newCommitId = "${it.id}*",
+                    commitColor = it.commitColor,
+                    parentCommit = head.commit,
+                    swimlane = newSwimlaneForRebasedBranch,
+                    linePosition = globalCommitNumber++
+                )
+            }
+            commitsToBeRebased.first().rerender(canvas)
+            calculateLostCommits()
+            canvas.renderAll()
             true
         } else {
             false
