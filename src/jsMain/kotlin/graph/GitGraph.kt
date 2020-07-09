@@ -47,7 +47,8 @@ class GitGraph(private val canvas: FabricCanvas) {
             commitIdSuffix,
             commitColor,
             head.commit,
-            head.targetBranch?.swimlane ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
+            head.targetBranch?.swimlane
+                ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
             globalCommitNumber++
         )
     }
@@ -237,6 +238,49 @@ class GitGraph(private val canvas: FabricCanvas) {
             moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
             true
         }
+    }
+
+    fun rebase(targetBranchName: String): Boolean {
+        val targetBranch = findBranch(targetBranchName)
+        return if (targetBranch != null) {
+            val commonBaseCommit = calculateCommonBaseCommit(targetBranch)
+            if (commonBaseCommit == targetBranch.commit) {
+                return false
+            }
+            if (commonBaseCommit == currentBranch().commit) {
+                console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}: fast-forward ${currentBranch().id}")
+                return true
+            }
+            console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}")
+
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun calculateCommonBaseCommit(targetBranch: AbstractBranch): Commit? {
+        val targetBranchHistory = HashSet<Commit>()
+        fun addParentToBranchHistory(commit: Commit) {
+            if (commit.parent != null) {
+                targetBranchHistory.add(commit.parent)
+                addParentToBranchHistory(commit.parent)
+            }
+        }
+        targetBranchHistory.add(targetBranch.commit)
+        addParentToBranchHistory(targetBranch.commit)
+
+        fun findCommonBaseCommitInCurrentBranchHistory(startCommit: Commit): Commit? {
+            if (targetBranchHistory.contains(startCommit)) {
+                return startCommit
+            } else if (startCommit.parent != null) {
+                return findCommonBaseCommitInCurrentBranchHistory(startCommit.parent)
+            } else {
+                return null
+            }
+        }
+
+        return findCommonBaseCommitInCurrentBranchHistory(currentBranch().commit)
     }
 
     private fun calculateLostCommits() {
