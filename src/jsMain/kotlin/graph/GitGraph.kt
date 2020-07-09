@@ -47,7 +47,8 @@ class GitGraph(private val canvas: FabricCanvas) {
             commitIdSuffix,
             commitColor,
             head.commit,
-            head.targetBranch?.swimlane ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
+            head.targetBranch?.swimlane
+                ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
             globalCommitNumber++
         )
     }
@@ -128,6 +129,11 @@ class GitGraph(private val canvas: FabricCanvas) {
         branches.forEach {
             if (it.swimlane >= swimlaneStart) {
                 it.shiftToNextSwimlane()
+            }
+        }
+        commits.forEach {
+            if (it.isLostInReflog) {
+                it.rerender(canvas)
             }
         }
     }
@@ -239,6 +245,76 @@ class GitGraph(private val canvas: FabricCanvas) {
         }
     }
 
+    fun rebase(targetBranchName: String): Boolean {
+        val targetBranch = findBranch(targetBranchName)
+        return if (targetBranch != null) {
+            val commonBaseCommit = calculateCommonBaseCommit(targetBranch)
+            if (commonBaseCommit == targetBranch.commit) {
+                return false
+            }
+            if (commonBaseCommit == currentBranch().commit) {
+                console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}: fast-forward ${currentBranch().id}")
+                moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+                return true
+            }
+            console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}")
+            val newSwimlaneForRebasedBranch = targetBranch.swimlane
+            shiftCommitsToTheRight(targetBranch.swimlane)
+            currentBranch().swimlane = newSwimlaneForRebasedBranch
+
+            val commitsToBeRebased = ArrayList<Commit>()
+            var commit: Commit? = currentBranch().commit
+            do {
+                if (commit != null) {
+                    commitsToBeRebased.add(commit)
+                    commit = commit.parent
+                }
+            } while (commit != commonBaseCommit)
+
+            moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+            commitsToBeRebased.reverse()
+            commitsToBeRebased.forEach {
+                addCommit(
+                    newCommitId = "${it.id}*",
+                    commitColor = it.commitColor,
+                    parentCommit = head.commit,
+                    swimlane = newSwimlaneForRebasedBranch,
+                    linePosition = globalCommitNumber++
+                )
+            }
+            commitsToBeRebased.first().rerender(canvas)
+            calculateLostCommits()
+            canvas.renderAll()
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun calculateCommonBaseCommit(targetBranch: AbstractBranch): Commit? {
+        val targetBranchHistory = HashSet<Commit>()
+        fun addParentToBranchHistory(commit: Commit) {
+            if (commit.parent != null) {
+                targetBranchHistory.add(commit.parent)
+                addParentToBranchHistory(commit.parent)
+            }
+        }
+        targetBranchHistory.add(targetBranch.commit)
+        addParentToBranchHistory(targetBranch.commit)
+
+        fun findCommonBaseCommitInCurrentBranchHistory(startCommit: Commit): Commit? {
+            if (targetBranchHistory.contains(startCommit)) {
+                return startCommit
+            } else if (startCommit.parent != null) {
+                return findCommonBaseCommitInCurrentBranchHistory(startCommit.parent)
+            } else {
+                return null
+            }
+        }
+
+        return findCommonBaseCommitInCurrentBranchHistory(currentBranch().commit)
+    }
+
     private fun calculateLostCommits() {
         fun traverseHistory(commit: Commit?, callback: (Commit) -> Unit) {
             if (commit == null) {
@@ -273,7 +349,11 @@ class GitGraph(private val canvas: FabricCanvas) {
     fun runGarbageCollection() {
         commits.forEach {
             if (it.commitCircle.isLostInReflog) {
+                if (it.parent?.childCommit == it) {
+                    it.parent.childCommit = null
+                }
                 it.removeFrom(canvas)
+                console.log("Remove lost commit $it")
             }
         }
         commits.removeAll { it.commitCircle.isLostInReflog }
@@ -288,6 +368,7 @@ class GitGraph(private val canvas: FabricCanvas) {
                 it.rerender(canvas)
             }
         }
+        currentBranch().attachToCommit(currentBranch().commit, canvas)
     }
 
     fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)

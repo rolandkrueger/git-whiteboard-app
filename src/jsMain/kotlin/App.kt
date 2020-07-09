@@ -81,7 +81,7 @@ val App = functionalComponent<RProps> { _ ->
                         0.06
                     }
                     if (zoom > 3.0) zoom = 3.0
-                    if (zoom < 0.5) zoom = 0.5
+                    if (zoom < 0.2) zoom = 0.2
                     canvas.setZoom(zoom)
                     event.preventDefault()
                     event.stopPropagation()
@@ -213,11 +213,17 @@ val App = functionalComponent<RProps> { _ ->
 
             doWhenButtonClicked("mergeBranchButton") {
                 if (!gitGraph.merge(
-                        UiControl.isCheckboxChecked("noFFCheckbox"),
+                        isCheckboxChecked("noFFCheckbox"),
                         getSelectedOption("mergeBranchInput")
                     )
                 ) {
                     ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch does not need to be merged.")
+                }
+            }
+
+            doWhenButtonClicked("rebaseBranchButton") {
+                if (!gitGraph.rebase(getSelectedOption("rebaseBranchInput"))) {
+                    ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch cannot be rebased.")
                 }
             }
 
@@ -242,6 +248,7 @@ fun updateBranchSelects(branches: List<AbstractBranch>) {
     UiControl.setSelectOptions("checkoutBranchInput", branchNames)
     UiControl.setSelectOptions("deleteBranchInput", branchNames)
     UiControl.setSelectOptions("mergeBranchInput", branchNames)
+    UiControl.setSelectOptions("rebaseBranchInput", branchNames)
 }
 
 fun updateTagSelects(tags: List<AbstractBranch>) {
