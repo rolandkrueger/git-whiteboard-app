@@ -139,7 +139,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     }
 
     fun doesCommitExist(id: String) = commits.any { it.id == id }
-    fun getCommitFor(id: String) = commits.find { it.id == id }
+    fun findCommitFor(id: String) = commits.find { it.id == id }
 
     /**
      * Calculates the current branch based on the HEAD pointer. If the HEAD is detached, return the HEAD as a result.
@@ -405,5 +405,14 @@ class GitGraph(private val canvas: FabricCanvas) {
             }
         }
         canvas.renderAll()
+    }
+
+    fun resetBranch(targetCommitId: String) {
+        val targetCommit = findCommitFor(targetCommitId)
+        if (targetCommit != null) {
+            moveBranch(currentBranch(), currentBranch().commit, targetCommit)
+            calculateLostCommits()
+            canvas.renderAll()
+        }
     }
 }
