@@ -68,16 +68,24 @@ class GitGraph(private val canvas: FabricCanvas) {
             commit.addBranch(head)
         }
 
+        var newSwimlane = swimlane
+
+        if (isHeadOnOccupiedSwimlane()) {
+            shiftCommitsToTheRight(head.commit.swimlane + 1)
+            newSwimlane++
+            currentBranch().swimlane = newSwimlane
+        }
+
         val oldHeadCommit = head.commit
         if (head.isDetached && head.swimlane == -1) {
-            head.swimlane = swimlane
+            head.swimlane = newSwimlane
         }
         val currentBranch = currentBranch()
         val id = (newCommitId ?: calcCommitId(currentBranch)) + commitIdSuffix
         val newCommitColor =
             commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
         val commit = Commit(
-            id, linePosition, swimlane, parentCommit,
+            id, linePosition, newSwimlane, parentCommit,
             newCommitColor
         )
         parentCommit?.childCommit = commit
@@ -88,19 +96,34 @@ class GitGraph(private val canvas: FabricCanvas) {
         commits.add(commit)
         if (head.isDetached) {
             moveHeadTo(commit)
-        } else {
-            moveBranch(currentBranch, head.commit, commit)
-        }
-
-        if (head.isDetached) {
             head.attachToCommit(head.commit, canvas)
         } else {
+            moveBranch(currentBranch, head.commit, commit)
             head.attachToBranch(currentBranch, canvas)
             currentBranch.attachToCommit(head.commit, canvas)
         }
 
         oldHeadCommit.repositionBranches(canvas)
+        calculateLostCommits()
         canvas.renderAll()
+    }
+
+    private fun isHeadOnOccupiedSwimlane(): Boolean {
+        val currentSwimlane = head.targetBranch?.swimlane ?: head.swimlane
+        val currentLinePosition = head.commit.linePosition
+        commits.filter { it.swimlane == currentSwimlane && it.linePosition > currentLinePosition }
+            .ifEmpty {
+                branches
+                    .filterNot { it == head.targetBranch || it == head }
+                    .filter {
+                        it.swimlane == currentSwimlane && head.commit != it.commit
+                    }
+                    .ifEmpty {
+                        return false
+                    }
+            }
+
+        return true
     }
 
     fun amendCommit() {
