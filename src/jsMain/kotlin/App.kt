@@ -150,7 +150,7 @@ val App = functionalComponent<RProps> { _ ->
                         "Unable to cherry-pick '$commitId': commit does not exist."
                     )
                 } else {
-                    gitGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = gitGraph.getCommitFor(commitId)?.commitColor)
+                    gitGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = gitGraph.findCommitFor(commitId)?.commitColor)
                 }
             }
 
@@ -191,6 +191,10 @@ val App = functionalComponent<RProps> { _ ->
                     gitGraph.deleteBranch(branchName)
                     updateBranchSelects(gitGraph.getBranches())
                 }
+            }
+
+            doWhenButtonClicked("resetBranchButton") {
+                gitGraph.resetBranch(getUserInput("resetBranchInput"))
             }
 
             doWhenButtonClicked("addTagButton") {
