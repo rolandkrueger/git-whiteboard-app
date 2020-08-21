@@ -131,11 +131,10 @@ class Commit(
 
     fun show(doShow: Boolean, canvas: FabricCanvas) {
         if (doShow) {
+            removeFrom(canvas)
             render(canvas)
         } else {
-            commitCircle.removeFrom(canvas)
-            parentLine?.removeFrom(canvas)
-            mergedParentLine?.removeFrom(canvas)
+            removeFrom(canvas)
         }
     }
 }
