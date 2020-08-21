@@ -55,16 +55,12 @@ abstract class CommitLabel protected constructor(
 
     private fun setPosition(position: Point, canvas: FabricCanvas) {
         this.position = position
-        canvas.remove(rectangle)
-        canvas.remove(fabricTextObject)
-
         rectangle.left = position.x
         rectangle.top = position.y
         fabricTextObject.left = position.x + 5
         fabricTextObject.top = position.y + 2
-
-        canvas.add(rectangle)
-        canvas.add(fabricTextObject)
+        fabricTextObject.dirty = true
+        rectangle.dirty = true
     }
 
     var isActive: Boolean = false
@@ -121,14 +117,6 @@ abstract class CommitLabel protected constructor(
         line.removeFrom(canvas)
         canvas.remove(rectangle)
         canvas.remove(fabricTextObject)
-        // FIXME: removing the label from the canvas does not properly work. Work around by setting the label's size to zero and moving it away
-        setPosition(Point(9999, 9999), canvas)
-        rectangle.width = 0
-        rectangle.height = 0
-        fabricTextObject.set("text", "")
-        rectangle.dirty = true
-        fabricTextObject.dirty = true
-        canvas.setZoom(canvas.getZoom())
     }
 
     companion object {

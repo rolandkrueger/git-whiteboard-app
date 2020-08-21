@@ -63,6 +63,7 @@ class CommitCircle(id: String, private val centerPosition: fabric.Point, private
     fun setColor(stroke: String, fill: String) {
         circle.set("stroke", stroke)
         circle.set("fill", fill)
+        circle.dirty = true
     }
 
     override fun removeFrom(canvas: FabricCanvas) {

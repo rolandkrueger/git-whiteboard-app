@@ -22,6 +22,7 @@ external class fabric {
     }
 
     class Canvas(id: String) : Object, ICanvasOptions {
+        fun getActiveObjects(): Array<Any>
         fun add(element: dynamic)
         fun clear(): Canvas
         fun requestRenderAll(): Canvas
@@ -33,6 +34,7 @@ external class fabric {
         fun getZoom(): Double
         fun setZoom(value: Double): Canvas
         fun remove(vararg obj: Any)
+        fun contains(obj: Any): Boolean
     }
 
     interface IObservable<T> {
