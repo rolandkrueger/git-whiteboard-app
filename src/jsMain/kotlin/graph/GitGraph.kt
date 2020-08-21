@@ -199,7 +199,6 @@ class GitGraph(private val canvas: FabricCanvas) {
         branches.sortBy { it.id }
         head.commit.removeBranch(head)
         branch.onDoubleClick { checkout(id, showLostCommits) }
-        branch.render(canvas)
         branch.attachToCommit(head.commit, canvas)
         branch.render(canvas)
         checkout(id, showLostCommits)
