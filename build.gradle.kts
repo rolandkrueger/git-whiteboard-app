@@ -114,6 +114,10 @@ tasks.named<AsciidoctorTask>("asciidoctor") {
     }
 }
 
+tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack") {
+    sourceMaps = false
+}
+
 // include JS artifacts in any JAR we generate
 tasks.getByName<Jar>("jvmJar") {
     val taskName = if (project.hasProperty("isProduction")) {
