@@ -53,7 +53,7 @@ abstract class CommitLabel protected constructor(
         canvas.add(fabricTextObject)
     }
 
-    private fun setPosition(position: Point, canvas: FabricCanvas) {
+    private fun setPosition(position: Point) {
         this.position = position
         rectangle.left = position.x
         rectangle.top = position.y
@@ -85,13 +85,13 @@ abstract class CommitLabel protected constructor(
         setPosition(
             commit.commitCircle.getRightDockPoint()
                     + GitGraphConfiguration.labelOffset
-                    + Point(0, (commit.branches.size - 1) * GitGraphConfiguration.labelYOffset), canvas
+                    + Point(0, (commit.branches.size - 1) * GitGraphConfiguration.labelYOffset)
         )
         setLinePosition(canvas, commit.commitCircle.getRightDockPoint(), getLeftDockPoint())
     }
 
     fun attachToLabel(commitLabel: CommitLabel, canvas: FabricCanvas) {
-        setPosition(commitLabel.position + Point(commitLabel.labelWidth + 25, 0), canvas)
+        setPosition(commitLabel.position + Point(commitLabel.labelWidth + 25, 0))
         setLinePosition(canvas, commitLabel.getRightDockPoint(), getLeftDockPoint())
     }
 
