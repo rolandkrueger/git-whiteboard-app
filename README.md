@@ -30,7 +30,7 @@ This project was initiated as part of the two We-Ship-It-Days at the [Mannheim o
 
 ## Try it out
 
-You can try out the pre-built version of the Git Whiteboard App in directory `/try-it-out`. Just open the `index.html` file in your browser.
+You can try out the app at [https://git-whiteboard.netlify.app/](https://git-whiteboard.netlify.app/). Alternatively, you can run the pre-built version of the Git Whiteboard App locally in directory `/try-it-out`. Just open the `index.html` file in your browser.
 
 ## How to build and run
 
