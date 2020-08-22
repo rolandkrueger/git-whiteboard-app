@@ -74,6 +74,8 @@ On the `Merge/Rebase` tab you can merge two branches (_octopus merges_ are not s
 
 To merge two branches with each other, you select the target branch to be merged with the drop-down list on section `Merge branch`. If a fast-forward merge is possible, it will automatically be performed, unless you select the checkbox `No fast-forward merge`. If this checkbox is selected, an explicit merge commit is created.
 
+The commit id for a merge commit consists of the concatenated ids of the merge commit's two parent commits. For example, if the two branches `foo` and `bar` with the respective most recent commit ids `f6` and `b3` are merged, the merge commit's id will become `f6b3`.
+
 === Rebase
 
 To rebase the currently checked out branch onto another branch, you select the target branch with the drop-down list on section `Rebase branch onto`. This will create new commits on the target branch for each commit on the rebased branch. The old commits will be lost in the reflog. The new commits are given the color and ids of the rebased commits with an additional asterisk appended. 
