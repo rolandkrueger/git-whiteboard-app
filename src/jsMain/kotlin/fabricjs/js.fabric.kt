@@ -17,18 +17,24 @@ external class fabric {
         override fun off(eventName: String, handler: (e: IEvent) -> Unit): Any
         override fun off(eventName: Any, handler: (e: IEvent) -> Unit): Any
         override fun off(): Any
+        fun set(key: String, value: String)
+        fun setCoords(ignoreZoom: Boolean = definedExternally, skipAbsolute: Boolean = definedExternally): Any
     }
 
     class Canvas(id: String) : Object, ICanvasOptions {
+        fun getActiveObjects(): Array<Any>
         fun add(element: dynamic)
         fun clear(): Canvas
         fun requestRenderAll(): Canvas
+        fun renderAll(): Canvas
         fun sendToBack(obj: Any): Canvas
         fun bringToFront(obj: Any): Canvas
         fun sendBackwards(obj: Any, intersecting: Boolean = definedExternally): Canvas
         fun bringForward(obj: Any, intersecting: Boolean = definedExternally): Canvas
         fun getZoom(): Double
         fun setZoom(value: Double): Canvas
+        fun remove(vararg obj: Any)
+        fun contains(obj: Any): Boolean
     }
 
     interface IObservable<T> {

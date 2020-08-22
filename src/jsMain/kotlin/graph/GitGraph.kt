@@ -1,164 +1,443 @@
 package graph
 
-import components.CommitCircle
-import config.GitGraphConfiguration
-import fabricjs.Point
+import fabricjs.FabricCanvas
 
-class GitGraph {
-    val commits = mutableListOf<Commit>()
-    val branches = mutableListOf<Branch>()
-    val tags = mutableListOf<Tag>()
-    var currentBranch: Branch
-    var head: Head
+class GitGraph(private val canvas: FabricCanvas) {
+    private val checkoutHandler: (Commit) -> (() -> Unit)
+    private val commits = mutableListOf<Commit>()
+    private val branches = mutableListOf<AbstractBranch>()
+    private val tags = mutableListOf<AbstractBranch>()
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
+    private var head: Head
+    private var showLostCommits = true
 
     init {
-        val initialCommit = Commit("m1", globalCommitNumber++, 0)
+        head = Head(Commit("", 0, 0))
+        checkoutHandler = { commit -> { checkout(commit.id, showLostCommits) } }
+    }
+
+    fun initGraph() {
+        if (globalCommitNumber > 0) {
+            throw IllegalStateException("Git graph may only be initialized once.")
+        }
+
+        console.log("Initialize a new Git graph")
+        val branchColor = BranchColors.nextColor()
+        val initialCommit = Commit("m1", globalCommitNumber++, 0, commitColor = branchColor)
+        initialCommit.commitCircle.onDoubleClick(checkoutHandler(initialCommit))
         commits.add(initialCommit)
         head = Head(initialCommit)
-        currentBranch = Branch("master", globalSwimlaneCounter++, counter = 2, commit = initialCommit)
-        currentBranch.isActive = true
-        initialCommit.addBranch(currentBranch)
-        branches.add(currentBranch)
-        head.targetBranch = currentBranch
+        branches.add(head)
+
+        initialCommit.render(canvas)
+        addBranch("master", 2, branchColor)
+        head.render(canvas)
     }
 
-    fun addCommit(): Commit {
-        val swimlane = head.targetBranch?.swimlane ?: head.swimlane
+    fun addCommit(
+        mergedParentCommit: Commit? = null,
+        newCommitId: String? = null,
+        commitIdSuffix: String = "",
+        commitColor: String? = null
+    ) {
+        addCommit(
+            mergedParentCommit,
+            newCommitId,
+            commitIdSuffix,
+            commitColor,
+            head.commit,
+            head.targetBranch?.swimlane
+                ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
+            globalCommitNumber++
+        )
+    }
 
-        val commit = Commit(calcCommitId(currentBranch), globalCommitNumber++, swimlane, head.commit)
-        moveBranch(currentBranch, currentBranch.commit, commit)
-        currentBranch.commit = commit
-        head.commit = commit
+    private fun addCommit(
+        mergedParentCommit: Commit? = null,
+        newCommitId: String? = null,
+        commitIdSuffix: String = "",
+        commitColor: String? = null,
+        parentCommit: Commit?,
+        swimlane: Int,
+        linePosition: Int
+    ) {
+        fun moveHeadTo(commit: Commit) {
+            head.commit.removeBranch(head)
+            head.commit = commit
+            commit.addBranch(head)
+        }
+
+        var newSwimlane = swimlane
+
+        if (isHeadOnOccupiedSwimlane()) {
+            shiftCommitsToTheRight(head.commit.swimlane + 1)
+            newSwimlane++
+            currentBranch().swimlane = newSwimlane
+        }
+
+        val oldHeadCommit = head.commit
+        if (head.isDetached && head.swimlane == -1) {
+            head.swimlane = newSwimlane
+        }
+        val currentBranch = currentBranch()
+        val id = (newCommitId ?: calcCommitId(currentBranch)) + commitIdSuffix
+        val newCommitColor =
+            commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
+        val commit = Commit(
+            id, linePosition, newSwimlane, parentCommit,
+            newCommitColor
+        )
+        parentCommit?.childCommit = commit
+        mergedParentCommit?.childCommit = commit
+        commit.mergedCommit = mergedParentCommit
+        commit.render(canvas)
+        commit.commitCircle.onDoubleClick(checkoutHandler(commit))
         commits.add(commit)
-        return commit
-    }
-
-    private fun moveBranch(branch: Branch, from: Commit, to: Commit) {
-        from.removeBranch(branch)
-        to.addBranch(branch)
-    }
-
-    fun addBranch(id: String) {
-        branches.add(Branch(id, globalSwimlaneCounter++, commit = head.commit))
-        checkout(id)
-    }
-
-    fun addTag(id: String) = tags.add(Tag(id, head.commit))
-
-    fun checkout(id: String) {
-        val targetBranch = branches.find { it.id == id }
-        if (targetBranch != null) {
-            currentBranch.isActive = false
-            targetBranch.isActive = true
-            currentBranch.commit.removeBranch(head)
-            targetBranch.commit.addBranch(targetBranch)
-            currentBranch = targetBranch
-            head.commit = currentBranch.commit
-            head.targetBranch = currentBranch
+        if (head.isDetached) {
+            moveHeadTo(commit)
+            head.attachToCommit(head.commit, canvas)
         } else {
-            val targetCommit = commits.find { it.id == id }
-            if (targetCommit != null) {
-                currentBranch.isActive = false
-                currentBranch = head
-                head.swimlane = globalSwimlaneCounter++
-                head.commit.removeBranch(head)
-                targetCommit.addBranch(head)
-                head.commit = targetCommit
-                head.targetBranch = null
+            moveBranch(currentBranch, head.commit, commit)
+            head.attachToBranch(currentBranch, canvas)
+            currentBranch.attachToCommit(head.commit, canvas)
+        }
+
+        oldHeadCommit.repositionBranches(canvas)
+        calculateLostCommits()
+        canvas.renderAll()
+    }
+
+    private fun isHeadOnOccupiedSwimlane(): Boolean {
+        val currentSwimlane = head.targetBranch?.swimlane ?: head.swimlane
+        val currentLinePosition = head.commit.linePosition
+        commits.filter { it.swimlane == currentSwimlane && it.linePosition > currentLinePosition }
+            .ifEmpty {
+                branches
+                    .filterNot { it == head.targetBranch || it == head }
+                    .filter {
+                        it.swimlane == currentSwimlane && head.commit != it.commit
+                    }
+                    .ifEmpty {
+                        return false
+                    }
+            }
+
+        return true
+    }
+
+    fun amendCommit() {
+        val amendedCommitSwimlane = head.commit.swimlane + 1
+        shiftCommitsToTheRight(amendedCommitSwimlane)
+        addCommit(
+            newCommitId = "${head.commit.id}*",
+            commitColor = head.commit.commitColor,
+            parentCommit = head.commit.parent,
+            swimlane = amendedCommitSwimlane,
+            linePosition = head.commit.linePosition
+        )
+        calculateLostCommits()
+        canvas.renderAll()
+    }
+
+    private fun shiftCommitsToTheRight(swimlaneStart: Int) {
+        commits.forEach {
+            if (it.swimlane >= swimlaneStart) {
+                it.shiftRight(canvas)
+            }
+            if (globalSwimlaneCounter <= it.swimlane) {
+                globalSwimlaneCounter = it.swimlane + 1
+            }
+        }
+        branches.forEach {
+            if (it.swimlane >= swimlaneStart) {
+                it.shiftToNextSwimlane()
+            }
+        }
+        commits.forEach {
+            if (it.isLostInReflog) {
+                it.rerender(canvas)
             }
         }
     }
 
-    fun merge(targetBranchId: String) {
-        val targetBranch = branches.find { it.id == targetBranchId }
-        if (targetBranch != null && targetBranch != currentBranch) {
-            val mergeCommitId = "${currentBranch.commit.id}${targetBranch.commit.id}"
-            val mergeCommit = addCommit()
-            mergeCommit.id = mergeCommitId
-            mergeCommit.mergedCommit = targetBranch.commit
+    fun doesCommitExist(id: String) = commits.any { it.id == id }
+    fun findCommitFor(id: String) = commits.find { it.id == id }
+
+    /**
+     * Calculates the current branch based on the HEAD pointer. If the HEAD is detached, return the HEAD as a result.
+     * Otherwise return the currently checked out branch.
+     */
+    private fun currentBranch(): AbstractBranch {
+        return if (head.isDetached) {
+            head
+        } else {
+            head.targetBranch!!
         }
     }
 
-    fun calculateLostCommits() {
+    private fun moveBranch(branch: AbstractBranch, from: Commit, to: Commit) {
+        from.removeBranch(branch)
+        to.addBranch(branch)
+        branch.commit = to
+        branch.getLabel().attachToCommit(to, canvas)
+        if (!head.isDetached) {
+            head.attachToBranch(branch, canvas)
+            head.commit = to
+        }
+    }
+
+    fun addBranch(id: String): Branch {
+        return addBranch(id, 1, BranchColors.nextColor())
+    }
+
+    private fun addBranch(id: String, counter: Int, commitColor: String): Branch {
+        console.log("Adding branch $id")
+        val branch =
+            Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor)
+        branches.add(branch)
+        branches.sortBy { it.id }
+        head.commit.removeBranch(head)
+        branch.onDoubleClick { checkout(id, showLostCommits) }
+        branch.attachToCommit(head.commit, canvas)
+        branch.render(canvas)
+        checkout(id, showLostCommits)
+        return branch
+    }
+
+    fun getBranches(): List<AbstractBranch> = branches
+
+    fun addTag(id: String) {
+        val tag = Tag(id, head.commit)
+
+        tag.render(canvas)
+        tag.onDoubleClick {
+            checkout(tag.commit.id, showLostCommits)
+        }
+        tags.add(tag)
+        tags.sortBy { it.id }
+    }
+
+    fun getTags(): List<AbstractBranch> = tags
+
+    fun checkout(id: String, doShowLostCommits: Boolean) {
+        console.log("Checking out $id")
+        val oldHeadCommit = head.commit
+
+        val targetBranch = findBranch(id)
+        if (targetBranch != null) {
+            // checking out a branch
+            head.targetBranch?.headRemoved()
+            head.targetBranch = targetBranch
+            targetBranch.checkedOut(head)
+            head.commit.removeBranch(head)
+            head.attachToBranch(targetBranch, canvas)
+        } else {
+            // try to check out a tag or commit directly
+            val targetCommit = findTag(id)?.commit ?: commits.find { it.id == id }
+            if (targetCommit != null) {
+                // a commit id was given to check out: create a detached HEAD
+                if (!head.isDetached) {
+                    head.targetBranch?.headRemoved()
+                    head.targetBranch = null
+                }
+                head.swimlane = -1 // calculate new swimlane as soon as a new commit is added
+                moveBranch(head, head.commit, targetCommit)
+                head.attachToCommit(targetCommit, canvas)
+            }
+        }
+        oldHeadCommit.repositionBranches(canvas)
+        calculateLostCommits()
+        showLostCommits(doShowLostCommits)
+        canvas.renderAll()
+    }
+
+    fun merge(noFF: Boolean, targetBranchId: String): Boolean {
+        val targetBranch = findBranch(targetBranchId) ?: throw IllegalStateException("target branch is null")
+        if (targetBranch == currentBranch() || targetBranch.commit.isAncestorOf(currentBranch().commit)) {
+            return false
+        }
+        return if (noFF || !currentBranch().commit.isAncestorOf(targetBranch.commit)) {
+            val mergeCommitId = "${currentBranch().commit.id}${targetBranch.commit.id}"
+            addCommit(targetBranch.commit, mergeCommitId)
+            true
+        } else {
+            // fast-forward current branch to target branch's commit
+            moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+            true
+        }
+    }
+
+    fun rebase(targetBranchName: String): Boolean {
+        val targetBranch = findBranch(targetBranchName)
+        return if (targetBranch != null) {
+            val commonBaseCommit = calculateCommonBaseCommit(targetBranch)
+            if (commonBaseCommit == targetBranch.commit) {
+                return false
+            }
+            if (commonBaseCommit == currentBranch().commit) {
+                console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}: fast-forward ${currentBranch().id}")
+                moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+                return true
+            }
+            console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}")
+            val newSwimlaneForRebasedBranch = targetBranch.swimlane
+            shiftCommitsToTheRight(targetBranch.swimlane)
+            currentBranch().swimlane = newSwimlaneForRebasedBranch
+
+            val commitsToBeRebased = ArrayList<Commit>()
+            var commit: Commit? = currentBranch().commit
+            do {
+                if (commit != null) {
+                    commitsToBeRebased.add(commit)
+                    commit = commit.parent
+                }
+            } while (commit != commonBaseCommit)
+
+            moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
+            commitsToBeRebased.reverse()
+            commitsToBeRebased.forEach {
+                addCommit(
+                    newCommitId = "${it.id}*",
+                    commitColor = it.commitColor,
+                    parentCommit = head.commit,
+                    swimlane = newSwimlaneForRebasedBranch,
+                    linePosition = globalCommitNumber++
+                )
+            }
+            commitsToBeRebased.first().rerender(canvas)
+            calculateLostCommits()
+            canvas.renderAll()
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun calculateCommonBaseCommit(targetBranch: AbstractBranch): Commit? {
+        val targetBranchHistory = HashSet<Commit>()
+        fun addParentToBranchHistory(commit: Commit) {
+            if (commit.parent != null) {
+                targetBranchHistory.add(commit.parent)
+                addParentToBranchHistory(commit.parent)
+            }
+        }
+        targetBranchHistory.add(targetBranch.commit)
+        addParentToBranchHistory(targetBranch.commit)
+
+        fun findCommonBaseCommitInCurrentBranchHistory(startCommit: Commit): Commit? {
+            if (targetBranchHistory.contains(startCommit)) {
+                return startCommit
+            } else if (startCommit.parent != null) {
+                return findCommonBaseCommitInCurrentBranchHistory(startCommit.parent)
+            } else {
+                return null
+            }
+        }
+
+        return findCommonBaseCommitInCurrentBranchHistory(currentBranch().commit)
+    }
+
+    private fun calculateLostCommits() {
+        fun traverseHistory(commit: Commit?, callback: (Commit) -> Unit) {
+            if (commit == null) {
+                return
+            }
+            callback(commit)
+            if (commit.parent != null) {
+                traverseHistory(commit.parent, callback)
+            }
+            if (commit.mergedCommit != null) {
+                traverseHistory(commit.mergedCommit, callback)
+            }
+        }
+
         commits.forEach {
-            it.commitCircle.isLostInReflog = true }
+            it.commitCircle.isLostInReflog = true
+        }
         val resetLostInReflog: (Commit) -> Unit = { it.isLostInReflog = false }
 
         branches.forEach {
             traverseHistory(it.commit, resetLostInReflog)
         }
+        tags.forEach {
+            traverseHistory(it.commit, resetLostInReflog)
+        }
         traverseHistory(head.commit, resetLostInReflog)
     }
 
-    private fun traverseHistory(commit: Commit, callback: (Commit) -> Unit) {
-        callback(commit)
-        if (commit.parent != null) {
-            traverseHistory(commit.parent, callback)
+    private fun calcCommitId(branch: AbstractBranch) = "${branch.id.substringAfter('/').first()}${branch.counter++}"
+    override fun toString(): String = commits.reversed().joinToString("\n")
+
+    fun runGarbageCollection() {
+        commits.forEach {
+            if (it.commitCircle.isLostInReflog) {
+                if (it.parent?.childCommit == it) {
+                    it.parent.childCommit = null
+                }
+                it.removeFrom(canvas)
+                console.log("Remove lost commit $it")
+            }
+        }
+        commits.removeAll { it.commitCircle.isLostInReflog }
+        realignCommits()
+        canvas.renderAll()
+    }
+
+    private fun realignCommits() {
+        commits.forEach {
+            if (it.parent?.swimlane == it.childCommit?.swimlane) {
+                it.swimlane = it.parent?.swimlane ?: it.childCommit?.swimlane ?: 0
+                it.rerender(canvas)
+            }
+        }
+        currentBranch().attachToCommit(currentBranch().commit, canvas)
+    }
+
+    fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)
+    fun deleteTag(tagName: String) = deleteRef(tagName, tags)
+    fun deleteBranch(branchName: String) = deleteRef(branchName, branches)
+
+    fun isBranchCheckedOut(branchName: String): Boolean = findBranch(branchName)?.isCheckedOut() ?: false
+    fun isBranchNameValid(branchName: String): Boolean {
+        return branchName.first() != 'H' &&
+                branches
+                    .map { it.id.substringAfter('/') }
+                    .none { it.startsWith(branchName.substringAfter('/').first()) }
+    }
+
+    private fun deleteRef(refName: String, refList: MutableList<AbstractBranch>) {
+        val targetRef = refList.find { it.id == refName }
+        if (targetRef != null) {
+            refList.remove(targetRef)
+            refList.sortBy { it.id }
+            targetRef.commit.removeBranch(targetRef)
+            targetRef.commit.repositionBranches(canvas)
+            targetRef.removeFrom(canvas)
+        }
+        calculateLostCommits()
+    }
+
+    private fun findBranch(branchName: String): AbstractBranch? = branches.find { it.id == branchName }
+
+    private fun findTag(tagName: String): AbstractBranch? = tags.find { it.id == tagName }
+
+    fun showLostCommits(doShowLostCommits: Boolean) {
+        showLostCommits = doShowLostCommits
+        commits.forEach {
+            if (it.isLostInReflog) {
+                it.show(doShowLostCommits, canvas)
+            }
+        }
+        canvas.renderAll()
+    }
+
+    fun resetBranch(targetCommitId: String) {
+        val targetCommit = findCommitFor(targetCommitId)
+        if (targetCommit != null) {
+            moveBranch(currentBranch(), currentBranch().commit, targetCommit)
+            calculateLostCommits()
+            canvas.renderAll()
         }
     }
-
-    private fun calcCommitId(branch: Branch) = "${branch.id.first()}${branch.counter++}"
-
-    override fun toString(): String {
-        return commits.reversed().joinToString("\n")
-    }
-}
-
-class Commit(var id: String, linePosition: Int, val swimlane: Int, val parent: Commit? = null) {
-    var isLostInReflog = false
-    set(value) {
-        commitCircle.isLostInReflog = value
-        field = value
-    }
-
-    var mergedCommit: Commit? = null
-    val branches = mutableSetOf<Branch>()
-    val commitCircle = CommitCircle(
-        id, Point(
-            GitGraphConfiguration.leftOffset + swimlane * GitGraphConfiguration.swimlaneDistance,
-            GitGraphConfiguration.bottomOffset - linePosition * GitGraphConfiguration.commitDistance
-        )
-    )
-
-    fun addBranch(branch: Branch) {
-        branches.add(branch)
-    }
-
-    fun removeBranch(branch: Branch) {
-        branches.remove(branch)
-    }
-
-    override fun toString(): String = id
-}
-
-open class Branch(val id: String, var swimlane: Int, var counter: Int = 1, var commit: Commit) {
-    var isActive: Boolean = false
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as Branch
-
-        if (id != other.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-
-    override fun toString(): String = "Branch $id -> $commit"
-}
-
-class Head(commit: Commit, var targetBranch: Branch? = null) : Branch("HEAD", 0, commit = commit) {
-    val isDetached: Boolean
-        get() = targetBranch == null
-}
-
-class Tag(val id: String, val commit: Commit) {
-    override fun toString(): String = "Tag $id -> $commit"
 }

@@ -1,42 +1,39 @@
-import components.*
-import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
-import fabricjs.Point
-import fabricjs.plus
+import graph.AbstractBranch
 import graph.GitGraph
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.html.InputType
 import kotlinx.html.id
-import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
-import react.*
+import react.RProps
 import react.dom.canvas
-import react.dom.div
-import react.dom.input
+import react.functionalComponent
+import react.useEffect
+import react.useState
+import ui.ConfirmationDialog
+import ui.UiControl
+import ui.UiControl.Companion.activateTab
+import ui.UiControl.Companion.doWhenButtonClicked
+import ui.UiControl.Companion.doWhenCheckboxClicked
+import ui.UiControl.Companion.doWhenLinkClicked
+import ui.UiControl.Companion.getSelectedOption
+import ui.UiControl.Companion.getUserInput
+import ui.UiControl.Companion.hideElements
+import ui.UiControl.Companion.isCheckboxChecked
+import ui.UiControl.Companion.showElements
 import kotlin.browser.document
+import kotlin.browser.window
 
 val scope = MainScope()
 
 val App = functionalComponent<RProps> { _ ->
-    val (currentGraph, setGraph) = useState(GitGraph())
-    val (currentCanvas, setCanvas) = useState(FabricCanvas(""))
-
     useEffect(dependencies = listOf()) {
         scope.launch {
             val canvasElement = document.getElementById("gitKannWas") as HTMLCanvasElement
-            val canvasBox = document.getElementById("canvasBox")
-            if (canvasBox != null) {
-                canvasElement.width = canvasBox.clientWidth
-                canvasElement.height = if (document.body?.clientHeight != null) {
-                    document.body?.clientHeight!!
-                } else {
-                    1000
-                }
-            }
+            canvasElement.width = window.innerWidth
+            canvasElement.height = window.innerHeight
 
             val canvas = FabricCanvas("gitKannWas")
 
@@ -67,6 +64,7 @@ val App = functionalComponent<RProps> { _ ->
             canvas.on("mouse:up") {
                 isDragging = false
                 canvas.selection = true
+                canvas.setZoom(canvas.getZoom())
             }
 
             canvas.on("mouse:wheel") {
@@ -80,265 +78,187 @@ val App = functionalComponent<RProps> { _ ->
                         0.06
                     }
                     if (zoom > 3.0) zoom = 3.0
-                    if (zoom < 0.5) zoom = 0.5
-                    console.log(zoom)
+                    if (zoom < 0.2) zoom = 0.2
                     canvas.setZoom(zoom)
                     event.preventDefault()
                     event.stopPropagation()
                 }
             }
 
-            setCanvas(canvas)
-            resetGraph(setGraph, canvas)
-            renderGraph(currentGraph, canvas)
-        }
-    }
+            var gitGraph = GitGraph(canvas)
+            gitGraph.initGraph()
 
-    div("columns") {
-        div("column") {
-            div("has-background-light") {
-                div("field") {
-                    input(InputType.button, classes = "input") {
-                        attrs {
-                            value = "Add commit"
-                            onClickFunction = {
-                                currentGraph.addCommit()
-                                renderGraph(currentGraph, currentCanvas)
-                            }
-                        }
-                    }
-                }
+            doWhenButtonClicked("expandPanelButton") {
+                hideElements("collapsedControlPanel")
+                showElements("expandedControlPanel")
+            }
+            doWhenButtonClicked("hidePanelButton") {
+                hideElements("expandedControlPanel")
+                showElements("collapsedControlPanel")
+            }
 
-                div("field") {
-                    div("columns") {
-                        div("column is-two-thirds") {
-                            input(InputType.text, classes = "input") {
-                                attrs {
-                                    id = "branchNameInput"
-                                    placeholder = "Branch name"
-                                }
-                            }
-                        }
-                        div("column") {
-                            input(InputType.button, classes = "input") {
-                                attrs {
-                                    value = "Add branch"
-                                    onClickFunction = {
-                                        val input: HTMLInputElement? =
-                                            document.getElementById("branchNameInput") as HTMLInputElement?
-                                        if (input?.value != null && input.value.isNotEmpty()) {
-                                            currentGraph.addBranch(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            doWhenLinkClicked("generalTabControl") {
+                activateTab("generalTab", "commitTab", "refsTab", "mergeTab", "aboutTab")
+            }
+            doWhenLinkClicked("commitTabControl") {
+                activateTab("commitTab", "generalTab", "refsTab", "mergeTab", "aboutTab")
+            }
+            doWhenLinkClicked("refsTabControl") {
+                activateTab("refsTab", "generalTab", "commitTab", "mergeTab", "aboutTab")
+            }
+            doWhenLinkClicked("mergeTabControl") {
+                activateTab("mergeTab", "generalTab", "commitTab", "refsTab", "aboutTab")
+            }
+            doWhenLinkClicked("aboutTabControl") {
+                activateTab("aboutTab", "generalTab", "commitTab", "mergeTab", "refsTab")
+            }
 
-                div("field") {
-                    div("columns") {
-                        div("column is-two-thirds") {
-                            input(InputType.text, classes = "input") {
-                                attrs {
-                                    id = "checkoutBranchNameInput"
-                                    placeholder = "Branch name or commit ID to check out"
-                                }
-                            }
-                        }
-                        div("column") {
-                            input(InputType.button, classes = "input") {
-                                attrs {
-                                    value = "Check out"
-                                    onClickFunction = {
-                                        val input: HTMLInputElement? =
-                                            document.getElementById("checkoutBranchNameInput") as HTMLInputElement?
-                                        if (input?.value != null && input.value.isNotEmpty()) {
-                                            currentGraph.checkout(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            doWhenButtonClicked("runGCButton") {
+                gitGraph.runGarbageCollection()
+            }
 
-                div("field") {
-                    div("columns") {
-                        div("column is-two-thirds") {
-                            input(InputType.text, classes = "input") {
-                                attrs {
-                                    id = "mergeBranchNameInput"
-                                    placeholder = "Branch name to merge into current branch"
-                                }
-                            }
-                        }
-                        div("column") {
-                            input(InputType.button, classes = "input") {
-                                attrs {
-                                    value = "Merge"
-                                    onClickFunction = {
-                                        val input: HTMLInputElement? =
-                                            document.getElementById("mergeBranchNameInput") as HTMLInputElement?
-                                        if (input?.value != null && input.value.isNotEmpty()) {
-                                            currentGraph.merge(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                div("field") {
-                    div("columns") {
-                        div("column is-two-thirds") {
-                            input(InputType.text, classes = "input") {
-                                attrs {
-                                    id = "tagNameInput"
-                                    placeholder = "Tag name"
-                                }
-                            }
-                        }
-                        div("column") {
-                            input(InputType.button, classes = "input") {
-                                attrs {
-                                    value = "Create tag"
-                                    onClickFunction = {
-                                        val input: HTMLInputElement? =
-                                            document.getElementById("tagNameInput") as HTMLInputElement?
-                                        if (input?.value != null && input.value.isNotEmpty()) {
-                                            currentGraph.addTag(input.value)
-                                            renderGraph(currentGraph, currentCanvas)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                div("field") {
-                    input(InputType.button, classes = "input") {
-                        attrs {
-                            value = "Reset history"
-                            onClickFunction = {
-                                resetGraph(setGraph, currentCanvas)
-                            }
-                        }
-                    }
+            doWhenButtonClicked("clearGraphButton") {
+                ConfirmationDialog.showConfirmationDialog(
+                    "Are you sure?",
+                    "Do you really want to reset your graph and start over?"
+                ) {
+                    canvas.clear()
+                    val newGraph = GitGraph(canvas)
+                    newGraph.initGraph()
+                    gitGraph = newGraph
                 }
             }
-        }
 
-        div("column is-three-quarters") {
-            div("box") {
-                attrs.id = "canvasBox"
-                canvas("image") {
-                    attrs {
-                        id = "gitKannWas"
-                    }
-                }
+            doWhenButtonClicked("addCommitButton") {
+                gitGraph.addCommit()
             }
-        }
-    }
-}
 
-private fun renderGraph(graph: GitGraph, canvas: FabricCanvas) {
-    canvas.clear()
-
-    graph.calculateLostCommits()
-    graph.commits.forEach { commit ->
-        val parent = commit.parent
-        if (parent != null) {
-            if (commit.swimlane == parent.swimlane) {
-                Line(
-                    parent.commitCircle.getUpperDockPoint(),
-                    commit.commitCircle.getLowerDockPoint()
-                ).render(canvas)
-            } else {
-                Line(
-                    parent.commitCircle.getRightDockPoint(),
-                    commit.commitCircle.getLowerDockPoint()
-                ).render(canvas)
+            doWhenButtonClicked("amendCommitButton") {
+                gitGraph.amendCommit()
             }
-            val mergedCommit = commit.mergedCommit
-            if (mergedCommit != null) {
-                Line(mergedCommit.commitCircle.getUpperDockPoint(), commit.commitCircle.getLowerDockPoint()).render(canvas)
-            }
-        }
-        commit.commitCircle.render(canvas)
-        commit.commitCircle.onDoubleClick {
-            graph.checkout(commit.id)
-            renderGraph(graph, canvas)
-        }
 
-        val labelOffset = Point(20, -1 * CommitCircle.RADIUS + CommitLabel.LABEL_HEIGHT / 2)
-
-        graph.commits.forEach {
-            it.branches.forEachIndexed { index, branch ->
-                if (branch != graph.head) {
-                    val yOffset = index * (CommitLabel.LABEL_HEIGHT + 5)
-                    val branchCommitCircle = it.commitCircle
-                    val labelText = if (branch.isActive) "*${branch.id}*" else branch.id
-                    val label = BranchLabel(
-                        labelText,
-                        branchCommitCircle.getRightDockPoint() + labelOffset + Point(0, yOffset),
-                        branch.isActive
+            doWhenButtonClicked("cherryPickButton") {
+                val commitId = getUserInput("cherryPickInput")
+                if (!gitGraph.doesCommitExist(commitId)) {
+                    ConfirmationDialog.showMessageDialog(
+                        "Commit does not exist",
+                        "Unable to cherry-pick '$commitId': commit does not exist."
                     )
-                    label.render(canvas)
-                    label.onDoubleClick {
-                        graph.checkout(branch.id)
-                        renderGraph(graph, canvas)
-                    }
-                    Line(branchCommitCircle.getRightDockPoint(), label.getLeftDockPoint()).render(canvas)
-
-                    val headBranch = graph.head.targetBranch
-                    if (headBranch != null && headBranch == branch) {
-                        val headLabel =
-                            HeadLabel(label.getRightDockPoint() + Point(15, CommitLabel.LABEL_HEIGHT / -2))
-                        headLabel.render(canvas)
-                        Line(label.getRightDockPoint(), headLabel.getLeftDockPoint()).render(canvas)
-                    }
+                } else {
+                    gitGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = gitGraph.findCommitFor(commitId)?.commitColor)
                 }
             }
-        }
 
-        val headBranch = graph.head.targetBranch
-        if (headBranch == null) {
-            val headCommit = graph.head.commit
-            val yOffset = if (headCommit.branches.size > 0) {
-                (headCommit.branches.size - 1) * (CommitLabel.LABEL_HEIGHT + 5)
-            } else {
-                0
+            doWhenButtonClicked("checkoutCommitButton") {
+                gitGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
             }
 
-            val headLabel = HeadLabel(headCommit.commitCircle.getRightDockPoint() + labelOffset + Point(0, yOffset))
-            headLabel.render(canvas)
-            Line(headCommit.commitCircle.getRightDockPoint(), headLabel.getLeftDockPoint()).render(canvas)
-        }
-
-        graph.tags.forEach { tag ->
-            val tagLabel = TagLabel(
-                tag.id,
-                tag.commit.commitCircle.getRightDockPoint() + labelOffset
-                        + Point(0, tag.commit.branches.size * (CommitLabel.LABEL_HEIGHT + 5))
-            )
-            tagLabel.render(canvas)
-            tagLabel.onDoubleClick {
-                graph.checkout(tag.commit.id)
-                renderGraph(graph, canvas)
+            doWhenButtonClicked("addBranchButton") {
+                val branchName = getUserInput("addBranchInput").replace(" ", "_")
+                if (!gitGraph.isBranchNameValid(branchName)) {
+                    ConfirmationDialog.showMessageDialog(
+                        "Branch name '$branchName' is invalid",
+                        "The name of the branch starts with a letter that is already used by another branch or " +
+                                "by the HEAD reference as first letter. Namespaces (feature/*, bugfix/*) are not considered. "
+                    )
+                } else {
+                    gitGraph.addBranch(branchName)
+                    updateBranchSelects(gitGraph.getBranches())
+                }
             }
-            Line(tag.commit.commitCircle.getRightDockPoint(), tagLabel.getLeftDockPoint()).render(canvas)
+
+            doWhenButtonClicked("checkoutBranchButton") {
+                gitGraph.checkout(
+                    getSelectedOption("checkoutBranchInput"),
+                    isCheckboxChecked("showLostCommitsCheckbox")
+                )
+            }
+
+            doWhenButtonClicked("deleteBranchButton") {
+                val branchName = getSelectedOption("deleteBranchInput")
+                if (gitGraph.isBranchCheckedOut(branchName)) {
+                    // deleting checked out branches is not allowed by Git
+                    ConfirmationDialog.showMessageDialog(
+                        "Cannot delete checked out branch",
+                        "Cannot delete branch which is currently checked out."
+                    )
+                } else {
+                    gitGraph.deleteBranch(branchName)
+                    updateBranchSelects(gitGraph.getBranches())
+                }
+            }
+
+            doWhenButtonClicked("resetBranchButton") {
+                gitGraph.resetBranch(getUserInput("resetBranchInput"))
+            }
+
+            doWhenButtonClicked("addTagButton") {
+                val tagName = getUserInput("addTagInput").replace(" ", "_")
+                if (gitGraph.doesTagExist(tagName)) {
+                    ConfirmationDialog.showMessageDialog(
+                        "Tag already exists",
+                        "Cannot create tag $tagName: tag already exists."
+                    )
+                } else {
+                    gitGraph.addTag(tagName)
+                    updateTagSelects(gitGraph.getTags())
+                }
+            }
+
+            doWhenButtonClicked("checkoutTagButton") {
+                gitGraph.checkout(
+                    getSelectedOption("checkoutTagInput"),
+                    isCheckboxChecked("showLostCommitsCheckbox")
+                )
+            }
+
+            doWhenButtonClicked("deleteTagButton") {
+                gitGraph.deleteTag(getSelectedOption("deleteTagInput"))
+                updateTagSelects(gitGraph.getTags())
+            }
+
+            doWhenButtonClicked("mergeBranchButton") {
+                if (!gitGraph.merge(
+                        isCheckboxChecked("noFFCheckbox"),
+                        getSelectedOption("mergeBranchInput")
+                    )
+                ) {
+                    ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch does not need to be merged.")
+                }
+            }
+
+            doWhenButtonClicked("rebaseBranchButton") {
+                if (!gitGraph.rebase(getSelectedOption("rebaseBranchInput"))) {
+                    ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch cannot be rebased.")
+                }
+            }
+
+            doWhenCheckboxClicked("showLostCommitsCheckbox", gitGraph::showLostCommits)
+        }
+    }
+
+    canvas("fullscreenCanvas") {
+        attrs {
+            id = "gitKannWas"
+            width = ""
+            height = ""
         }
     }
 }
 
-private fun resetGraph(setGraph: RSetState<GitGraph>, canvas: FabricCanvas) {
-    val gitGraph = GitGraph()
-    setGraph(gitGraph)
-    renderGraph(gitGraph, canvas)
+fun updateBranchSelects(branches: List<AbstractBranch>) {
+    val branchNames = branches
+        .map { it.id }
+        .filter { it != "HEAD" }
+
+    UiControl.setSelectOptions("checkoutBranchInput", branchNames)
+    UiControl.setSelectOptions("deleteBranchInput", branchNames)
+    UiControl.setSelectOptions("mergeBranchInput", branchNames)
+    UiControl.setSelectOptions("rebaseBranchInput", branchNames)
+}
+
+fun updateTagSelects(tags: List<AbstractBranch>) {
+    val tagNames = tags.map { it.id }
+    UiControl.setSelectOptions("deleteTagInput", tagNames)
+    UiControl.setSelectOptions("checkoutTagInput", tagNames)
 }

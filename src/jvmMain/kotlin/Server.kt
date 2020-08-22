@@ -14,6 +14,7 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import java.io.File
 
 
 fun main() {
@@ -36,6 +37,13 @@ fun main() {
             get("/") {
                 call.respondText(
                     this::class.java.classLoader.getResource("index.html")!!.readText(),
+                    ContentType.Text.Html
+                )
+            }
+            get("/manual.html") {
+                // respond with the document created by the Asciidoctor plugin
+                call.respondText(
+                    File("build/distributions/manual.html").readText(),
                     ContentType.Text.Html
                 )
             }

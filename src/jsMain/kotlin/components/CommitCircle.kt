@@ -1,31 +1,30 @@
 package components
 
+import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
 import fabricjs.FabricCircle
 import fabricjs.Point
 import fabricjs.fabric
 
-class CommitCircle(val id: String, private val centerPosition: fabric.Point) :
+class CommitCircle(id: String, private val centerPosition: fabric.Point, private val commitColor: String) :
     Renderable {
 
     var isLostInReflog: Boolean = false
         set(value) {
             if (value) {
-                circle.fill = "#CCC"
-                circle.stroke = "#CCC"
+                setColor("#CCC", "#CCC")
             } else {
-                circle.fill = "#A081EF"
-                circle.stroke = "#423462"
+                setColor("#423462", commitColor)
             }
             field = value
         }
 
     private var circle: FabricCircle = FabricCircle()
 
-    private var idLabel: IdLabel = IdLabel(
+    private var idLabel: CommitIdLabel = CommitIdLabel(
         id, Point(
             centerPosition.x - CommitLabel.calcLabelWidth(id) / 2,
-            centerPosition.y - CommitLabel.LABEL_HEIGHT / 2
+            centerPosition.y - GitGraphConfiguration.labelHeight / 2
         )
     )
 
@@ -34,12 +33,12 @@ class CommitCircle(val id: String, private val centerPosition: fabric.Point) :
             left = centerPosition.x
             top = centerPosition.y
             strokeWidth = 2
-            radius = RADIUS
+            radius = GitGraphConfiguration.commitRadius
             if (isLostInReflog) {
                 fill = "#CCC"
                 stroke = "#CCC"
             } else {
-                fill = "#A081EF"
+                fill = commitColor
                 stroke = "#423462"
             }
             hasControls = false
@@ -61,12 +60,20 @@ class CommitCircle(val id: String, private val centerPosition: fabric.Point) :
         idLabel.onDoubleClick(handler)
     }
 
-    fun getUpperDockPoint() = centerPosition.subtract(fabric.Point(0, RADIUS))
-    fun getLowerDockPoint() = centerPosition.add(fabric.Point(0, RADIUS))
-    fun getLeftDockPoint() = centerPosition.subtract(fabric.Point(RADIUS, 0))
-    fun getRightDockPoint() = centerPosition.add(fabric.Point(RADIUS, 0))
-
-    companion object {
-        const val RADIUS = 25
+    fun setColor(stroke: String, fill: String) {
+        circle.set("stroke", stroke)
+        circle.set("fill", fill)
+        circle.dirty = true
     }
+
+    override fun removeFrom(canvas: FabricCanvas) {
+        canvas.remove(circle)
+        idLabel.removeFrom(canvas)
+    }
+
+    fun getUpperDockPoint() = centerPosition.subtract(Point(0, GitGraphConfiguration.commitRadius))
+    fun getLowerDockPoint() = centerPosition.add(Point(0, GitGraphConfiguration.commitRadius))
+    fun getRightDockPoint() = centerPosition.add(Point(GitGraphConfiguration.commitRadius, 0))
+    fun getLeftDockPoint() = centerPosition.subtract(Point(GitGraphConfiguration.commitRadius, 0))
+
 }
