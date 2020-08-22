@@ -40,7 +40,15 @@ To build the app, run the following command on the console:
 ./gradlew run
 ```
 
-Then visit `http://localhost:9090` in your browser. You need to have a JDK installed for this. 
+Then visit `http://localhost:9090` in your browser. You need to have a JDK installed for this.
+
+To build the production version of the app simply run
+
+```
+./gradlew
+```
+
+This will build the standalone version in `build/distributions` which can be run by just loading `index.html` in a browser.
 
 ## Motivation
 One problem that arises with any Git training is that when explaining Git functionality, it is relatively cumbersome for the trainer to adequately illustrate the dynamics of a Git history as it evolves. To date, a trainer has only the following three tools to visually demonstrate the creation of a Git History. Each of these three has its own specific drawbacks:
