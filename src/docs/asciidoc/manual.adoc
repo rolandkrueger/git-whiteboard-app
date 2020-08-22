@@ -1,0 +1,79 @@
+:toc:
+
+= Git Whiteboard App -- User Manual
+
+The Git Whiteboard App is a tool for quickly visualizing various features of the Git version control system. This comes in handy when you want to explain Git's features, for instance, when you're teaching Git to other people. The app allows you to demonstrate the dynamics of a Git graph which is a cumbersome task when you have to use traditional visualization tools such as whiteboards or flip charts.
+
+The app is always initialized with the default `master` branch and one initial commit. You can start adding commits and branches on top of that.
+
+The app's control panel is subdivided into five tabs: `General`, `Commits`, `Refs`, `Merge/Rebase`, and `About`. Select one of these tabs to access the app's functionality.
+
+You can hide the control panel to get more screen space for the Git graph. To do that, click on the chevron icon in the upper right corner of the control panel. The same button is used to make the panel visible again.
+
+== Working With the Git Graph
+
+The Git graph shown in the main area of the app can be moved and zoomed. To move the graph around, left click and hold anywhere in the main area, then drag the graph around. To zoom the graph, press `Ctrl` and zoom in and out with your mouse wheel.
+
+When you want to start from scratch with a new Git graph, you can discard your current graph and get a new one by clicking `Clear graph` on the `General` tab.
+
+== Working With Commits
+
+As with Git itself, the Git Whiteboard App's Git graph is constructed by adding commits as children of the current HEAD commit. To add a new commit, click the `Add commit` button on the `Commits` tab. A new commit will then be added on top of the commit which is currently referenced by the HEAD pointer. Since the app is a demonstration tool, it is not possible to define the contents of a commit or its message.
+
+The app automatically generates a commit id for each new commit. This id is kept very simple but is still unique for the current graph so that it is easy to refer to each commit when explaining the graph.
+
+Every branch in the Git graph has its own unique color. When a new commit is added to a branch, the new commit will be colored in that branch's color. Commits created in detached HEAD state are red.
+
+=== Commit Ids [[commit-ids]]
+
+The method to calculate a new commit id is as follows: for each branch in the graph, a global commit counter is managed. This counter is increased by one for every commit added to the branch. The commit id is then derived by the first character of the branch name plus the current commit count. For example, if the third commit is added to the `master` branch, the new commit id is `m3`.
+
+If currently no branch is checked out (detached HEAD state), the HEAD's commit counter and the letter `H` is used, e.g. the second commit made in detached HEAD state gets the id `H2`.
+
+In order to keep all commit ids unique, it is not allowed to create more than one branch with the same first letter. For example, it is not possible to create both a branch `feature_1` and `feature_2`. However, if you're using the namespace notation in your branch names, the namespace part of a branch name is ignored when calculating commit ids. For example, it is allowed to have two branches `feature/foo` and `feature/bar`. Commits on `feature/foo` will then be named `f1`, `f2`, `f3`, etc. while commits on `feature/bar` get the ids `b1`, `b2`, `b3`, and so on.
+
+=== Amend Commits
+
+To simulate amending commits, click button `Amend commit` on the `Commits` tab. This will create a new commit that replaces the current HEAD commit. The new commit's id is derived from the amended commit by adding an asterisk to the old commit id, e.g. amending commit `f3` will yield a new commit `f3*`.
+
+The old commit is still available as a lost commit (see <<lost_commits,below>> for more about lost commits).
+
+=== Cherry-pick Commits
+
+To cherry-pick a commit, enter the id of the commit to be cherry-picked in the text field on the section `Cherry-pick commit` on the `Commits` tab and click the icon button on the text field. This will add a new commit to the current branch with the same color as the cherry-picked commit. The new commit gets a regular id with the cherry-picked commit's id appended in parentheses. For example, if you cherry-pick commit `f2` onto the `master` branch as the fourth commit, the new commit gets the id `m4(f2)`.
+
+=== Check Out Individual Commits
+
+You can check out individual commits, thereby creating a detached HEAD. To do so, you can either double-click on the commit to be checked out, or enter the target commit id in the text field on the section `Check out` on the `Commits` tab and click the icon button on the text field.
+
+== Working With a Detached HEAD: Lost Commits and the Reflog [[lost_commits]]
+
+The Git Whiteboard App allows you to simulate a detached HEAD state. This can be achieved by either checking out an individual commit or a tag. Commits created in this state will be colored in red. Their ids get the `H` prefix for HEAD.
+
+Some Git operations will result in commits being lost in the reflog (e.g., `amend`, `reset`, `rebase`, etc.). This means that such commits do still exist, but are not visible in the Git graph anymore. They can be restored through the reflog. The Git Whiteboard App can show these lost commits as greyed out commit objects. To hide these lost commits, click the checkbox `Show lost commits` on the `General` tab. If this checkbox is deselected, lost commits are not shown. This corresponds to the normal view of a Git history where commits lost in the reflog are not visible in the history.
+
+You can simulate a garbage collection run by clicking the button `Run garbage collection` on the `General` tab. This will delete all commits which are currently lost in the reflog.
+
+== Working with Refs (Branches and Tags)
+
+On the `Refs` tab, you can add, delete, and check out branches and tags. To check out a branch or tag, you can double-click the corresponding branch/tag label. Alternatively, you can select the branch or tag to be checked out with the drop-down list on sections `Check out branch` and `Check out tag`. The currently checked out branch is highlighted with a bold font and enclosed in asterisks.
+
+When adding a new branch, the naming rules apply as described in section <<commit-ids>>. If you happen to use a whitespace character in a branch or tag name, then this will automatically be replaced with an underscore.
+
+=== Resetting a Branch
+
+You can reset the currently checked out branch. This operation will move the branch label to the specified target commit. To do so, enter the target commit id, to which the branch should be reset, into the text field on the `Reset branch` section on the `Refs` tab and click the icon button on the text field. This might result in a number of commits getting lost in the reflog.
+
+In the current version, you can only move around branch labels with this operation. It is not yet possible to visualize the difference between hard, soft, and mixed resets.
+
+== Merging and Rebasing
+
+On the `Merge/Rebase` tab you can merge two branches (_octopus merges_ are not supported) or rebase one branch onto another.
+
+=== Merge
+
+To merge two branches with each other, you select the target branch to be merged with the drop-down list on section `Merge branch`. If a fast-forward merge is possible, it will automatically be performed, unless you select the checkbox `No fast-forward merge`. If this checkbox is selected, an explicit merge commit is created.
+
+=== Rebase
+
+To rebase the currently checked out branch onto another branch, you select the target branch with the drop-down list on section `Rebase branch onto`. This will create new commits on the target branch for each commit on the rebased branch. The old commits will be lost in the reflog. The new commits are given the color and ids of the rebased commits with an additional asterisk appended. 

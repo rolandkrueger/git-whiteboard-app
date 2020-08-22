@@ -1,5 +1,6 @@
 // Initial project setup based on https://github.com/kotlin-hands-on/jvm-js-fullstack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
 val kotlinVersion = "1.3.71"
 val serializationVersion = "0.20.0"
@@ -9,6 +10,7 @@ plugins {
     kotlin("multiplatform") version "1.3.71"
     application //to run JVM part
     kotlin("plugin.serialization") version "1.3.70"
+    id("org.asciidoctor.jvm.convert") version "3.1.0"
 }
 
 group = "de.oio"
@@ -19,6 +21,12 @@ repositories {
     mavenCentral()
     jcenter()
     maven("https://kotlin.bintray.com/kotlin-js-wrappers/") // react, styled, ...
+}
+
+defaultTasks("jsBrowserProductionWebpack", "asciidoctor")
+
+tasks.named("run") {
+    dependsOn(":asciidoctor")
 }
 
 kotlin {
@@ -97,6 +105,17 @@ kotlin {
 
 application {
     mainClassName = "ServerKt"
+}
+
+tasks.named<AsciidoctorTask>("asciidoctor") {
+    outputOptions {
+        backends("html5")
+        setOutputDir(file("$buildDir/distributions"))
+    }
+}
+
+tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack") {
+    sourceMaps = false
 }
 
 // include JS artifacts in any JAR we generate
