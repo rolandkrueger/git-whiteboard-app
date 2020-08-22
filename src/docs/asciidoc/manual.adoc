@@ -1,0 +1,8 @@
+= User Manual
+
+== Working With the Git Graph
+== Working With Commits
+== Working With a Detached HEAD: Lost Commits and the Reflog
+== Working with Refs (Branches and Tags)
+
+== Merging and Rebasing
