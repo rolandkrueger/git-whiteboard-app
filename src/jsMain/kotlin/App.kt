@@ -29,9 +29,6 @@ import kotlin.browser.window
 val scope = MainScope()
 
 val App = functionalComponent<RProps> { _ ->
-    val (currentCanvas, setCanvas) = useState(FabricCanvas(""))
-    val (currentGraph, setGraph) = useState(GitGraph(currentCanvas))
-
     useEffect(dependencies = listOf()) {
         scope.launch {
             val canvasElement = document.getElementById("gitKannWas") as HTMLCanvasElement
@@ -88,10 +85,8 @@ val App = functionalComponent<RProps> { _ ->
                 }
             }
 
-            setCanvas(canvas)
             var gitGraph = GitGraph(canvas)
             gitGraph.initGraph()
-            setGraph(gitGraph)
 
             doWhenButtonClicked("expandPanelButton") {
                 hideElements("collapsedControlPanel")
@@ -210,6 +205,13 @@ val App = functionalComponent<RProps> { _ ->
                 }
             }
 
+            doWhenButtonClicked("checkoutTagButton") {
+                gitGraph.checkout(
+                    getSelectedOption("checkoutTagInput"),
+                    isCheckboxChecked("showLostCommitsCheckbox")
+                )
+            }
+
             doWhenButtonClicked("deleteTagButton") {
                 gitGraph.deleteTag(getSelectedOption("deleteTagInput"))
                 updateTagSelects(gitGraph.getTags())
@@ -258,5 +260,5 @@ fun updateBranchSelects(branches: List<AbstractBranch>) {
 fun updateTagSelects(tags: List<AbstractBranch>) {
     val tagNames = tags.map { it.id }
     UiControl.setSelectOptions("deleteTagInput", tagNames)
-
+    UiControl.setSelectOptions("checkoutTagInput", tagNames)
 }

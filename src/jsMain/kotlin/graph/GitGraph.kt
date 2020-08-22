@@ -223,6 +223,7 @@ class GitGraph(private val canvas: FabricCanvas) {
     fun checkout(id: String, doShowLostCommits: Boolean) {
         console.log("Checking out $id")
         val oldHeadCommit = head.commit
+
         val targetBranch = findBranch(id)
         if (targetBranch != null) {
             // checking out a branch
@@ -232,8 +233,8 @@ class GitGraph(private val canvas: FabricCanvas) {
             head.commit.removeBranch(head)
             head.attachToBranch(targetBranch, canvas)
         } else {
-            // try to check out a commit directly
-            val targetCommit = commits.find { it.id == id }
+            // try to check out a tag or commit directly
+            val targetCommit = findTag(id)?.commit ?: commits.find { it.id == id }
             if (targetCommit != null) {
                 // a commit id was given to check out: create a detached HEAD
                 if (!head.isDetached) {
@@ -418,6 +419,8 @@ class GitGraph(private val canvas: FabricCanvas) {
     }
 
     private fun findBranch(branchName: String): AbstractBranch? = branches.find { it.id == branchName }
+
+    private fun findTag(tagName: String): AbstractBranch? = tags.find { it.id == tagName }
 
     fun showLostCommits(doShowLostCommits: Boolean) {
         showLostCommits = doShowLostCommits
