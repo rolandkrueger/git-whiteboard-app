@@ -182,7 +182,7 @@
                 <div class="field has-addons is-expanded">
                     <div class="control is-expanded">
                         <input id="checkoutCommitInput" class="input" type="text"
-                               placeholder="Commit ID or branch name">
+                               placeholder="Commit ID">
                     </div>
                     <div class="control">
                         <button id="checkoutCommitButton" class="button is-success">
@@ -267,6 +267,21 @@
                         <button id="addTagButton" class="button is-warning">
                                 <span class="icon">
                                     <i class="fas fa-tag"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+                <label for="checkoutTagInput" class="label">Check out tag</label>
+                <div class="field has-addons is-expanded">
+                    <div class="select is-fullwidth">
+                        <select id="checkoutTagInput" disabled>
+                        </select>
+                    </div>
+                    <div class="control">
+                        <button id="checkoutTagButton" class="button is-warning">
+                                <span class="icon">
+                                    <i class="fas fa-level-down-alt"></i>
                                 </span>
                         </button>
                     </div>

@@ -205,6 +205,13 @@ val App = functionalComponent<RProps> { _ ->
                 }
             }
 
+            doWhenButtonClicked("checkoutTagButton") {
+                gitGraph.checkout(
+                    getSelectedOption("checkoutTagInput"),
+                    isCheckboxChecked("showLostCommitsCheckbox")
+                )
+            }
+
             doWhenButtonClicked("deleteTagButton") {
                 gitGraph.deleteTag(getSelectedOption("deleteTagInput"))
                 updateTagSelects(gitGraph.getTags())
@@ -253,5 +260,5 @@ fun updateBranchSelects(branches: List<AbstractBranch>) {
 fun updateTagSelects(tags: List<AbstractBranch>) {
     val tagNames = tags.map { it.id }
     UiControl.setSelectOptions("deleteTagInput", tagNames)
-
+    UiControl.setSelectOptions("checkoutTagInput", tagNames)
 }
