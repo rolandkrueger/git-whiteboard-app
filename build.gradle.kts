@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "de.oio"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
