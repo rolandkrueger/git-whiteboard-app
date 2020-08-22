@@ -58,7 +58,7 @@ You can simulate a garbage collection run by clicking the button `Run garbage co
 
 On the `Refs` tab, you can add, delete, and check out branches and tags. To check out a branch or tag, you can double-click the corresponding branch/tag label. Alternatively, you can select the branch or tag to be checked out with the drop-down list on sections `Check out branch` and `Check out tag`. The currently checked out branch is highlighted with a bold font and enclosed in asterisks.
 
-When adding a new branch, the naming rules apply as described in section <<commit-ids>>.
+When adding a new branch, the naming rules apply as described in section <<commit-ids>>. If you happen to use a whitespace character in a branch or tag name, then this will automatically be replaced with an underscore.
 
 === Resetting a Branch
 
