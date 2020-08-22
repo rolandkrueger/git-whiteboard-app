@@ -39,7 +39,7 @@
         }
 
         .expandedControlPanel {
-            width: 520px;
+            width: 560px;
             animation-duration: 1s;
             animation-timing-function: linear;
             overflow: auto;
@@ -109,7 +109,7 @@
                     <li class="is-active"><a id="generalTabControl">General</a></li>
                     <li><a id="commitTabControl">Commits</a></li>
                     <li><a id="refsTabControl">Refs</a></li>
-                    <li><a id="mergeTabControl">Merge</a></li>
+                    <li><a id="mergeTabControl">Merge/Rebase</a></li>
                     <li><a id="aboutTabControl">About</a></li>
                 </ul>
             </div>
@@ -138,7 +138,7 @@
                 <div class="field">
                     <div class="control">
                         <label class="checkbox">
-                            <input type="checkbox" checked disabled>
+                            <input id="showLostCommitsCheckbox" type="checkbox" checked>
                             Show lost commits
                         </label>
                     </div>
@@ -156,7 +156,7 @@
                 </div>
 
                 <div class="field">
-                    <button id="amendCommitButton" class="button is-outlined is-fullwidth" disabled>
+                    <button id="amendCommitButton" class="button is-outlined is-fullwidth">
                         <span class="icon">
                             <i class="fas fa-band-aid"></i>
                         </span>
@@ -164,13 +164,13 @@
                     </button>
                 </div>
 
-                <label class="label">Cherry-pick commit</label>
+                <label for="cherryPickInput" class="label">Cherry-pick commit</label>
                 <div class="field has-addons">
                     <p class="control is-expanded">
-                        <input id="cherryPickInput" class="input" type="text" placeholder="Commit ID" disabled>
+                        <input id="cherryPickInput" class="input" type="text" placeholder="Commit ID">
                     </p>
                     <p class="control">
-                        <button id="cherryPickButton" class="button is-success" disabled>
+                        <button id="cherryPickButton" class="button is-success">
                                 <span class="icon">
                                     <i class="far fa-hand-lizard"></i>
                                 </span>
@@ -178,11 +178,11 @@
                     </p>
                 </div>
 
-                <label class="label">Check out</label>
+                <label for="checkoutCommitInput" class="label">Check out</label>
                 <div class="field has-addons is-expanded">
                     <div class="control is-expanded">
                         <input id="checkoutCommitInput" class="input" type="text"
-                               placeholder="Commit ID or branch name">
+                               placeholder="Commit ID">
                     </div>
                     <div class="control">
                         <button id="checkoutCommitButton" class="button is-success">
@@ -196,7 +196,7 @@
             </div>
 
             <div id="refsTab" class="hidden">
-                <label class="label">Add branch</label>
+                <label for="addBranchInput" class="label">Add branch</label>
                 <div class="field has-addons is-expanded">
                     <div class="control is-expanded">
                         <input id="addBranchInput" class="input" type="text" placeholder="Branch name">
@@ -210,11 +210,12 @@
                     </div>
                 </div>
 
-                <label class="label">Checkout branch</label>
+                <label for="checkoutBranchInput" class="label">Check out branch</label>
                 <div class="field has-addons is-expanded">
-                    <div class="control is-expanded">
-                        <input id="checkoutBranchInput" class="input" type="text"
-                               placeholder="Commit ID or branch name">
+                    <div class="select is-fullwidth">
+                        <select id="checkoutBranchInput">
+                            <option>master</option>
+                        </select>
                     </div>
                     <div class="control">
                         <button id="checkoutBranchButton" class="button is-success">
@@ -225,10 +226,12 @@
                     </div>
                 </div>
 
-                <label class="label">Delete branch</label>
+                <label for="deleteBranchInput" class="label">Delete branch</label>
                 <div class="field has-addons is-expanded">
-                    <div class="control is-expanded">
-                        <input id="deleteBranchInput" class="input" type="text" placeholder="Branch name">
+                    <div class="select is-fullwidth">
+                        <select id="deleteBranchInput">
+                            <option>master</option>
+                        </select>
                     </div>
                     <div class="control">
                         <button id="deleteBranchButton" class="button is-success">
@@ -239,9 +242,23 @@
                     </div>
                 </div>
 
+                <label for="resetBranchInput" class="label">Reset branch</label>
+                <div class="field has-addons is-expanded">
+                    <div class="control is-expanded">
+                        <input id="resetBranchInput" class="input" type="text" placeholder="Target commit id">
+                    </div>
+                    <div class="control">
+                        <button id="resetBranchButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-angle-double-down"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
                 <hr>
 
-                <label class="label">Add tag</label>
+                <label for="addTagInput" class="label">Add tag</label>
                 <div class="field has-addons is-expanded">
                     <div class="control is-expanded">
                         <input id="addTagInput" class="input" type="text" placeholder="Tag name">
@@ -255,10 +272,26 @@
                     </div>
                 </div>
 
-                <label class="label">Delete tag</label>
+                <label for="checkoutTagInput" class="label">Check out tag</label>
                 <div class="field has-addons is-expanded">
-                    <div class="control is-expanded">
-                        <input id="deleteTagInput" class="input" type="text" placeholder="Tag name">
+                    <div class="select is-fullwidth">
+                        <select id="checkoutTagInput" disabled>
+                        </select>
+                    </div>
+                    <div class="control">
+                        <button id="checkoutTagButton" class="button is-warning">
+                                <span class="icon">
+                                    <i class="fas fa-level-down-alt"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+
+                <label for="deleteTagInput" class="label">Delete tag</label>
+                <div class="field has-addons is-expanded">
+                    <div class="select is-fullwidth">
+                        <select id="deleteTagInput" disabled>
+                        </select>
                     </div>
                     <div class="control">
                         <button id="deleteTagButton" class="button is-warning">
@@ -271,15 +304,40 @@
             </div>
 
             <div id="mergeTab" class="hidden">
-                <label class="label">Merge branch</label>
+                <label for="mergeBranchInput" class="label">Merge branch</label>
                 <div class="field has-addons is-expanded">
-                    <div class="control is-expanded">
-                        <input id="mergeBranchInput" class="input" type="text" placeholder="Branch name">
+                    <div class="select is-fullwidth">
+                        <select id="mergeBranchInput">
+                            <option>master</option>
+                        </select>
                     </div>
                     <div class="control">
                         <button id="mergeBranchButton" class="button is-success">
                                 <span class="icon">
                                     <i class="fas fa-compress-alt"></i>
+                                </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input id="noFFCheckbox" type="checkbox">
+                            No fast-forward merge
+                        </label>
+                    </div>
+                </div>
+                <label for="rebaseBranchInput" class="label">Rebase branch onto</label>
+                <div class="field has-addons is-expanded">
+                    <div class="select is-fullwidth">
+                        <select id="rebaseBranchInput">
+                            <option>master</option>
+                        </select>
+                    </div>
+                    <div class="control">
+                        <button id="rebaseBranchButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-share"></i>
                                 </span>
                         </button>
                     </div>
@@ -293,6 +351,7 @@
                                 href="https://github.com/rolandkrueger/git-whiteboard-app">GitHub</a>.
                         </li>
                         <li>Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.</li>
+                        <li><a href="manual.html" target="_blank">User Manual</a></li>
                     </ul>
                 </div>
             </div>
