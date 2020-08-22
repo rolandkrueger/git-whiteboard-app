@@ -61,6 +61,10 @@ One problem that arises with any Git training is that when explaining Git functi
   
 The Git Whiteboard App is supposed to offer another flexible alternative. With this web application, it must be at least as easy to visualize a Git history as on a whiteboard. But in contrast to drawing on the whiteboard, dynamically changing the history should be much easier. For example, it should be possible to move a branch pointer anywhere in the Git graph, as with Git reset. Also, functions like Git rebase should be easier to display visually than on the whiteboard.
 
+## User manual
+
+You can find the user manual [here](src/docs/asciidoc/manual.adoc). You can open the manual directly from the application on the `About` tab.
+
 ## Implementation
 
 The Git Whiteboard App is exclusively implemented with Kotlin/JS, i.e. the application is written with Kotlin and compiled into JavaScript code. The app is stateless. This means that no server is necessary to run the app. As described above, it suffices to load the `index.html` in a browser.
