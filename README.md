@@ -72,7 +72,9 @@ The Git Whiteboard App is exclusively implemented with Kotlin/JS, i.e. the appli
 The following open-source projects were used to create the Git Whiteboard App:
 
 * [Kotlin/JS](https://kotlinlang.org/docs/reference/js-overview.html)
+* [Ktor for the local development mode](https://ktor.io/)
 * [kotlin-react](https://github.com/JetBrains/kotlin-wrappers#readme)
 * [fabric.js Javascript HTML5 canvas library](http://fabricjs.com/)
 * [The Bulma CSS framework](https://bulma.io/)
 * [Font Awesome](https://fontawesome.com/)
+* [Asciidoctor for the user manual](https://asciidoctor.org/)
