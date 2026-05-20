@@ -72,6 +72,7 @@ Known non-blocking warnings may appear from Gradle/Kotlin tooling, Webpack bundl
 
 ## Style Guidelines
 
+- German may be used as the conversation language, but the project language is exclusively English. Before editing any instruction file, specification, or similar project guidance, translate German user-provided data into concise English and write only the English version to the repository.
 - Use the existing Kotlin style and keep changes narrowly scoped.
 - Prefer ASCII text in source files unless the existing file clearly uses non-ASCII.
 - Avoid broad refactors while fixing narrow behavior.
