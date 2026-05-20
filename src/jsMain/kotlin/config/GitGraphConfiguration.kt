@@ -1,7 +1,7 @@
 package config
 
 import fabricjs.Point
-import kotlin.browser.window
+import kotlinx.browser.window
 
 class GitGraphConfiguration {
     companion object {

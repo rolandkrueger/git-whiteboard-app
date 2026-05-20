@@ -1,12 +1,10 @@
 package ui
 
 import org.w3c.dom.HTMLButtonElement
+import kotlinx.browser.document
 import ui.UiControl.Companion.doWhenButtonClicked
 import ui.UiControl.Companion.hideElements
 import ui.UiControl.Companion.showElements
-import kotlin.browser.document
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
 
 class ConfirmationDialog private constructor(
     val title: String,
@@ -52,10 +50,10 @@ class ConfirmationDialog private constructor(
             hide()
         }
 
-        document.getElementById("confirmationDialog")?.addClass("is-active")
+        document.getElementById("confirmationDialog")?.classList?.add("is-active")
     }
 
     private fun hide() {
-        document.getElementById("confirmationDialog")?.removeClass("is-active")
+        document.getElementById("confirmationDialog")?.classList?.remove("is-active")
     }
 }

@@ -1,22 +1,20 @@
 package ui
 
 import org.w3c.dom.*
-import kotlin.browser.document
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
+import kotlinx.browser.document
 
 class UiControl {
 
     companion object {
         fun hideElements(vararg elementIds: String) {
             elementIds.forEach {
-                document.getElementById(it)?.addClass("hidden")
+                document.getElementById(it)?.classList?.add("hidden")
             }
         }
 
         fun showElements(vararg elementIds: String) {
             elementIds.forEach {
-                document.getElementById(it)?.removeClass("hidden")
+                document.getElementById(it)?.classList?.remove("hidden")
             }
         }
 
@@ -38,9 +36,9 @@ class UiControl {
         fun activateTab(activeTabId: String, vararg otherTabIds: String) {
             showElements(activeTabId)
             hideElements(*otherTabIds)
-            document.getElementById("${activeTabId}Control")?.parentElement?.addClass("is-active")
+            document.getElementById("${activeTabId}Control")?.parentElement?.classList?.add("is-active")
             otherTabIds.forEach {
-                document.getElementById("${it}Control")?.parentElement?.removeClass("is-active")
+                document.getElementById("${it}Control")?.parentElement?.classList?.remove("is-active")
             }
         }
 
