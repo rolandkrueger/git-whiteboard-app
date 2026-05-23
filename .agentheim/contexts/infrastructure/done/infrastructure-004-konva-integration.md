@@ -6,7 +6,7 @@ type: feature
 context: infrastructure
 created: 2026-05-23
 completed: 2026-05-23
-commit:
+commit: 09e7f74
 depends_on: [infrastructure-003]
 blocks: []
 tags: [konva, fabric, kotlin-js, bindings, rendering, migration]

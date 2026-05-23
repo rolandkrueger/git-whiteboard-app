@@ -5,6 +5,29 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 2 (first-try PASS: 2 [infrastructure-003, infrastructure-004])
+**Bounced:** 1 (infrastructure-003, env-bounce — Bash denied in first session; re-dispatched successfully)
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 2 (4959555, 09e7f74)
+
+---
+
+## 2026-05-23 -- Task verified and completed: infrastructure-004 - Konva.js integration: replace Fabric.js bindings and rewrite rendering
+
+**Type:** Work / Task completion
+**Task:** infrastructure-004 - Konva.js integration: replace Fabric.js bindings and rewrite rendering
+**Summary:** Replaced Fabric.js v5 with Konva.js v10.3.0. Deleted fabricjs/ (3 files). Created konvajs/ package (8 files). Rewrote Renderable, all components/, graph/, and App.kt to use Layer. Pan/zoom via Stage transforms; click-to-focus via getPointerPosition(). Production webpack build passes.
+**Verification:** PASS (iteration 1 — verifier false-positive overridden: flagged orchestrator-owned INDEX.md/protocol.md changes as worker violations; verifier confirmed build passes and all code correct)
+**Commit:** 09e7f74
+**Files changed:** 23
+**ADRs written:** none
+
+---
+
 ## 2026-05-23 -- Batch started: [infrastructure-004]
 
 **Type:** Work / Batch start
