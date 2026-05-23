@@ -6,7 +6,7 @@ type: feature
 context: scenario
 created: 2026-05-23
 completed: 2026-05-23
-commit:
+commit: 20fa14e
 depends_on: [scenario-001]
 blocks: []
 tags: [scenario, url-encoding, share, compression, serialization, json, gzip]
