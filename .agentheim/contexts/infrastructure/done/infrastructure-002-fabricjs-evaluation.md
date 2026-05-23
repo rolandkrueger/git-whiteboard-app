@@ -2,7 +2,8 @@
 id: infrastructure-002
 title: Migrate canvas foundation from Fabric.js to Konva.js
 type: decision
-status: todo
+status: done
+completed: 2026-05-23
 bc: infrastructure
 depends_on: []
 blocks: [infrastructure-001]
@@ -35,3 +36,6 @@ Konva.js v10.3.0 (April 2026), 14,500 GitHub stars, ships bundled TypeScript def
 The existing handwritten Fabric.js bindings live in `src/jsMain/kotlin/fabricjs/`. They will be replaced — not migrated — once this ADR is committed and `infrastructure-001` adopts Konva.
 
 PixiJS was evaluated and rejected: WebGL-first, game-oriented, overkill for a small interactive graph with dozens of nodes.
+
+## Outcome
+ADR-0002 (`0002-migrate-canvas-foundation-to-konvajs.md`) written to `.agentheim/knowledge/decisions/`. The ADR confirms migration to Konva.js v10.x and rejects Fabric.js v5 (abandoned, unpatched CVE), Fabric.js v7 (near-complete binding rewrite with no advantage over Konva), and PixiJS (WebGL-first, game-oriented). Dukat spike is documented as environment-blocked — manual verification required before the integration task begins; the ADR captures the expected approach and known risks. No production code changes were made.

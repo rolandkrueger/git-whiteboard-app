@@ -11,23 +11,23 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 2
-- **Doing:** 0
-- **Done:** 0
+- **Todo:** 0
+- **Doing:** 1
+- **Done:** 1
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **infrastructure-002** — Migrate canvas foundation from Fabric.js to Konva.js (decision) — depends_on: [] — `todo/infrastructure-002-fabricjs-evaluation.md`
-- **infrastructure-001** — Walking skeleton: multi-repo proof-of-concept (spike) — depends_on: [git-canvas-001, scenario-001, infrastructure-002] — `todo/infrastructure-001-walking-skeleton.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **infrastructure-001** — Walking skeleton: multi-repo proof-of-concept (spike) — `doing/infrastructure-001-walking-skeleton.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **infrastructure-002** — Migrate canvas foundation from Fabric.js to Konva.js (decision) — `done/infrastructure-002-fabricjs-evaluation.md`
 <!-- done-list:end -->
 
 ### Backlog
@@ -37,6 +37,7 @@ research touching this BC, and concept synthesis pages.
 ## ADRs scoped to this BC
 
 <!-- adr-local:start -->
+- **0003** — Migrate canvas foundation from Fabric.js to Konva.js — `knowledge/decisions/0003-migrate-canvas-foundation-to-konvajs.md`
 <!-- adr-local:end -->
 
 ## Research touching this BC

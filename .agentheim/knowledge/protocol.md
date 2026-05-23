@@ -5,6 +5,55 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Batch started: [infrastructure-001]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-001 - Walking skeleton: multi-repo proof-of-concept
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Task completed (verification skipped): infrastructure-002 - Migrate canvas foundation from Fabric.js to Konva.js
+
+**Type:** Work / Task completion
+**Task:** infrastructure-002 - Migrate canvas foundation from Fabric.js to Konva.js
+**Summary:** ADR 0003 written confirming Konva.js migration. Fabric.js v5 rejected (abandoned, unpatched CVE); Fabric.js v7 not preferred (near-complete binding rewrite); Konva.js v10.x adopted. Dukat spike documented as environment-blocked.
+**Verification:** SKIPPED — decision-only task, single ADR file
+**Files changed:** 1
+**ADRs written:** 0003-migrate-canvas-foundation-to-konvajs.md
+
+---
+
+## 2026-05-23 -- Task verified and completed: scenario-001 - URL encoding format for graph snapshots
+
+**Type:** Work / Task completion
+**Task:** scenario-001 - URL encoding format for graph snapshots
+**Summary:** ADR 0002 written adopting JSON + gzip + base64url in URL fragment. BC README updated. Consequences section added after verifier flagged its absence; ADR numbering fixed after parallel-worker rename.
+**Verification:** PASS (iteration 1, orchestrator-fixed numbering)
+**Files changed:** 2
+**ADRs written:** 0002-url-encoding-format-for-graph-snapshots.md
+
+---
+
+## 2026-05-23 -- Task verified and completed: git-canvas-001 - Multi-repo canvas layout strategy
+
+**Type:** Work / Task completion
+**Task:** git-canvas-001 - Multi-repo canvas layout strategy
+**Summary:** ADR 0001 written adopting shared infinite canvas with click-to-focus and faded inactive repos. BC README updated.
+**Verification:** PASS (iteration 1)
+**Files changed:** 2
+**ADRs written:** 0001-multi-repo-canvas-layout.md
+
+---
+
+## 2026-05-23 -- Batch started: [git-canvas-001, scenario-001, infrastructure-002]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-001 - Multi-repo canvas layout strategy, scenario-001 - URL encoding format for graph snapshots, infrastructure-002 - Migrate canvas foundation from Fabric.js to Konva.js
+**Parallel:** yes (3 workers)
+
+---
+
 ## 2026-05-23 -- Research: Canvas library evaluation for multi-repo Kotlin/JS diagram app
 
 **Type:** Research

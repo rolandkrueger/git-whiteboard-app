@@ -2,7 +2,8 @@
 id: scenario-001
 title: URL encoding format for graph snapshots
 type: decision
-status: todo
+status: done
+completed: 2026-05-23
 bc: scenario
 depends_on: []
 ---
@@ -50,3 +51,7 @@ On app initialization, the app checks for the `#state=` fragment. If present, it
 **Option B: Compact custom DSL** — Rejected; hand-editability is not needed, and a bespoke parser adds maintenance cost with no benefit given small scenario sizes.
 
 **Option C: Compressed binary (msgpack or similar) + base64url** — Rejected; URL length is not a concern, and binary formats are harder to debug. Option A is sufficient.
+
+## Outcome
+
+ADR 0001 written to `.agentheim/knowledge/decisions/0002-url-encoding-format-for-graph-snapshots.md`. The ADR documents the chosen encoding (JSON + gzip + base64url in `#state=` fragment), the state shape to serialize, the startup detection behavior, and the two rejected alternatives. The scenario BC README was updated to resolve the open encoding-format question.

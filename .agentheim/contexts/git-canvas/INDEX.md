@@ -11,14 +11,13 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 1
+- **Todo:** 0
 - **Doing:** 0
-- **Done:** 0
+- **Done:** 1
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-001** — Multi-repo canvas layout strategy (decision) — depends_on: [] — `todo/git-canvas-001-multi-repo-layout-decision.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -27,6 +26,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-001** — Multi-repo canvas layout strategy (decision) — `done/git-canvas-001-multi-repo-layout-decision.md`
 <!-- done-list:end -->
 
 ### Backlog
@@ -36,6 +36,7 @@ research touching this BC, and concept synthesis pages.
 ## ADRs scoped to this BC
 
 <!-- adr-local:start -->
+- **0001** — Multi-repo canvas layout strategy — `knowledge/decisions/0001-multi-repo-canvas-layout.md`
 <!-- adr-local:end -->
 
 ## Research touching this BC

@@ -11,14 +11,13 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 1
+- **Todo:** 0
 - **Doing:** 0
-- **Done:** 0
+- **Done:** 1
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **scenario-001** — URL encoding format for graph snapshots (decision) — depends_on: [] — `todo/scenario-001-url-encoding-decision.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -27,6 +26,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **scenario-001** — URL encoding format for graph snapshots (decision) — `done/scenario-001-url-encoding-decision.md`
 <!-- done-list:end -->
 
 ### Backlog
@@ -36,6 +36,7 @@ research touching this BC, and concept synthesis pages.
 ## ADRs scoped to this BC
 
 <!-- adr-local:start -->
+- **0002** — URL encoding format for graph snapshots — `knowledge/decisions/0002-url-encoding-format-for-graph-snapshots.md`
 <!-- adr-local:end -->
 
 ## Research touching this BC

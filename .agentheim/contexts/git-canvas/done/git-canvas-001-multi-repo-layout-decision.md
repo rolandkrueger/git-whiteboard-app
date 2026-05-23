@@ -2,7 +2,8 @@
 id: git-canvas-001
 title: Multi-repo canvas layout strategy
 type: decision
-status: todo
+status: done
+completed: 2026-05-23
 bc: git-canvas
 depends_on: []
 ---
@@ -53,3 +54,7 @@ Global — applies to the whole shared canvas. Independent per-repo zoom is not 
 **Option B: Tabbed repos** — Rejected because both repos must be simultaneously visible; tabs break the "see both sides" teaching moment during push/pull.
 
 **Option D: Floating resizable windows** — Rejected; Fabric.js is not a window manager and the implementation complexity is unjustified given Option C already provides free positioning.
+
+## Outcome
+
+ADR `0001-multi-repo-canvas-layout.md` written to `.agentheim/knowledge/decisions/`. The ADR documents the full decision including spatial arrangement (free-floating regions on a shared infinite canvas), active repo indicator (full color vs. faded), trainer interaction model (click to focus), pan/zoom scope (global), repo labeling, and all four rejected alternatives with rationale. The BC README was updated to reflect the resolved open question and record the layout decision in the ubiquitous language section.

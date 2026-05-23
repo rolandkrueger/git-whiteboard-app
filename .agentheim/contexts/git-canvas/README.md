@@ -53,7 +53,12 @@ core — this is the unique value the tool provides; everything else is support 
 - **Upstream of:** scenario — supplies the graph state shape that scenario serializes
 - **Served by:** infrastructure — build and hosting pipeline
 
+## Layout decisions
+
+- **Multi-repo canvas layout:** Single shared infinite canvas (ADR 0001). All repos are free-floating regions on one Fabric.js canvas; the trainer positions them by dragging. Active repo is indicated by full color; inactive repos are faded/desaturated. Pan/zoom is global.
+- **Active repo selection:** Click anywhere in a repo region to make it active; all control-panel commands are routed to the active repo only.
+
 ## Open questions
-- Multi-repo canvas layout: side-by-side panels vs. floating regions vs. single shared canvas?
+
 - How many simultaneous repos should be supported on one canvas?
 - Should remote-tracking branch labels be visually distinct from local branch labels?

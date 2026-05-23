@@ -30,7 +30,10 @@ supporting — valuable time-saver for trainers who teach the same topics repeat
 ## Relationships with other contexts
 - **Conformist to:** git-canvas — the state shape is owned by git-canvas; scenario adapts to it
 
+## Encoding format (decided — ADR 0002)
+
+JSON + gzip + base64url in the URL fragment (`#state=<base64url>`). The fragment is never sent to a server. On startup the app checks for `#state=`; if present it deserializes and restores the graph instead of the default blank canvas. A "Share" button in the control panel triggers serialization and writes the encoded state to the address bar.
+
 ## Open questions
-- What encoding format? (base64 JSON, compact binary, custom DSL)
 - Should the app ship with a preset scenario library (cherry-pick demo, rebase demo, conflict demo)?
-- Should the URL update live as the trainer manipulates the graph, or only on explicit "Share" action?
+- Should the URL update live as the trainer manipulates the graph, or only on explicit "Share" action? (Current answer: explicit "Share" button, no live update.)
