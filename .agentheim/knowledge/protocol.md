@@ -5,13 +5,24 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 1 (first-try PASS: 1 [infrastructure-005])
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 1 (4a4cc52)
+
+---
+
 ## 2026-05-23 -- Task verified and completed: infrastructure-005 - Canvas drag-to-pan broken after Konva.js migration
 
 **Type:** Work / Task completion
 **Task:** infrastructure-005 - Canvas drag-to-pan broken after Konva.js migration
 **Summary:** Restored drag-to-pan by replacing Konva synthetic stage events with native DOM events on the container; also added mouseleave guard and moved mouseup to window to handle release outside the canvas.
 **Verification:** PASS (iteration 1)
-**Commit:** TBD
+**Commit:** 4a4cc52
 **Files changed:** 1
 **Tests added:** 0
 **ADRs written:** none

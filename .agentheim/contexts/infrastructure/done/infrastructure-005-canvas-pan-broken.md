@@ -6,7 +6,7 @@ type: bug
 context: infrastructure
 created: 2026-05-23
 completed: 2026-05-23
-commit:
+commit: 4a4cc52
 depends_on: [infrastructure-004]
 blocks: []
 tags: [konva, pan, interaction, regression]
