@@ -2,10 +2,10 @@ package graph
 
 import components.RepoRegion
 import config.GitGraphConfiguration
-import fabricjs.FabricCanvas
+import konvajs.Layer
 
 class GitGraph(
-    private val canvas: FabricCanvas,
+    private val layer: Layer,
     val repoName: String = "origin",
     private val config: GitGraphConfiguration = GitGraphConfiguration()
 ) {
@@ -23,7 +23,7 @@ class GitGraph(
         set(value) {
             field = value
             repoRegion.setActive(value)
-            canvas.renderAll()
+            layer.batchDraw()
         }
 
     init {
@@ -43,7 +43,7 @@ class GitGraph(
 
         console.log("Initialize a new Git graph for repo: $repoName")
         if (!initialized) {
-            repoRegion.render(canvas)
+            repoRegion.render(layer)
             initialized = true
         }
         val branchColor = BranchColors.nextColor()
@@ -53,9 +53,10 @@ class GitGraph(
         head = Head(initialCommit)
         branches.add(head)
 
-        initialCommit.render(canvas)
+        initialCommit.render(layer)
         addBranch("master", 2, branchColor)
-        head.render(canvas)
+        head.render(layer)
+        layer.batchDraw()
     }
 
     fun addCommit(
@@ -114,21 +115,21 @@ class GitGraph(
         parentCommit?.childCommit = commit
         mergedParentCommit?.childCommit = commit
         commit.mergedCommit = mergedParentCommit
-        commit.render(canvas)
+        commit.render(layer)
         commit.commitCircle.onDoubleClick(checkoutHandler(commit))
         commits.add(commit)
         if (head.isDetached) {
             moveHeadTo(commit)
-            head.attachToCommit(head.commit, canvas)
+            head.attachToCommit(head.commit, layer)
         } else {
             moveBranch(currentBranch, head.commit, commit)
-            head.attachToBranch(currentBranch, canvas)
-            currentBranch.attachToCommit(head.commit, canvas)
+            head.attachToBranch(currentBranch, layer)
+            currentBranch.attachToCommit(head.commit, layer)
         }
 
-        oldHeadCommit.repositionBranches(canvas)
+        oldHeadCommit.repositionBranches(layer)
         calculateLostCommits()
-        canvas.renderAll()
+        layer.batchDraw()
     }
 
     private fun isHeadOnOccupiedSwimlane(): Boolean {
@@ -160,13 +161,13 @@ class GitGraph(
             linePosition = head.commit.linePosition
         )
         calculateLostCommits()
-        canvas.renderAll()
+        layer.batchDraw()
     }
 
     private fun shiftCommitsToTheRight(swimlaneStart: Int) {
         commits.forEach {
             if (it.swimlane >= swimlaneStart) {
-                it.shiftRight(canvas)
+                it.shiftRight(layer)
             }
             if (globalSwimlaneCounter <= it.swimlane) {
                 globalSwimlaneCounter = it.swimlane + 1
@@ -179,7 +180,7 @@ class GitGraph(
         }
         commits.forEach {
             if (it.isLostInReflog) {
-                it.rerender(canvas)
+                it.rerender(layer)
             }
         }
     }
@@ -203,9 +204,9 @@ class GitGraph(
         from.removeBranch(branch)
         to.addBranch(branch)
         branch.commit = to
-        branch.getLabel().attachToCommit(to, canvas)
+        branch.getLabel().attachToCommit(to, layer)
         if (!head.isDetached) {
-            head.attachToBranch(branch, canvas)
+            head.attachToBranch(branch, layer)
             head.commit = to
         }
     }
@@ -222,8 +223,8 @@ class GitGraph(
         branches.sortBy { it.id }
         head.commit.removeBranch(head)
         branch.onDoubleClick { checkout(id, showLostCommits) }
-        branch.attachToCommit(head.commit, canvas)
-        branch.render(canvas)
+        branch.attachToCommit(head.commit, layer)
+        branch.render(layer)
         checkout(id, showLostCommits)
         return branch
     }
@@ -233,7 +234,7 @@ class GitGraph(
     fun addTag(id: String) {
         val tag = Tag(id, head.commit)
 
-        tag.render(canvas)
+        tag.render(layer)
         tag.onDoubleClick {
             checkout(tag.commit.id, showLostCommits)
         }
@@ -254,7 +255,7 @@ class GitGraph(
             head.targetBranch = targetBranch
             targetBranch.checkedOut(head)
             head.commit.removeBranch(head)
-            head.attachToBranch(targetBranch, canvas)
+            head.attachToBranch(targetBranch, layer)
         } else {
             // try to check out a tag or commit directly
             val targetCommit = findTag(id)?.commit ?: commits.find { it.id == id }
@@ -266,13 +267,13 @@ class GitGraph(
                 }
                 head.swimlane = -1 // calculate new swimlane as soon as a new commit is added
                 moveBranch(head, head.commit, targetCommit)
-                head.attachToCommit(targetCommit, canvas)
+                head.attachToCommit(targetCommit, layer)
             }
         }
-        oldHeadCommit.repositionBranches(canvas)
+        oldHeadCommit.repositionBranches(layer)
         calculateLostCommits()
         showLostCommits(doShowLostCommits)
-        canvas.renderAll()
+        layer.batchDraw()
     }
 
     fun merge(noFF: Boolean, targetBranchId: String): Boolean {
@@ -328,9 +329,9 @@ class GitGraph(
                     linePosition = globalCommitNumber++
                 )
             }
-            commitsToBeRebased.first().rerender(canvas)
+            commitsToBeRebased.first().rerender(layer)
             calculateLostCommits()
-            canvas.renderAll()
+            layer.batchDraw()
             true
         } else {
             false
@@ -398,23 +399,23 @@ class GitGraph(
                 if (it.parent?.childCommit == it) {
                     it.parent.childCommit = null
                 }
-                it.removeFrom(canvas)
+                it.removeFrom(layer)
                 console.log("Remove lost commit $it")
             }
         }
         commits.removeAll { it.commitCircle.isLostInReflog }
         realignCommits()
-        canvas.renderAll()
+        layer.batchDraw()
     }
 
     private fun realignCommits() {
         commits.forEach {
             if (it.parent?.swimlane == it.childCommit?.swimlane) {
                 it.swimlane = it.parent?.swimlane ?: it.childCommit?.swimlane ?: 0
-                it.rerender(canvas)
+                it.rerender(layer)
             }
         }
-        currentBranch().attachToCommit(currentBranch().commit, canvas)
+        currentBranch().attachToCommit(currentBranch().commit, layer)
     }
 
     fun doesTagExist(tagName: String) = tags.map { it.id }.contains(tagName)
@@ -435,8 +436,8 @@ class GitGraph(
             refList.remove(targetRef)
             refList.sortBy { it.id }
             targetRef.commit.removeBranch(targetRef)
-            targetRef.commit.repositionBranches(canvas)
-            targetRef.removeFrom(canvas)
+            targetRef.commit.repositionBranches(layer)
+            targetRef.removeFrom(layer)
         }
         calculateLostCommits()
     }
@@ -449,10 +450,10 @@ class GitGraph(
         showLostCommits = doShowLostCommits
         commits.forEach {
             if (it.isLostInReflog) {
-                it.show(doShowLostCommits, canvas)
+                it.show(doShowLostCommits, layer)
             }
         }
-        canvas.renderAll()
+        layer.batchDraw()
     }
 
     fun resetBranch(targetCommitId: String) {
@@ -460,7 +461,7 @@ class GitGraph(
         if (targetCommit != null) {
             moveBranch(currentBranch(), currentBranch().commit, targetCommit)
             calculateLostCommits()
-            canvas.renderAll()
+            layer.batchDraw()
         }
     }
 
@@ -468,17 +469,17 @@ class GitGraph(
      * Clears all commits, branches, and tags from this repo and re-initializes
      * to the initial state. The region border is preserved.
      */
-    fun clearGraph(canvas: FabricCanvas) {
-        commits.forEach { it.removeFrom(canvas) }
+    fun clearGraph() {
+        commits.forEach { it.removeFrom(layer) }
         commits.clear()
-        branches.forEach { it.removeFrom(canvas) }
+        branches.forEach { it.removeFrom(layer) }
         branches.clear()
-        tags.forEach { it.removeFrom(canvas) }
+        tags.forEach { it.removeFrom(layer) }
         tags.clear()
         globalCommitNumber = 0
         globalSwimlaneCounter = 0
         head = Head(Commit("", 0, 0, config = config))
         initGraph()
-        canvas.renderAll()
+        layer.batchDraw()
     }
 }

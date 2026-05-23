@@ -5,6 +5,26 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Batch started: [infrastructure-004]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-004 - Konva.js integration: replace Fabric.js bindings and rewrite rendering
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Task verified and completed: infrastructure-003 - Dukat spike: assess Konva.js TypeScript binding generation
+
+**Type:** Work / Task completion
+**Task:** infrastructure-003 - Dukat spike: assess Konva.js TypeScript binding generation
+**Summary:** Dukat 0.5.8-rc.4 confirmed via npx; run against Konva v10.3.0 per-file .d.ts. All 7 scoped types produce structurally correct external classes; main degradation is GetSet mapped type → Any for shape property accessors. Recommendation: start from Dukat output with medium-effort mechanical cleanup (~15-20 props, write RectConfig, rename T$0 interfaces, prune internals).
+**Verification:** PASS (iteration 1)
+**Commit:** 4959555
+**Files changed:** 1
+**ADRs written:** none
+
+---
+
 ## 2026-05-23 -- Batch started: [infrastructure-003]
 
 **Type:** Work / Batch start

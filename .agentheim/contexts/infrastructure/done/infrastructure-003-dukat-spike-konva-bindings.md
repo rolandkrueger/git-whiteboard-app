@@ -6,7 +6,7 @@ type: spike
 context: infrastructure
 created: 2026-05-23
 completed: 2026-05-23
-commit:
+commit: 4959555
 depends_on: []
 blocks: [infrastructure-004]
 tags: [konva, dukat, kotlin-js, bindings]

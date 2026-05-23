@@ -1,8 +1,8 @@
 package components
 
-import fabricjs.FabricCanvas
+import konvajs.Layer
 
 interface Renderable {
-    fun render(canvas: FabricCanvas)
-    fun removeFrom(canvas: FabricCanvas)
+    fun render(layer: Layer)
+    fun removeFrom(layer: Layer)
 }

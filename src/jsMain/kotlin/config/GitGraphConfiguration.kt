@@ -1,6 +1,6 @@
 package config
 
-import fabricjs.Point
+import components.Point
 import kotlinx.browser.window
 
 class GitGraphConfiguration(val xOffset: Int = 0, val yOffset: Int = 0) {

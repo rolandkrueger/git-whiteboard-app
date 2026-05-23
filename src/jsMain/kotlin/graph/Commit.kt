@@ -2,10 +2,10 @@ package graph
 
 import components.CommitCircle
 import components.Line
+import components.Point
 import components.Renderable
 import config.GitGraphConfiguration
-import fabricjs.FabricCanvas
-import fabricjs.Point
+import konvajs.Layer
 
 class Commit(
     var id: String,
@@ -40,64 +40,57 @@ class Commit(
         commitColor
     )
 
-    override fun render(canvas: FabricCanvas) {
-        commitCircle.render(canvas)
+    override fun render(layer: Layer) {
+        commitCircle.render(layer)
         val parent = parent
         // draw line to parent commit(s)
         if (parent != null) {
-            val dockPoint: Point =
-                if (swimlane == parent.swimlane) {
-                    parent.commitCircle.getUpperDockPoint()
-                } else if (swimlane < parent.swimlane) {
-                    parent.commitCircle.getUpperDockPoint()
-                } else {
-                    parent.commitCircle.getUpperDockPoint()
-                }
+            val dockPoint: Point = parent.commitCircle.getUpperDockPoint()
             parentLine = Line(
                 dockPoint,
                 commitCircle.getLowerDockPoint()
             )
-            parentLine?.render(canvas)
+            parentLine?.render(layer)
             val mergedCommit = mergedCommit
             if (mergedCommit != null) {
                 mergedParentLine = Line(mergedCommit.commitCircle.getUpperDockPoint(), commitCircle.getLowerDockPoint())
-                mergedParentLine?.render(canvas)
+                mergedParentLine?.render(layer)
             }
         }
     }
 
-    fun shiftRight(canvas: FabricCanvas) {
-        removeFrom(canvas)
+    fun shiftRight(layer: Layer) {
+        removeFrom(layer)
         swimlane++
         commitCircle = createCommitCircle()
-        childCommit?.rerender(canvas)
-        render(canvas)
+        childCommit?.rerender(layer)
+        render(layer)
         branches.forEach {
-            it.attachToCommit(this, canvas)
+            it.attachToCommit(this, layer)
         }
-        repositionBranches(canvas)
+        repositionBranches(layer)
     }
 
-    fun rerender(canvas: FabricCanvas) {
-        removeFrom(canvas)
+    fun rerender(layer: Layer) {
+        removeFrom(layer)
         commitCircle = createCommitCircle()
-        childCommit?.rerender(canvas)
-        render(canvas)
+        childCommit?.rerender(layer)
+        render(layer)
     }
 
-    override fun removeFrom(canvas: FabricCanvas) {
-        commitCircle.removeFrom(canvas)
-        parentLine?.removeFrom(canvas)
-        mergedParentLine?.removeFrom(canvas)
+    override fun removeFrom(layer: Layer) {
+        commitCircle.removeFrom(layer)
+        parentLine?.removeFrom(layer)
+        mergedParentLine?.removeFrom(layer)
     }
 
     override fun toString(): String = id
 
-    fun repositionBranches(canvas: FabricCanvas) {
+    fun repositionBranches(layer: Layer) {
         val branchesCopy = ArrayList(branches)
         branches.clear()
         branchesCopy.forEach { branch ->
-            branch.attachToCommit(this, canvas)
+            branch.attachToCommit(this, layer)
         }
     }
 
@@ -130,12 +123,12 @@ class Commit(
         return id.hashCode()
     }
 
-    fun show(doShow: Boolean, canvas: FabricCanvas) {
+    fun show(doShow: Boolean, layer: Layer) {
         if (doShow) {
-            removeFrom(canvas)
-            render(canvas)
+            removeFrom(layer)
+            render(layer)
         } else {
-            removeFrom(canvas)
+            removeFrom(layer)
         }
     }
 }

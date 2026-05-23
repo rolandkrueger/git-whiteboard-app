@@ -51,7 +51,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
-                implementation(npm("fabric", "5.3.0"))
+                implementation(npm("konva", "10.3.0"))
             }
         }
     }

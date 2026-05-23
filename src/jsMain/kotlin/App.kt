@@ -1,10 +1,12 @@
 import config.GitGraphConfiguration
-import fabricjs.FabricCanvas
 import graph.AbstractBranch
 import graph.GitGraph
+import konvajs.Layer
+import konvajs.Stage
+import konvajs.StageConfig
+import components.jso
 import kotlinx.browser.document
 import kotlinx.browser.window
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
 import ui.ConfirmationDialog
@@ -20,69 +22,89 @@ import ui.UiControl.Companion.isCheckboxChecked
 import ui.UiControl.Companion.showElements
 
 fun startApp() {
-    val canvasElement = document.createElement("canvas") as HTMLCanvasElement
-    canvasElement.id = "gitKannWas"
-    canvasElement.setAttribute("class", "fullscreenCanvas")
-    canvasElement.width = window.innerWidth
-    canvasElement.height = window.innerHeight
-    document.getElementById("root")?.appendChild(canvasElement)
+    // Create a container div for Konva and append it to the root element
+    val containerDiv = document.createElement("div")
+    containerDiv.id = "konvaContainer"
+    containerDiv.setAttribute("class", "fullscreenCanvas")
+    document.getElementById("root")?.appendChild(containerDiv)
 
-    val canvas = FabricCanvas("gitKannWas")
+    val stage = Stage(
+        jso<StageConfig> {
+            container = "konvaContainer"
+            width = window.innerWidth
+            height = window.innerHeight
+        }
+    )
+
+    val originLayer = Layer()
+    val aliceLayer = Layer()
+    stage.add(originLayer.asDynamic())
+    stage.add(aliceLayer.asDynamic())
 
     var isDragging = false
-    var lastPosX = 0
-    var lastPosY = 0
-    var dragStartX = 0
-    var dragStartY = 0
+    var lastPosX = 0.0
+    var lastPosY = 0.0
+    var dragStartX = 0.0
+    var dragStartY = 0.0
 
-    canvas.on("mouse:down") {
-        val event = it.e as MouseEvent
+    stage.on("mousedown") {
+        val event = it.evt as MouseEvent
         isDragging = true
-        canvas.selection = false
-        lastPosX = event.clientX
-        lastPosY = event.clientY
-        dragStartX = event.clientX
-        dragStartY = event.clientY
+        lastPosX = event.clientX.toDouble()
+        lastPosY = event.clientY.toDouble()
+        dragStartX = event.clientX.toDouble()
+        dragStartY = event.clientY.toDouble()
     }
-    canvas.on("mouse:move") {
+
+    stage.on("mousemove") {
         if (isDragging) {
-            val event = it.e as MouseEvent
-            val viewportTransform = canvas.viewportTransform
-            if (viewportTransform != null) {
-                viewportTransform.set(4, viewportTransform[4] + event.clientX - lastPosX)
-                viewportTransform.set(5, viewportTransform[5] + event.clientY - lastPosY)
-            }
-            canvas.requestRenderAll()
-            lastPosX = event.clientX
-            lastPosY = event.clientY
+            val event = it.evt as MouseEvent
+            val dx = event.clientX.toDouble() - lastPosX
+            val dy = event.clientY.toDouble() - lastPosY
+            stage.x(stage.x().toDouble() + dx)
+            stage.y(stage.y().toDouble() + dy)
+            stage.batchDraw()
+            lastPosX = event.clientX.toDouble()
+            lastPosY = event.clientY.toDouble()
         }
     }
 
-    canvas.on("mouse:wheel") {
-        val event = it.e as WheelEvent
+    // Wheel zoom: Ctrl+scroll
+    stage.getContainer().addEventListener("wheel", { evt ->
+        val event = evt as WheelEvent
         if (event.ctrlKey) {
-            val delta = event.deltaY
-            var zoom = canvas.getZoom()
-            zoom += if (delta > 0) {
-                -0.06
-            } else {
-                0.06
-            }
-            if (zoom > 3.0) zoom = 3.0
-            if (zoom < 0.2) zoom = 0.2
-            canvas.setZoom(zoom)
             event.preventDefault()
-            event.stopPropagation()
+            val delta = event.deltaY
+            var scaleX = stage.scaleX().toDouble()
+            scaleX += if (delta > 0) -0.06 else 0.06
+            if (scaleX > 3.0) scaleX = 3.0
+            if (scaleX < 0.2) scaleX = 0.2
+
+            val pointer = stage.getPointerPosition()
+            if (pointer != null) {
+                val mousePointTo = jso<konvajs.Vector2d> {
+                    x = (pointer.x.toDouble() - stage.x().toDouble()) / stage.scaleX().toDouble()
+                    y = (pointer.y.toDouble() - stage.y().toDouble()) / stage.scaleY().toDouble()
+                }
+                stage.scaleX(scaleX)
+                stage.scaleY(scaleX)
+                stage.x(pointer.x.toDouble() - mousePointTo.x.toDouble() * scaleX)
+                stage.y(pointer.y.toDouble() - mousePointTo.y.toDouble() * scaleX)
+            } else {
+                stage.scaleX(scaleX)
+                stage.scaleY(scaleX)
+            }
+            stage.batchDraw()
         }
-    }
+    })
 
     // Repo "origin" at default position; repo "alice" offset to the right
     val repoSeparation = 800
     val originConfig = GitGraphConfiguration(xOffset = 0, yOffset = 0)
     val aliceConfig = GitGraphConfiguration(xOffset = repoSeparation, yOffset = 0)
 
-    val originGraph = GitGraph(canvas, repoName = "origin", config = originConfig)
-    val aliceGraph = GitGraph(canvas, repoName = "alice", config = aliceConfig)
+    val originGraph = GitGraph(originLayer, repoName = "origin", config = originConfig)
+    val aliceGraph = GitGraph(aliceLayer, repoName = "alice", config = aliceConfig)
 
     originGraph.initGraph()
     aliceGraph.initGraph()
@@ -97,22 +119,20 @@ fun startApp() {
     }
     updateActiveRepoLabel()
 
-    canvas.on("mouse:up") {
+    stage.on("mouseup") {
         isDragging = false
-        canvas.selection = true
-        canvas.setZoom(canvas.getZoom())
 
         // Distinguish a click from a drag: only handle repo selection if the mouse barely moved
-        val event = it.e as MouseEvent
-        val dx = event.clientX - dragStartX
-        val dy = event.clientY - dragStartY
+        val event = it.evt as MouseEvent
+        val dx = event.clientX.toDouble() - dragStartX
+        val dy = event.clientY.toDouble() - dragStartY
         val movedDistance = dx * dx + dy * dy
         if (movedDistance < 25) { // less than ~5px movement = click, not drag
-            // Use absolutePointer from the Fabric event to get canvas coordinates
-            val pointer = it.absolutePointer
+            val pointer = stage.getPointerPosition()
             if (pointer != null) {
-                val px = pointer.x.toDouble()
-                val py = pointer.y.toDouble()
+                // Convert stage-relative pointer to the unscaled world coordinate
+                val px = (pointer.x.toDouble() - stage.x().toDouble()) / stage.scaleX().toDouble()
+                val py = (pointer.y.toDouble() - stage.y().toDouble()) / stage.scaleY().toDouble()
                 val clickedGraph = when {
                     aliceGraph.containsPoint(px, py) -> aliceGraph
                     originGraph.containsPoint(px, py) -> originGraph
@@ -164,7 +184,7 @@ fun startApp() {
             "Are you sure?",
             "Do you really want to reset the active repo graph and start over?"
         ) {
-            activeGraph.clearGraph(canvas)
+            activeGraph.clearGraph()
             updateBranchSelects(activeGraph.getBranches())
             updateTagSelects(activeGraph.getTags())
         }

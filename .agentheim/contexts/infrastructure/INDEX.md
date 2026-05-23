@@ -11,23 +11,23 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 1
+- **Todo:** 0
 - **Doing:** 1
-- **Done:** 2
+- **Done:** 3
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **infrastructure-004** — Konva.js integration: replace Fabric.js bindings and rewrite rendering — `todo/infrastructure-004-konva-integration.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
-- **infrastructure-003** — Dukat spike: assess Konva.js TypeScript binding generation — `doing/infrastructure-003-dukat-spike-konva-bindings.md`
+- **infrastructure-004** — Konva.js integration: replace Fabric.js bindings and rewrite rendering — `doing/infrastructure-004-konva-integration.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **infrastructure-003** — Dukat spike: assess Konva.js TypeScript binding generation — `done/infrastructure-003-dukat-spike-konva-bindings.md`
 - **infrastructure-001** — Walking skeleton: multi-repo proof-of-concept (spike) — `done/infrastructure-001-walking-skeleton.md`
 - **infrastructure-002** — Migrate canvas foundation from Fabric.js to Konva.js (decision) — `done/infrastructure-002-fabricjs-evaluation.md`
 <!-- done-list:end -->

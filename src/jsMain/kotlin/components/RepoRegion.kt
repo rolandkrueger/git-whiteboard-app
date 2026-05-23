@@ -1,8 +1,10 @@
 package components
 
-import fabricjs.FabricCanvas
-import fabricjs.FabricRect
-import fabricjs.FabricText
+import konvajs.Layer
+import konvajs.Rect
+import konvajs.RectConfig
+import konvajs.Text
+import konvajs.TextConfig
 
 /**
  * A visual region drawn behind a GitGraph to identify a repo on the shared canvas.
@@ -17,63 +19,59 @@ class RepoRegion(
     private val regionHeight: Int = 480
 ) : Renderable {
 
-    private val borderRect = FabricRect()
-    private val nameLabel = FabricText(repoName)
-
     private val ACTIVE_STROKE = "#2196F3"
     private val INACTIVE_STROKE = "#CCCCCC"
     private val STROKE_WIDTH_ACTIVE = 3
     private val STROKE_WIDTH_INACTIVE = 1
 
-    init {
-        with(borderRect) {
-            left = regionLeft
-            top = regionTop
+    private val borderRect = Rect(
+        jso<RectConfig> {
+            x = regionLeft
+            y = regionTop
             width = regionWidth
             height = regionHeight
             fill = "transparent"
             stroke = INACTIVE_STROKE
             strokeWidth = STROKE_WIDTH_INACTIVE
-            selectable = false
-            evented = false
-            rx = 8
-            ry = 8
+            cornerRadius = 8
+            listening = false
         }
-        with(nameLabel) {
-            left = regionLeft + 12
-            top = regionTop + 8
+    )
+
+    private val nameLabel = Text(
+        jso<TextConfig> {
+            x = regionLeft + 12
+            y = regionTop + 8
+            text = repoName
             fontSize = 18
             fontFamily = "Courier New"
             fill = "#888888"
-            selectable = false
-            evented = false
+            listening = false
         }
+    )
+
+    override fun render(layer: Layer) {
+        layer.add(borderRect.asDynamic())
+        borderRect.moveToBottom()
+        layer.add(nameLabel.asDynamic())
+        nameLabel.moveToBottom()
     }
 
-    override fun render(canvas: FabricCanvas) {
-        canvas.add(borderRect)
-        canvas.sendToBack(borderRect)
-        canvas.add(nameLabel)
-        canvas.sendToBack(nameLabel)
-    }
-
-    override fun removeFrom(canvas: FabricCanvas) {
-        canvas.remove(borderRect)
-        canvas.remove(nameLabel)
+    override fun removeFrom(layer: Layer) {
+        borderRect.destroy()
+        nameLabel.destroy()
     }
 
     fun setActive(active: Boolean) {
         if (active) {
-            borderRect.set("stroke", ACTIVE_STROKE)
-            borderRect.strokeWidth = STROKE_WIDTH_ACTIVE
-            nameLabel.set("fill", "#2196F3")
+            borderRect.stroke(ACTIVE_STROKE)
+            borderRect.strokeWidth(STROKE_WIDTH_ACTIVE.toDouble())
+            nameLabel.fill("#2196F3")
         } else {
-            borderRect.set("stroke", INACTIVE_STROKE)
-            borderRect.strokeWidth = STROKE_WIDTH_INACTIVE
-            nameLabel.set("fill", "#888888")
+            borderRect.stroke(INACTIVE_STROKE)
+            borderRect.strokeWidth(STROKE_WIDTH_INACTIVE.toDouble())
+            nameLabel.fill("#888888")
         }
-        borderRect.dirty = true
-        nameLabel.dirty = true
     }
 
     /**

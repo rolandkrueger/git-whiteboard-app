@@ -2,9 +2,7 @@ package graph
 
 import components.*
 import config.GitGraphConfiguration
-import fabricjs.FabricCanvas
-import fabricjs.Point
-import fabricjs.plus
+import konvajs.Layer
 
 abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: Int = 1, var commit: Commit, val commitColor: String = "") :
     Renderable {
@@ -13,8 +11,8 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
 
     abstract fun getLabel(): CommitLabel
 
-    override fun render(canvas: FabricCanvas) {
-        getLabel().render(canvas)
+    override fun render(layer: Layer) {
+        getLabel().render(layer)
     }
 
     fun onDoubleClick(handler: () -> Unit) {
@@ -35,14 +33,14 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
 
     fun isCheckedOut() = head != null
 
-    fun attachToCommit(commit: Commit, canvas: FabricCanvas) {
+    fun attachToCommit(commit: Commit, layer: Layer) {
         commit.addBranch(this)
-        getLabel().attachToCommit(commit, canvas)
-        head?.attachToBranch(this, canvas)
+        getLabel().attachToCommit(commit, layer)
+        head?.attachToBranch(this, layer)
     }
 
-    override fun removeFrom(canvas: FabricCanvas) {
-        getLabel().removeFrom(canvas)
+    override fun removeFrom(layer: Layer) {
+        getLabel().removeFrom(layer)
     }
 
     fun shiftToNextSwimlane() {
@@ -92,11 +90,11 @@ class Head(commit: Commit, var targetBranch: AbstractBranch? = null) : AbstractB
         return headLabel
     }
 
-    fun attachToBranch(branch: AbstractBranch, canvas: FabricCanvas) {
+    fun attachToBranch(branch: AbstractBranch, layer: Layer) {
         if (isDetached) {
             commit.removeBranch(this)
         }
-        getLabel().attachToLabel(branch.getLabel(), canvas)
+        getLabel().attachToLabel(branch.getLabel(), layer)
         commit = branch.commit
     }
 }
@@ -112,9 +110,9 @@ class Tag(id: String, commit: Commit) : AbstractBranch(id, 0, commit = commit) {
         commit.addBranch(this)
     }
 
-    override fun render(canvas: FabricCanvas) {
-        tagLabel.render(canvas)
-        tagLabel.attachToCommit(commit, canvas)
+    override fun render(layer: Layer) {
+        tagLabel.render(layer)
+        tagLabel.attachToCommit(commit, layer)
     }
 
     override fun getLabel(): CommitLabel {

@@ -1,60 +1,51 @@
 package components
 
 import config.GitGraphConfiguration
-import fabricjs.FabricCanvas
-import fabricjs.FabricRect
-import fabricjs.FabricText
-import fabricjs.fabric
+import konvajs.Layer
+import konvajs.Rect
+import konvajs.RectConfig
+import konvajs.Text
+import konvajs.TextConfig
 
-class CommitIdLabel(id: String, position: fabric.Point) : Renderable {
+class CommitIdLabel(id: String, position: Point) : Renderable {
 
-    private var rectangle: FabricRect = FabricRect()
-    private var fabricTextObject: FabricText
-
-    init {
-        with(rectangle) {
-            fill = "#FFF"
+    private var rectangle: Rect = Rect(
+        jso<RectConfig> {
+            x = position.x
+            y = position.y
             width = CommitLabel.calcLabelWidth(id)
             height = GitGraphConfiguration.labelHeight
-            selectable = false
-            hoverCursor = "pointer"
-            strokeWidth = 2
-            opacity = 0.8
-            rx = 5
-            ry = 5
-            strokeWidth = 1
+            fill = "#FFF"
             stroke = "black"
-            left = position.x
-            top = position.y
+            strokeWidth = 1
+            opacity = 0.8
+            cornerRadius = 5
+            listening = true
         }
-
-        fabricTextObject = FabricText(id)
-        with(fabricTextObject) {
+    )
+    private var textObject: Text = Text(
+        jso<TextConfig> {
+            x = position.x + 5
+            y = position.y + 2
+            text = id
             fontSize = 16
             fontFamily = "Courier New"
             fill = "#000"
-            selectable = false
-            hoverCursor = "pointer"
-            left = position.x + 5
-            top = position.y + 2
         }
-    }
+    )
 
     fun onDoubleClick(handler: () -> Unit) {
-        rectangle.on("mousedblclick") {
-            handler()
-        }
-        fabricTextObject.on("mousedblclick") {
-            handler()
-        }
+        rectangle.on("dblclick") { handler() }
+        textObject.on("dblclick") { handler() }
     }
 
-    override fun render(canvas: FabricCanvas) {
-        canvas.add(rectangle)
-        canvas.add(fabricTextObject)
+    override fun render(layer: Layer) {
+        layer.add(rectangle.asDynamic())
+        layer.add(textObject.asDynamic())
     }
 
-    override fun removeFrom(canvas: FabricCanvas) {
-        canvas.remove(rectangle, fabricTextObject)
+    override fun removeFrom(layer: Layer) {
+        rectangle.destroy()
+        textObject.destroy()
     }
 }

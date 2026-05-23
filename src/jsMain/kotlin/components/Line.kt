@@ -1,25 +1,26 @@
 package components
 
-import fabricjs.FabricCanvas
-import fabricjs.FabricLine
-import fabricjs.Point
+import konvajs.Layer
+import konvajs.Line as KonvaLine
+import konvajs.LineConfig
 
 class Line(start: Point, end: Point) : Renderable {
-    private val line: FabricLine = FabricLine(arrayOf(start.x, start.y, end.x, end.y))
-
-    override fun render(canvas: FabricCanvas) {
-        with(line) {
+    private val line: KonvaLine = KonvaLine(
+        jso<LineConfig> {
+            points = arrayOf(start.x, start.y, end.x, end.y)
             fill = "black"
             stroke = "black"
             strokeWidth = 3
-            selectable = false
-            evented = false
+            listening = false
         }
-        canvas.add(line)
-        canvas.sendToBack(line)
+    )
+
+    override fun render(layer: Layer) {
+        layer.add(line.asDynamic())
+        line.moveToBottom()
     }
 
-    override fun removeFrom(canvas: FabricCanvas) {
-        canvas.remove(line)
+    override fun removeFrom(layer: Layer) {
+        line.destroy()
     }
 }
