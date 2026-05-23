@@ -5,6 +5,40 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Batch started: [infrastructure-003]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-003 - Dukat spike: assess Konva.js TypeScript binding generation
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Task bounced: infrastructure-003 - Dukat spike: assess Konva.js TypeScript binding generation
+
+**Type:** Work / Task bounced
+**Task:** infrastructure-003 - Dukat spike: assess Konva.js TypeScript binding generation
+**Reason:** Bash tool was denied in this session. Spike requires shell access to install dukat, run npm install konva, and invoke dukat against the type definitions. Worker note added to task file.
+**Moved to:** backlog
+
+---
+
+## 2026-05-23 -- Batch started: [infrastructure-003]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-003 - Dukat spike: assess Konva.js TypeScript binding generation
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Model / Captured: infrastructure-003, infrastructure-004 - Konva.js migration tasks
+
+**Type:** Model / Capture
+**BC:** infrastructure
+**Filed to:** todo
+**Summary:** Two implementation tasks capturing the Konva.js migration work mandated by ADR-0003. infrastructure-003 (Dukat spike) must run first to assess binding generation quality; infrastructure-004 (full integration) depends on it and replaces all Fabric.js bindings and rendering code. Both tasks include prior art links to infrastructure-001 and infrastructure-002 and cross-reference ADRs 0001/0002/0003.
+
+---
+
 ## 2026-05-23 -- Work session ended
 
 **Type:** Work / Session end

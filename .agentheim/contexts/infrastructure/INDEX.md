@@ -11,17 +11,19 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 0
-- **Doing:** 0
+- **Todo:** 1
+- **Doing:** 1
 - **Done:** 2
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **infrastructure-004** — Konva.js integration: replace Fabric.js bindings and rewrite rendering — `todo/infrastructure-004-konva-integration.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **infrastructure-003** — Dukat spike: assess Konva.js TypeScript binding generation — `doing/infrastructure-003-dukat-spike-konva-bindings.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
