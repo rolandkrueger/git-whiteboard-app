@@ -47,18 +47,22 @@ fun startApp() {
     var dragStartX = 0.0
     var dragStartY = 0.0
 
-    stage.on("mousedown") {
-        val event = it.evt as MouseEvent
+    // Use native DOM events on the container for pan — Konva synthetic events are unreliable
+    // when shapes with listening:true intercept the pointer, preventing bubbling to the stage.
+    val container = stage.getContainer()
+
+    container.addEventListener("mousedown", { evt ->
+        val event = evt as MouseEvent
         isDragging = true
         lastPosX = event.clientX.toDouble()
         lastPosY = event.clientY.toDouble()
         dragStartX = event.clientX.toDouble()
         dragStartY = event.clientY.toDouble()
-    }
+    })
 
-    stage.on("mousemove") {
+    container.addEventListener("mousemove", { evt ->
         if (isDragging) {
-            val event = it.evt as MouseEvent
+            val event = evt as MouseEvent
             val dx = event.clientX.toDouble() - lastPosX
             val dy = event.clientY.toDouble() - lastPosY
             stage.x(stage.x().toDouble() + dx)
@@ -67,10 +71,15 @@ fun startApp() {
             lastPosX = event.clientX.toDouble()
             lastPosY = event.clientY.toDouble()
         }
-    }
+    })
+
+    // Clear drag state when pointer leaves the canvas — prevents sticky pan
+    container.addEventListener("mouseleave", {
+        isDragging = false
+    })
 
     // Wheel zoom: Ctrl+scroll
-    stage.getContainer().addEventListener("wheel", { evt ->
+    container.addEventListener("wheel", { evt ->
         val event = evt as WheelEvent
         if (event.ctrlKey) {
             event.preventDefault()
@@ -119,36 +128,40 @@ fun startApp() {
     }
     updateActiveRepoLabel()
 
-    stage.on("mouseup") {
+    // Use native mouseup on window so release outside canvas still clears isDragging
+    window.addEventListener("mouseup", { evt ->
+        val wasDragging = isDragging
         isDragging = false
 
+        if (!wasDragging) return@addEventListener
+
         // Distinguish a click from a drag: only handle repo selection if the mouse barely moved
-        val event = it.evt as MouseEvent
+        val event = evt as MouseEvent
         val dx = event.clientX.toDouble() - dragStartX
         val dy = event.clientY.toDouble() - dragStartY
         val movedDistance = dx * dx + dy * dy
         if (movedDistance < 25) { // less than ~5px movement = click, not drag
-            val pointer = stage.getPointerPosition()
-            if (pointer != null) {
-                // Convert stage-relative pointer to the unscaled world coordinate
-                val px = (pointer.x.toDouble() - stage.x().toDouble()) / stage.scaleX().toDouble()
-                val py = (pointer.y.toDouble() - stage.y().toDouble()) / stage.scaleY().toDouble()
-                val clickedGraph = when {
-                    aliceGraph.containsPoint(px, py) -> aliceGraph
-                    originGraph.containsPoint(px, py) -> originGraph
-                    else -> null
-                }
-                if (clickedGraph != null && clickedGraph != activeGraph) {
-                    activeGraph.isActive = false
-                    activeGraph = clickedGraph
-                    activeGraph.isActive = true
-                    updateActiveRepoLabel()
-                    updateBranchSelects(activeGraph.getBranches())
-                    updateTagSelects(activeGraph.getTags())
-                }
+            // Compute canvas-relative position from native event, then apply stage transform
+            val rect = container.getBoundingClientRect()
+            val canvasX = event.clientX.toDouble() - rect.left
+            val canvasY = event.clientY.toDouble() - rect.top
+            val px = (canvasX - stage.x().toDouble()) / stage.scaleX().toDouble()
+            val py = (canvasY - stage.y().toDouble()) / stage.scaleY().toDouble()
+            val clickedGraph = when {
+                aliceGraph.containsPoint(px, py) -> aliceGraph
+                originGraph.containsPoint(px, py) -> originGraph
+                else -> null
+            }
+            if (clickedGraph != null && clickedGraph != activeGraph) {
+                activeGraph.isActive = false
+                activeGraph = clickedGraph
+                activeGraph.isActive = true
+                updateActiveRepoLabel()
+                updateBranchSelects(activeGraph.getBranches())
+                updateTagSelects(activeGraph.getTags())
             }
         }
-    }
+    })
 
     doWhenButtonClicked("expandPanelButton") {
         hideElements("collapsedControlPanel")

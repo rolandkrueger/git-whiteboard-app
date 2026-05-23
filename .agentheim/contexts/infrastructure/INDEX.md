@@ -13,7 +13,7 @@ research touching this BC, and concept synthesis pages.
 - **Backlog:** 0
 - **Todo:** 0
 - **Doing:** 0
-- **Done:** 4
+- **Done:** 5
 <!-- task-counts:end -->
 
 ### Todo
@@ -26,6 +26,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **infrastructure-005** — Canvas drag-to-pan broken after Konva.js migration — `done/infrastructure-005-canvas-pan-broken.md`
 - **infrastructure-004** — Konva.js integration: replace Fabric.js bindings and rewrite rendering — `done/infrastructure-004-konva-integration.md`
 - **infrastructure-003** — Dukat spike: assess Konva.js TypeScript binding generation — `done/infrastructure-003-dukat-spike-konva-bindings.md`
 - **infrastructure-001** — Walking skeleton: multi-repo proof-of-concept (spike) — `done/infrastructure-001-walking-skeleton.md`

@@ -5,6 +5,36 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Task verified and completed: infrastructure-005 - Canvas drag-to-pan broken after Konva.js migration
+
+**Type:** Work / Task completion
+**Task:** infrastructure-005 - Canvas drag-to-pan broken after Konva.js migration
+**Summary:** Restored drag-to-pan by replacing Konva synthetic stage events with native DOM events on the container; also added mouseleave guard and moved mouseup to window to handle release outside the canvas.
+**Verification:** PASS (iteration 1)
+**Commit:** TBD
+**Files changed:** 1
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-05-23 -- Batch started: [infrastructure-005]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-005 - Canvas drag-to-pan broken after Konva.js migration
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Model / Captured: infrastructure-005 - Canvas drag-to-pan broken after Konva.js migration
+
+**Type:** Model / Capture
+**BC:** infrastructure
+**Filed to:** todo
+**Summary:** Regression from infrastructure-004 — canvas drag-to-pan stopped working after the Konva.js migration; Ctrl+scroll zoom is unaffected. Filed directly to todo as a concrete, observable regression with clear acceptance criteria.
+
+---
+
 ## 2026-05-23 -- Work session ended
 
 **Type:** Work / Session end
