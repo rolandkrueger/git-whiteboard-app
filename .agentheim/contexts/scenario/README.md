@@ -30,9 +30,17 @@ supporting — valuable time-saver for trainers who teach the same topics repeat
 ## Relationships with other contexts
 - **Conformist to:** git-canvas — the state shape is owned by git-canvas; scenario adapts to it
 
-## Encoding format (decided — ADR 0002)
+## Encoding format (decided — ADR 0002, implemented in scenario-002)
 
-JSON + gzip + base64url in the URL fragment (`#state=<base64url>`). The fragment is never sent to a server. On startup the app checks for `#state=`; if present it deserializes and restores the graph instead of the default blank canvas. A "Share" button in the control panel triggers serialization and writes the encoded state to the address bar.
+JSON + gzip + base64url in the URL fragment (`#state=<base64url>`). The fragment is never sent to a server. On startup the app checks for `#state=`; if present it deserializes and restores the graph instead of the default blank canvas. A "Share" button in the control panel triggers serialization, writes the encoded state to the address bar, and copies the full URL to the clipboard.
+
+### Implementation shape
+
+- `src/jsMain/kotlin/scenario/GraphSnapshot.kt` — data classes: `MultiRepoSnapshot`, `RepoSnapshot`, `CommitSnapshot`, `BranchSnapshot`, `TagSnapshot`, `HeadSnapshot`
+- `src/jsMain/kotlin/scenario/ScenarioSerializer.kt` — `ScenarioSerializer` object (encode/decode via `JSON.stringify/parse` on dynamic objects); `compressToBase64Url()` and `decompressFromBase64Url()` (gzip via browser `CompressionStream`/`DecompressionStream` APIs, returning Promises)
+- `graph/GitGraph.kt` — `getSnapshot(): RepoSnapshot` and `restoreFromSnapshot(snapshot: RepoSnapshot)` methods
+- `App.kt` — Share button handler; startup hash detection and async restore path
+- `index.html` — Share button in control panel header
 
 ## Open questions
 - Should the app ship with a preset scenario library (cherry-pick demo, rebase demo, conflict demo)?

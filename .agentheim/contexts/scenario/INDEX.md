@@ -13,7 +13,7 @@ research touching this BC, and concept synthesis pages.
 - **Backlog:** 0
 - **Todo:** 0
 - **Doing:** 0
-- **Done:** 1
+- **Done:** 2
 <!-- task-counts:end -->
 
 ### Todo
@@ -26,6 +26,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **scenario-002** — Share button — encode and restore graph state via URL fragment — `done/scenario-002-share-button-url-encoding.md`
 - **scenario-001** — URL encoding format for graph snapshots (decision) — `done/scenario-001-url-encoding-decision.md`
 <!-- done-list:end -->
 

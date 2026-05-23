@@ -5,6 +5,47 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Task verified and completed: scenario-002 - Share button — encode and restore graph state via URL fragment
+
+**Type:** Work / Task completion
+**Task:** scenario-002 - Share button — encode and restore graph state via URL fragment
+**Summary:** Implemented end-to-end URL-based scenario sharing: Share button serializes multi-repo graph state to JSON, compresses with gzip, base64url-encodes, writes to URL fragment and copies to clipboard; on startup detects #state= fragment and asynchronously restores both graphs.
+**Verification:** PASS (iteration 2 — iteration 1 fixed two bugs: version field jsIntOrNull coercion, return pump() in decompressFromBase64Url)
+**Commit:** TBD
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-05-23 -- Verification failed: scenario-002 - Share button — encode and restore graph state via URL fragment
+
+**Type:** Work / Verification failure
+**Task:** scenario-002 - Share button — encode and restore graph state via URL fragment
+**Iteration:** 1 of 3
+**Reasons:** ScenarioSerializer.decode always returns null — version field uses as? Int instead of jsIntOrNull (JSON.parse returns Double not Int); decompressFromBase64Url missing return pump() in recursive loop causing Promise to never settle on mid-stream failure
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
+## 2026-05-23 -- Batch started: [scenario-002]
+
+**Type:** Work / Batch start
+**Tasks:** scenario-002 - Share button — encode and restore graph state via URL fragment
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Model / Captured: scenario-002 - Share button — encode and restore graph state via URL fragment
+
+**Type:** Model / Capture
+**BC:** scenario
+**Filed to:** todo
+**Summary:** Implements the EncodeCurrentStateAsUrl + LoadScenarioFromUrl commands from ADR-0002: a Share button serializes multi-repo graph state to JSON, compresses with gzip, base64url-encodes, and writes to the URL fragment; on startup, the app detects and restores from that fragment instead of rendering the default blank canvas.
+
+---
+
 ## 2026-05-23 -- Work session ended
 
 **Type:** Work / Session end

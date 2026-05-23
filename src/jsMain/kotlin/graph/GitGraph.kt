@@ -3,6 +3,11 @@ package graph
 import components.RepoRegion
 import config.GitGraphConfiguration
 import konvajs.Layer
+import scenario.BranchSnapshot
+import scenario.CommitSnapshot
+import scenario.HeadSnapshot
+import scenario.RepoSnapshot
+import scenario.TagSnapshot
 
 class GitGraph(
     private val layer: Layer,
@@ -480,6 +485,162 @@ class GitGraph(
         globalSwimlaneCounter = 0
         head = Head(Commit("", 0, 0, config = config))
         initGraph()
+        layer.batchDraw()
+    }
+
+    /** Returns a snapshot of the current state for URL encoding. */
+    fun getSnapshot(): RepoSnapshot {
+        val commitSnapshots = commits.map { commit ->
+            CommitSnapshot(
+                id = commit.id,
+                linePosition = commit.linePosition,
+                swimlane = commit.swimlane,
+                parentId = commit.parent?.id,
+                mergedParentId = commit.mergedCommit?.id,
+                commitColor = commit.commitColor,
+                isLostInReflog = commit.isLostInReflog
+            )
+        }
+        val branchSnapshots = branches
+            .filter { it.id != "HEAD" }
+            .map { branch ->
+                BranchSnapshot(
+                    id = branch.id,
+                    swimlane = branch.swimlane,
+                    targetCommitId = branch.commit.id,
+                    commitColor = branch.commitColor
+                )
+            }
+        val tagSnapshots = tags.map { tag ->
+            TagSnapshot(id = tag.id, targetCommitId = tag.commit.id)
+        }
+        val headSnapshot = HeadSnapshot(
+            targetBranchId = if (head.isDetached) null else head.targetBranch?.id,
+            detachedCommitId = if (head.isDetached) head.commit.id else null
+        )
+        return RepoSnapshot(
+            repoName = repoName,
+            xOffset = config.xOffset,
+            yOffset = config.yOffset,
+            globalCommitNumber = globalCommitNumber,
+            globalSwimlaneCounter = globalSwimlaneCounter,
+            commits = commitSnapshots,
+            branches = branchSnapshots,
+            tags = tagSnapshots,
+            head = headSnapshot
+        )
+    }
+
+    /**
+     * Restores the graph state from a snapshot. Must be called instead of initGraph().
+     * Directly populates commits, branches, tags and head, then re-renders everything.
+     */
+    fun restoreFromSnapshot(snapshot: RepoSnapshot) {
+        // Render the repo region border (same as initGraph() does)
+        if (!initialized) {
+            repoRegion.render(layer)
+            initialized = true
+        }
+
+        // Restore counters
+        globalCommitNumber = snapshot.globalCommitNumber
+        globalSwimlaneCounter = snapshot.globalSwimlaneCounter
+
+        // Rebuild commit objects in order (snapshot stores parents before children)
+        val commitMap = mutableMapOf<String, Commit>()
+        for (cs in snapshot.commits) {
+            val parent = if (cs.parentId != null) commitMap[cs.parentId] else null
+            val commit = Commit(
+                id = cs.id,
+                linePosition = cs.linePosition,
+                swimlane = cs.swimlane,
+                parent = parent,
+                commitColor = cs.commitColor,
+                config = config
+            )
+            commit.isLostInReflog = cs.isLostInReflog
+            // Wire childCommit on parent
+            if (parent != null && parent.childCommit == null) {
+                parent.childCommit = commit
+            }
+            commitMap[cs.id] = commit
+            commits.add(commit)
+        }
+        // Second pass: wire mergedCommit references and parent lines
+        for (cs in snapshot.commits) {
+            if (cs.mergedParentId != null) {
+                val commit = commitMap[cs.id]
+                val mergedParent = commitMap[cs.mergedParentId]
+                if (commit != null && mergedParent != null) {
+                    commit.mergedCommit = mergedParent
+                    if (mergedParent.childCommit == null) {
+                        mergedParent.childCommit = commit
+                    }
+                }
+            }
+        }
+
+        // Render commits (draws circles and parent lines)
+        commits.forEach { commit ->
+            commit.render(layer)
+            commit.commitCircle.onDoubleClick(checkoutHandler(commit))
+        }
+
+        // Restore branches (non-HEAD)
+        for (bs in snapshot.branches) {
+            val targetCommit = commitMap[bs.targetCommitId] ?: continue
+            val branch = Branch(
+                id = bs.id,
+                swimlane = bs.swimlane,
+                commit = targetCommit,
+                commitColor = bs.commitColor
+            )
+            branch.onDoubleClick { checkout(bs.id, showLostCommits) }
+            branches.add(branch)
+            targetCommit.addBranch(branch)
+            branch.render(layer)
+            branch.getLabel().attachToCommit(targetCommit, layer)
+        }
+        branches.sortBy { it.id }
+
+        // Restore tags
+        for (ts in snapshot.tags) {
+            val targetCommit = commitMap[ts.targetCommitId] ?: continue
+            val tag = Tag(ts.id, targetCommit)
+            tag.render(layer)
+            tag.onDoubleClick { checkout(ts.id, showLostCommits) }
+            tags.add(tag)
+        }
+        tags.sortBy { it.id }
+
+        // Restore HEAD
+        val headSnapshot = snapshot.head
+        if (headSnapshot.targetBranchId != null) {
+            // Attached HEAD
+            val targetBranch = branches.find { it.id == headSnapshot.targetBranchId }
+            if (targetBranch != null) {
+                head = Head(targetBranch.commit, targetBranch)
+                targetBranch.checkedOut(head)
+                targetBranch.commit.addBranch(head)
+                head.attachToBranch(targetBranch, layer)
+            } else {
+                // Fallback: detach to the first commit
+                val fallbackCommit = commits.firstOrNull() ?: Commit("", 0, 0, config = config)
+                head = Head(fallbackCommit)
+                head.attachToCommit(fallbackCommit, layer)
+            }
+        } else if (headSnapshot.detachedCommitId != null) {
+            // Detached HEAD
+            val targetCommit = commitMap[headSnapshot.detachedCommitId]
+            if (targetCommit != null) {
+                head = Head(targetCommit)
+                targetCommit.addBranch(head)
+                head.attachToCommit(targetCommit, layer)
+            }
+        }
+        head.render(layer)
+        branches.add(head)
+
         layer.batchDraw()
     }
 }

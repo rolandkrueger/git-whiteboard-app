@@ -9,6 +9,10 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
+import scenario.MultiRepoSnapshot
+import scenario.ScenarioSerializer
+import scenario.compressToBase64Url
+import scenario.decompressFromBase64Url
 import ui.ConfirmationDialog
 import ui.UiControl
 import ui.UiControl.Companion.activateTab
@@ -115,9 +119,6 @@ fun startApp() {
     val originGraph = GitGraph(originLayer, repoName = "origin", config = originConfig)
     val aliceGraph = GitGraph(aliceLayer, repoName = "alice", config = aliceConfig)
 
-    originGraph.initGraph()
-    aliceGraph.initGraph()
-
     // origin is active by default
     var activeGraph = originGraph
     originGraph.isActive = true
@@ -127,6 +128,56 @@ fun startApp() {
         document.getElementById("activeRepoLabel")?.textContent = "Active: ${activeGraph.repoName}"
     }
     updateActiveRepoLabel()
+
+    // ---- Startup: restore from URL fragment if present, otherwise init blank graph ----
+    fun initBothGraphs() {
+        originGraph.initGraph()
+        aliceGraph.initGraph()
+        updateBranchSelects(activeGraph.getBranches())
+        updateTagSelects(activeGraph.getTags())
+    }
+
+    fun restoreFromHash(encoded: String) {
+        val promise = decompressFromBase64Url(encoded)
+        promise.then({ json: String ->
+            val snapshot: MultiRepoSnapshot? = ScenarioSerializer.decode(json)
+            if (snapshot == null || snapshot.version != 1) {
+                console.warn("URL state could not be decoded; falling back to blank canvas.")
+                initBothGraphs()
+                return@then
+            }
+            val graphs = mapOf(originGraph.repoName to originGraph, aliceGraph.repoName to aliceGraph)
+            for (repoSnapshot in snapshot.repos) {
+                val graph = graphs[repoSnapshot.repoName]
+                if (graph != null) {
+                    graph.restoreFromSnapshot(repoSnapshot)
+                }
+            }
+            // Any graph not mentioned in snapshot falls back to blank init
+            val restoredNames = snapshot.repos.map { it.repoName }.toSet()
+            if (originGraph.repoName !in restoredNames) originGraph.initGraph()
+            if (aliceGraph.repoName !in restoredNames) aliceGraph.initGraph()
+
+            updateBranchSelects(activeGraph.getBranches())
+            updateTagSelects(activeGraph.getTags())
+        }, { _: dynamic ->
+            console.warn("URL state decompression failed; falling back to blank canvas.")
+            initBothGraphs()
+        })
+    }
+
+    val hash = window.location.hash
+    val statePrefix = "#state="
+    if (hash.startsWith(statePrefix)) {
+        val encoded = hash.removePrefix(statePrefix)
+        if (encoded.isNotEmpty()) {
+            restoreFromHash(encoded)
+        } else {
+            initBothGraphs()
+        }
+    } else {
+        initBothGraphs()
+    }
 
     // Use native mouseup on window so release outside canvas still clears isDragging
     window.addEventListener("mouseup", { evt ->
@@ -162,6 +213,27 @@ fun startApp() {
             }
         }
     })
+
+    // ---- Share button: encode current canvas state to URL fragment and clipboard ----
+    doWhenButtonClicked("shareButton") {
+        val snapshot = MultiRepoSnapshot(
+            version = 1,
+            repos = listOf(originGraph.getSnapshot(), aliceGraph.getSnapshot())
+        )
+        val json = ScenarioSerializer.encode(snapshot)
+        val compressPromise = compressToBase64Url(json)
+        compressPromise.then({ encoded: String ->
+            window.location.hash = "state=$encoded"
+            val fullUrl = window.location.href
+            window.navigator.clipboard.writeText(fullUrl).then({ _: dynamic ->
+                console.log("Share URL copied to clipboard.")
+            }, { err: dynamic ->
+                console.warn("Could not copy to clipboard: $err")
+            })
+        }, { err: dynamic ->
+            console.warn("Share: compression failed: $err")
+        })
+    }
 
     doWhenButtonClicked("expandPanelButton") {
         hideElements("collapsedControlPanel")
@@ -307,9 +379,6 @@ fun startApp() {
     }
 
     doWhenCheckboxClicked("showLostCommitsCheckbox") { activeGraph.showLostCommits(it) }
-
-    // Initialise branch/tag selects for the active (origin) repo
-    updateBranchSelects(activeGraph.getBranches())
 }
 
 fun updateBranchSelects(branches: List<AbstractBranch>) {
