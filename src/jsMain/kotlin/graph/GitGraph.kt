@@ -1,8 +1,14 @@
 package graph
 
+import components.RepoRegion
+import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
 
-class GitGraph(private val canvas: FabricCanvas) {
+class GitGraph(
+    private val canvas: FabricCanvas,
+    val repoName: String = "origin",
+    private val config: GitGraphConfiguration = GitGraphConfiguration()
+) {
     private val checkoutHandler: (Commit) -> (() -> Unit)
     private val commits = mutableListOf<Commit>()
     private val branches = mutableListOf<AbstractBranch>()
@@ -11,20 +17,37 @@ class GitGraph(private val canvas: FabricCanvas) {
     private var globalSwimlaneCounter = 0
     private var head: Head
     private var showLostCommits = true
+    private val repoRegion = RepoRegion(repoName, config.leftOffset - 60, config.bottomOffset - 320)
+
+    var isActive: Boolean = false
+        set(value) {
+            field = value
+            repoRegion.setActive(value)
+            canvas.renderAll()
+        }
 
     init {
-        head = Head(Commit("", 0, 0))
+        head = Head(Commit("", 0, 0, config = config))
         checkoutHandler = { commit -> { checkout(commit.id, showLostCommits) } }
     }
+
+    /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
+    fun containsPoint(x: Double, y: Double): Boolean = repoRegion.containsPoint(x, y)
+
+    private var initialized = false
 
     fun initGraph() {
         if (globalCommitNumber > 0) {
             throw IllegalStateException("Git graph may only be initialized once.")
         }
 
-        console.log("Initialize a new Git graph")
+        console.log("Initialize a new Git graph for repo: $repoName")
+        if (!initialized) {
+            repoRegion.render(canvas)
+            initialized = true
+        }
         val branchColor = BranchColors.nextColor()
-        val initialCommit = Commit("m1", globalCommitNumber++, 0, commitColor = branchColor)
+        val initialCommit = Commit("m1", globalCommitNumber++, 0, commitColor = branchColor, config = config)
         initialCommit.commitCircle.onDoubleClick(checkoutHandler(initialCommit))
         commits.add(initialCommit)
         head = Head(initialCommit)
@@ -86,7 +109,7 @@ class GitGraph(private val canvas: FabricCanvas) {
             commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
         val commit = Commit(
             id, linePosition, newSwimlane, parentCommit,
-            newCommitColor
+            newCommitColor, config
         )
         parentCommit?.childCommit = commit
         mergedParentCommit?.childCommit = commit
@@ -439,5 +462,23 @@ class GitGraph(private val canvas: FabricCanvas) {
             calculateLostCommits()
             canvas.renderAll()
         }
+    }
+
+    /**
+     * Clears all commits, branches, and tags from this repo and re-initializes
+     * to the initial state. The region border is preserved.
+     */
+    fun clearGraph(canvas: FabricCanvas) {
+        commits.forEach { it.removeFrom(canvas) }
+        commits.clear()
+        branches.forEach { it.removeFrom(canvas) }
+        branches.clear()
+        tags.forEach { it.removeFrom(canvas) }
+        tags.clear()
+        globalCommitNumber = 0
+        globalSwimlaneCounter = 0
+        head = Head(Commit("", 0, 0, config = config))
+        initGraph()
+        canvas.renderAll()
     }
 }

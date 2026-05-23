@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 0
-- **Doing:** 1
-- **Done:** 1
+- **Doing:** 0
+- **Done:** 2
 <!-- task-counts:end -->
 
 ### Todo
@@ -22,11 +22,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **infrastructure-001** — Walking skeleton: multi-repo proof-of-concept (spike) — `doing/infrastructure-001-walking-skeleton.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **infrastructure-001** — Walking skeleton: multi-repo proof-of-concept (spike) — `done/infrastructure-001-walking-skeleton.md`
 - **infrastructure-002** — Migrate canvas foundation from Fabric.js to Konva.js (decision) — `done/infrastructure-002-fabricjs-evaluation.md`
 <!-- done-list:end -->
 

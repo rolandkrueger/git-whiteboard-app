@@ -1,3 +1,4 @@
+import config.GitGraphConfiguration
 import fabricjs.FabricCanvas
 import graph.AbstractBranch
 import graph.GitGraph
@@ -31,6 +32,8 @@ fun startApp() {
     var isDragging = false
     var lastPosX = 0
     var lastPosY = 0
+    var dragStartX = 0
+    var dragStartY = 0
 
     canvas.on("mouse:down") {
         val event = it.e as MouseEvent
@@ -38,6 +41,8 @@ fun startApp() {
         canvas.selection = false
         lastPosX = event.clientX
         lastPosY = event.clientY
+        dragStartX = event.clientX
+        dragStartY = event.clientY
     }
     canvas.on("mouse:move") {
         if (isDragging) {
@@ -51,11 +56,6 @@ fun startApp() {
             lastPosX = event.clientX
             lastPosY = event.clientY
         }
-    }
-    canvas.on("mouse:up") {
-        isDragging = false
-        canvas.selection = true
-        canvas.setZoom(canvas.getZoom())
     }
 
     canvas.on("mouse:wheel") {
@@ -76,8 +76,59 @@ fun startApp() {
         }
     }
 
-    var gitGraph = GitGraph(canvas)
-    gitGraph.initGraph()
+    // Repo "origin" at default position; repo "alice" offset to the right
+    val repoSeparation = 800
+    val originConfig = GitGraphConfiguration(xOffset = 0, yOffset = 0)
+    val aliceConfig = GitGraphConfiguration(xOffset = repoSeparation, yOffset = 0)
+
+    val originGraph = GitGraph(canvas, repoName = "origin", config = originConfig)
+    val aliceGraph = GitGraph(canvas, repoName = "alice", config = aliceConfig)
+
+    originGraph.initGraph()
+    aliceGraph.initGraph()
+
+    // origin is active by default
+    var activeGraph = originGraph
+    originGraph.isActive = true
+
+    // Update the active-repo indicator in the control panel header
+    fun updateActiveRepoLabel() {
+        document.getElementById("activeRepoLabel")?.textContent = "Active: ${activeGraph.repoName}"
+    }
+    updateActiveRepoLabel()
+
+    canvas.on("mouse:up") {
+        isDragging = false
+        canvas.selection = true
+        canvas.setZoom(canvas.getZoom())
+
+        // Distinguish a click from a drag: only handle repo selection if the mouse barely moved
+        val event = it.e as MouseEvent
+        val dx = event.clientX - dragStartX
+        val dy = event.clientY - dragStartY
+        val movedDistance = dx * dx + dy * dy
+        if (movedDistance < 25) { // less than ~5px movement = click, not drag
+            // Use absolutePointer from the Fabric event to get canvas coordinates
+            val pointer = it.absolutePointer
+            if (pointer != null) {
+                val px = pointer.x.toDouble()
+                val py = pointer.y.toDouble()
+                val clickedGraph = when {
+                    aliceGraph.containsPoint(px, py) -> aliceGraph
+                    originGraph.containsPoint(px, py) -> originGraph
+                    else -> null
+                }
+                if (clickedGraph != null && clickedGraph != activeGraph) {
+                    activeGraph.isActive = false
+                    activeGraph = clickedGraph
+                    activeGraph.isActive = true
+                    updateActiveRepoLabel()
+                    updateBranchSelects(activeGraph.getBranches())
+                    updateTagSelects(activeGraph.getTags())
+                }
+            }
+        }
+    }
 
     doWhenButtonClicked("expandPanelButton") {
         hideElements("collapsedControlPanel")
@@ -105,61 +156,60 @@ fun startApp() {
     }
 
     doWhenButtonClicked("runGCButton") {
-        gitGraph.runGarbageCollection()
+        activeGraph.runGarbageCollection()
     }
 
     doWhenButtonClicked("clearGraphButton") {
         ConfirmationDialog.showConfirmationDialog(
             "Are you sure?",
-            "Do you really want to reset your graph and start over?"
+            "Do you really want to reset the active repo graph and start over?"
         ) {
-            canvas.clear()
-            val newGraph = GitGraph(canvas)
-            newGraph.initGraph()
-            gitGraph = newGraph
+            activeGraph.clearGraph(canvas)
+            updateBranchSelects(activeGraph.getBranches())
+            updateTagSelects(activeGraph.getTags())
         }
     }
 
     doWhenButtonClicked("addCommitButton") {
-        gitGraph.addCommit()
+        activeGraph.addCommit()
     }
 
     doWhenButtonClicked("amendCommitButton") {
-        gitGraph.amendCommit()
+        activeGraph.amendCommit()
     }
 
     doWhenButtonClicked("cherryPickButton") {
         val commitId = getUserInput("cherryPickInput")
-        if (!gitGraph.doesCommitExist(commitId)) {
+        if (!activeGraph.doesCommitExist(commitId)) {
             ConfirmationDialog.showMessageDialog(
                 "Commit does not exist",
                 "Unable to cherry-pick '$commitId': commit does not exist."
             )
         } else {
-            gitGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = gitGraph.findCommitFor(commitId)?.commitColor)
+            activeGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = activeGraph.findCommitFor(commitId)?.commitColor)
         }
     }
 
     doWhenButtonClicked("checkoutCommitButton") {
-        gitGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
+        activeGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
     }
 
     doWhenButtonClicked("addBranchButton") {
         val branchName = getUserInput("addBranchInput").replace(" ", "_")
-        if (!gitGraph.isBranchNameValid(branchName)) {
+        if (!activeGraph.isBranchNameValid(branchName)) {
             ConfirmationDialog.showMessageDialog(
                 "Branch name '$branchName' is invalid",
                 "The name of the branch starts with a letter that is already used by another branch or " +
                         "by the HEAD reference as first letter. Namespaces (feature/*, bugfix/*) are not considered. "
             )
         } else {
-            gitGraph.addBranch(branchName)
-            updateBranchSelects(gitGraph.getBranches())
+            activeGraph.addBranch(branchName)
+            updateBranchSelects(activeGraph.getBranches())
         }
     }
 
     doWhenButtonClicked("checkoutBranchButton") {
-        gitGraph.checkout(
+        activeGraph.checkout(
             getSelectedOption("checkoutBranchInput"),
             isCheckboxChecked("showLostCommitsCheckbox")
         )
@@ -167,49 +217,48 @@ fun startApp() {
 
     doWhenButtonClicked("deleteBranchButton") {
         val branchName = getSelectedOption("deleteBranchInput")
-        if (gitGraph.isBranchCheckedOut(branchName)) {
-            // deleting checked out branches is not allowed by Git
+        if (activeGraph.isBranchCheckedOut(branchName)) {
             ConfirmationDialog.showMessageDialog(
                 "Cannot delete checked out branch",
                 "Cannot delete branch which is currently checked out."
             )
         } else {
-            gitGraph.deleteBranch(branchName)
-            updateBranchSelects(gitGraph.getBranches())
+            activeGraph.deleteBranch(branchName)
+            updateBranchSelects(activeGraph.getBranches())
         }
     }
 
     doWhenButtonClicked("resetBranchButton") {
-        gitGraph.resetBranch(getUserInput("resetBranchInput"))
+        activeGraph.resetBranch(getUserInput("resetBranchInput"))
     }
 
     doWhenButtonClicked("addTagButton") {
         val tagName = getUserInput("addTagInput").replace(" ", "_")
-        if (gitGraph.doesTagExist(tagName)) {
+        if (activeGraph.doesTagExist(tagName)) {
             ConfirmationDialog.showMessageDialog(
                 "Tag already exists",
                 "Cannot create tag $tagName: tag already exists."
             )
         } else {
-            gitGraph.addTag(tagName)
-            updateTagSelects(gitGraph.getTags())
+            activeGraph.addTag(tagName)
+            updateTagSelects(activeGraph.getTags())
         }
     }
 
     doWhenButtonClicked("checkoutTagButton") {
-        gitGraph.checkout(
+        activeGraph.checkout(
             getSelectedOption("checkoutTagInput"),
             isCheckboxChecked("showLostCommitsCheckbox")
         )
     }
 
     doWhenButtonClicked("deleteTagButton") {
-        gitGraph.deleteTag(getSelectedOption("deleteTagInput"))
-        updateTagSelects(gitGraph.getTags())
+        activeGraph.deleteTag(getSelectedOption("deleteTagInput"))
+        updateTagSelects(activeGraph.getTags())
     }
 
     doWhenButtonClicked("mergeBranchButton") {
-        if (!gitGraph.merge(
+        if (!activeGraph.merge(
                 isCheckboxChecked("noFFCheckbox"),
                 getSelectedOption("mergeBranchInput")
             )
@@ -219,12 +268,15 @@ fun startApp() {
     }
 
     doWhenButtonClicked("rebaseBranchButton") {
-        if (!gitGraph.rebase(getSelectedOption("rebaseBranchInput"))) {
+        if (!activeGraph.rebase(getSelectedOption("rebaseBranchInput"))) {
             ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch cannot be rebased.")
         }
     }
 
-    doWhenCheckboxClicked("showLostCommitsCheckbox", gitGraph::showLostCommits)
+    doWhenCheckboxClicked("showLostCommitsCheckbox") { activeGraph.showLostCommits(it) }
+
+    // Initialise branch/tag selects for the active (origin) repo
+    updateBranchSelects(activeGraph.getBranches())
 }
 
 fun updateBranchSelects(branches: List<AbstractBranch>) {

@@ -12,7 +12,8 @@ class Commit(
     val linePosition: Int,
     var swimlane: Int,
     val parent: Commit? = null,
-    val commitColor: String = ""
+    val commitColor: String = "",
+    val config: GitGraphConfiguration = GitGraphConfiguration()
 ) : Renderable {
     var isLostInReflog = false
         set(value) {
@@ -33,8 +34,8 @@ class Commit(
 
     private fun createCommitCircle(): CommitCircle = CommitCircle(
         id, Point(
-            GitGraphConfiguration.leftOffset + swimlane * GitGraphConfiguration.swimlaneDistance,
-            GitGraphConfiguration.bottomOffset - linePosition * GitGraphConfiguration.commitDistance
+            config.leftOffset + swimlane * config.swimlaneDistance,
+            config.bottomOffset - linePosition * config.commitDistance
         ),
         commitColor
     )

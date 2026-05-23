@@ -5,6 +5,28 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 4 (first-try PASS: 3 [git-canvas-001, scenario-001, infrastructure-001], skipped: 1 [infrastructure-002])
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 0 (deferred — user chose to skip commits this session)
+
+---
+
+## 2026-05-23 -- Task verified and completed: infrastructure-001 - Walking skeleton: multi-repo proof-of-concept
+
+**Type:** Work / Task completion
+**Task:** infrastructure-001 - Walking skeleton: multi-repo proof-of-concept
+**Summary:** Two GitGraph instances ("origin" and "alice") coexist on shared Fabric.js canvas at fixed positions 800px apart. Click-to-focus activation with colored border indicator. All control panel operations route to active repo. Production webpack build passes cleanly.
+**Verification:** PASS (iteration 1)
+**Files changed:** 6
+**ADRs written:** none
+
+---
+
 ## 2026-05-23 -- Batch started: [infrastructure-001]
 
 **Type:** Work / Batch start
