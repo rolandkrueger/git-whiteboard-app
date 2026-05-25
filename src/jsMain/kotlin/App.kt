@@ -134,7 +134,7 @@ fun startApp() {
     }
 
     // ---- "Add Repository" dialog logic ----
-    fun showAddRepoDialog() {
+    fun showAddRepoDialog(onNewGraph: (GitGraph) -> Unit) {
         val dialog = document.getElementById("addRepoDialog") ?: return
         val nameInput = document.getElementById("addRepoNameInput") as? HTMLInputElement ?: return
         val confirmBtn = document.getElementById("addRepoConfirmButton") as? HTMLButtonElement ?: return
@@ -198,9 +198,10 @@ fun startApp() {
                 val name = nameInput.value.trim()
                 val xOffset = graphs.last().xOffset + repoSeparation
                 val newGraph = createGraph(name, xOffset)
-                newGraph.renderEmptyRegion()
+                newGraph.initGraph()
                 graphs.add(newGraph)
                 updateAddRepoButtonState()
+                onNewGraph(newGraph)
                 closeDialog()
             }
         }
@@ -335,7 +336,14 @@ fun startApp() {
     }
 
     doWhenButtonClicked("addRepoButton") {
-        showAddRepoDialog()
+        showAddRepoDialog { newGraph ->
+            activeGraph.isActive = false
+            activeGraph = newGraph
+            activeGraph.isActive = true
+            updateActiveRepoLabel(activeGraph)
+            updateBranchSelects(activeGraph.getBranches())
+            updateTagSelects(activeGraph.getTags())
+        }
     }
 
     doWhenButtonClicked("expandPanelButton") {

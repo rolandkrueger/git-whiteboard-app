@@ -42,18 +42,6 @@ class GitGraph(
     /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
     fun containsPoint(x: Double, y: Double): Boolean = repoRegion.containsPoint(x, y)
 
-    /**
-     * Renders just the repo region border and label without creating any initial commit.
-     * Use this when adding a new empty repo that the trainer will populate manually.
-     */
-    fun renderEmptyRegion() {
-        if (!initialized) {
-            repoRegion.render(layer)
-            initialized = true
-        }
-        layer.batchDraw()
-    }
-
     private var initialized = false
 
     fun initGraph() {
@@ -74,7 +62,7 @@ class GitGraph(
         branches.add(head)
 
         initialCommit.render(layer)
-        addBranch("master", 2, branchColor)
+        addBranch("main", 2, branchColor)
         head.render(layer)
         layer.batchDraw()
     }
