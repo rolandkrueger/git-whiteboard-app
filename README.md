@@ -22,9 +22,10 @@ With the current version, you can demonstrate the following Git features:
 * show commits which have been lost in the reflog,
 * perform a garbage collection to remove such lost commits,
 * show/hide lost commits,
-* reset branches (only moving around the branch label is supported; a soft, hard, and mixed reset is not explicitly visualized).
-
-More advanced features, such as working remotely with `push`, `fetch`, and `pull`, will be supported in a later version.
+* reset branches (only moving around the branch label is supported; a soft, hard, and mixed reset is not explicitly visualized),
+* work with multiple repositories on a shared canvas (up to 3 repos simultaneously),
+* add repositories dynamically during a session with the "Add Repository" button,
+* share the full session state via a URL (Share button encodes and restores the complete canvas state using URL fragment encoding).
 
 This project was initiated as part of the two We-Ship-It-Days at the [Mannheim offices of Trivadis Germany GmbH](https://www.oio.de/).
 
@@ -37,7 +38,7 @@ You can try out the app at [https://git-whiteboard.netlify.app/](https://git-whi
 To build the app, run the following command on the console:
 
 ```
-./gradlew run
+sh gradlew run
 ```
 
 Then visit `http://localhost:9090` in your browser. You need to have a JDK installed for this.
@@ -45,7 +46,7 @@ Then visit `http://localhost:9090` in your browser. You need to have a JDK insta
 To build the production version of the app simply run
 
 ```
-./gradlew
+sh gradlew
 ```
 
 This will build the standalone version in `build/distributions` which can be run by just loading `index.html` in a browser.
@@ -73,8 +74,14 @@ The following open-source projects were used to create the Git Whiteboard App:
 
 * [Kotlin/JS](https://kotlinlang.org/docs/reference/js-overview.html)
 * [Ktor for the local development mode](https://ktor.io/)
-* [kotlin-react](https://github.com/JetBrains/kotlin-wrappers#readme)
-* [fabric.js Javascript HTML5 canvas library](http://fabricjs.com/)
+* [Konva.js canvas library](https://konvajs.org/)
 * [The Bulma CSS framework](https://bulma.io/)
 * [Font Awesome](https://fontawesome.com/)
 * [Asciidoctor for the user manual](https://asciidoctor.org/)
+
+## Agentic Development
+
+From the point of the Konva.js migration onward, all further feature development and bug fixes are implemented using agentic coding. Development is driven by:
+
+* **[Claude Code](https://claude.ai/code)** — Anthropic's AI coding agent (CLI and IDE extensions)
+* **[agentheim plugin](https://github.com/heimeshoff/Agentheim)** — a domain-driven development plugin for Claude Code that provides a model/work/brainstorm skill set for managing the backlog and running parallel worker agents
