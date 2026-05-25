@@ -22,7 +22,15 @@ class GitGraph(
     private var globalSwimlaneCounter = 0
     private var head: Head
     private var showLostCommits = true
-    private val repoRegion = RepoRegion(repoName, config.leftOffset - 60, config.bottomOffset - 320)
+
+    private val regionLeft = config.leftOffset - 60
+    private val regionInitialTop = config.bottomOffset - 320
+    private val regionInitialWidth = 700
+    private val regionInitialHeight = 480
+    /** Fixed bottom anchor: the region never shrinks below its initial bottom edge. */
+    private val regionBottom = regionInitialTop + regionInitialHeight
+
+    private val repoRegion = RepoRegion(repoName, regionLeft, regionInitialTop, regionInitialWidth, regionInitialHeight)
 
     /** The horizontal canvas offset for this repo's region, used to position new repos to the right. */
     val xOffset: Int get() = config.xOffset
@@ -41,6 +49,31 @@ class GitGraph(
 
     /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
     fun containsPoint(x: Double, y: Double): Boolean = repoRegion.containsPoint(x, y)
+
+    /**
+     * Recalculates the region bounding box from actual commit positions and updates the
+     * RepoRegion. The region can only grow — it never shrinks below its initial size.
+     * Must be called before every layer.batchDraw() in graph-mutating operations.
+     */
+    private fun updateRegionBounds() {
+        if (commits.isEmpty()) return
+
+        val PADDING_RIGHT = 80
+        val PADDING_TOP = 60
+
+        // Compute maximum x (rightward growth as swimlanes increase)
+        val maxCommitX = commits.maxOf { config.leftOffset + it.swimlane * config.swimlaneDistance }
+        val neededRight = maxCommitX + config.commitRadius + PADDING_RIGHT
+        val newWidth = maxOf(neededRight - regionLeft, regionInitialWidth)
+
+        // Compute minimum y (upward growth as linePositions increase)
+        val minCommitY = commits.minOf { config.bottomOffset - it.linePosition * config.commitDistance }
+        val neededTop = minCommitY - config.commitRadius - PADDING_TOP
+        val newTop = minOf(neededTop, regionInitialTop)
+        val newHeight = maxOf(regionBottom - newTop, regionInitialHeight)
+
+        repoRegion.updateBounds(newTop, newWidth, newHeight)
+    }
 
     private var initialized = false
 
@@ -64,6 +97,7 @@ class GitGraph(
         initialCommit.render(layer)
         addBranch("main", 2, branchColor)
         head.render(layer)
+        updateRegionBounds()
         layer.batchDraw()
     }
 
@@ -137,6 +171,7 @@ class GitGraph(
 
         oldHeadCommit.repositionBranches(layer)
         calculateLostCommits()
+        updateRegionBounds()
         layer.batchDraw()
     }
 
@@ -644,6 +679,7 @@ class GitGraph(
         head.render(layer)
         branches.add(head)
 
+        updateRegionBounds()
         layer.batchDraw()
     }
 }
