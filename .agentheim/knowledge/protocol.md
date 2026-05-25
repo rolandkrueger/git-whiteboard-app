@@ -5,6 +5,30 @@ Newest entries on top.
 
 ---
 
+## 2026-05-25 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 1 (first-try PASS: 1 [infrastructure-006])
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 1 (044454f)
+
+---
+
+## 2026-05-25 -- Task verified and completed: infrastructure-006 - Dynamic graph management — start with one, add up to two more
+
+**Type:** Work / Task completion
+**Task:** infrastructure-006 - Dynamic graph management — start with one, add up to two more
+**Summary:** Replaced hardcoded two-graph initialisation with a dynamic graph list starting from a single "origin" graph; added an "Add Repository" button with name-input dialog that creates new empty graphs (up to three total), and updated click-to-focus, share, and URL-restore to work across all dynamically added graphs.
+**Verification:** PASS (iteration 1)
+**Commit:** 044454f
+**Files changed:** 3
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-05-23 -- Batch started: [infrastructure-006]
 
 **Type:** Work / Batch start

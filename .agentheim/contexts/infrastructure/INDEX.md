@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 0
-- **Doing:** 1
-- **Done:** 5
+- **Doing:** 0
+- **Done:** 6
 <!-- task-counts:end -->
 
 ### Todo
@@ -22,11 +22,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **infrastructure-006** — Dynamic graph management — start with one, add up to two more — `doing/infrastructure-006-dynamic-graph-management.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **infrastructure-006** — Dynamic graph management — start with one, add up to two more — `done/infrastructure-006-dynamic-graph-management.md`
 - **infrastructure-005** — Canvas drag-to-pan broken after Konva.js migration — `done/infrastructure-005-canvas-pan-broken.md`
 - **infrastructure-004** — Konva.js integration: replace Fabric.js bindings and rewrite rendering — `done/infrastructure-004-konva-integration.md`
 - **infrastructure-003** — Dukat spike: assess Konva.js TypeScript binding generation — `done/infrastructure-003-dukat-spike-konva-bindings.md`

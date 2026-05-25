@@ -6,7 +6,7 @@ type: feature
 context: infrastructure
 created: 2026-05-23
 completed: 2026-05-23
-commit:
+commit: 044454f
 depends_on: []
 blocks: []
 tags: [multi-repo, graph-lifecycle, dynamic, initialization, add-graph]
