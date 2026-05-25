@@ -12,7 +12,7 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 0
-- **Doing:** 0
+- **Doing:** 1
 - **Done:** 5
 <!-- task-counts:end -->
 
@@ -22,6 +22,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
+- **infrastructure-006** — Dynamic graph management — start with one, add up to two more — `doing/infrastructure-006-dynamic-graph-management.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)

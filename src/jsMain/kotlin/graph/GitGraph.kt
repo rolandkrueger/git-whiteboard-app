@@ -24,6 +24,9 @@ class GitGraph(
     private var showLostCommits = true
     private val repoRegion = RepoRegion(repoName, config.leftOffset - 60, config.bottomOffset - 320)
 
+    /** The horizontal canvas offset for this repo's region, used to position new repos to the right. */
+    val xOffset: Int get() = config.xOffset
+
     var isActive: Boolean = false
         set(value) {
             field = value
@@ -38,6 +41,18 @@ class GitGraph(
 
     /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
     fun containsPoint(x: Double, y: Double): Boolean = repoRegion.containsPoint(x, y)
+
+    /**
+     * Renders just the repo region border and label without creating any initial commit.
+     * Use this when adding a new empty repo that the trainer will populate manually.
+     */
+    fun renderEmptyRegion() {
+        if (!initialized) {
+            repoRegion.render(layer)
+            initialized = true
+        }
+        layer.batchDraw()
+    }
 
     private var initialized = false
 

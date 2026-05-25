@@ -5,6 +5,23 @@ Newest entries on top.
 
 ---
 
+## 2026-05-23 -- Batch started: [infrastructure-006]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-006 - Dynamic graph management — start with one, add up to two more
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-23 -- Model / Captured: infrastructure-006 - Dynamic graph management — start with one, add up to two more
+
+**Type:** Model / Capture
+**BC:** infrastructure
+**Filed to:** todo
+**Summary:** Replaces hardcoded two-graph initialisation with a single "origin" graph on startup; adds an "Add Repository" button that prompts for a name (like branch creation) and places the new graph at a fixed horizontal offset. Maximum three graphs total; no removal in this task.
+
+---
+
 ## 2026-05-23 -- Work session ended
 
 **Type:** Work / Session end

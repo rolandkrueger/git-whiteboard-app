@@ -129,6 +129,14 @@
                     Zoom with Ctrl+Mouse Wheel, move with click and drag.
                 </div>
                 <div class="field">
+                    <button id="addRepoButton" class="button is-outlined is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </span>
+                        <span>Add Repository</span>
+                    </button>
+                </div>
+                <div class="field">
                     <button id="runGCButton" class="button is-outlined is-fullwidth">
                         <span class="icon">
                             <i class="fa fa-trash"></i>
@@ -381,6 +389,28 @@
             <button id="confirmationDialogOkButton" class="button is-success">Ok</button>
             <button id="confirmationDialogYesButton" class="button is-success">Yes</button>
             <button id="confirmationDialogNoButton" class="button">No, cancel</button>
+        </footer>
+    </div>
+</div>
+
+<div id="addRepoDialog" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Add Repository</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <label class="label">Repository name</label>
+                <div class="control">
+                    <input id="addRepoNameInput" class="input" type="text" placeholder="e.g. alice, bob">
+                </div>
+                <p id="addRepoNameError" class="help is-danger hidden"></p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="addRepoConfirmButton" class="button is-success" disabled>Add</button>
+            <button id="addRepoCancelButton" class="button">Cancel</button>
         </footer>
     </div>
 </div>
