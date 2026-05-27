@@ -5,6 +5,138 @@ Newest entries on top.
 
 ---
 
+## 2026-05-27 00:00 -- Model / Captured: git-canvas-004 - User-configurable initial repository name
+
+**Type:** Model / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** The initial repository is currently hard-coded as `origin`. Make the initial repository name editable by the trainer and change the default starting name to `my-repo`.
+
+---
+
+## 2026-05-25 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 1 (first-try PASS: 1 [infrastructure-007])
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 1 (b65046f)
+
+---
+
+## 2026-05-25 -- Task verified and completed: infrastructure-007 - Update README — multi-repo features, Konva.js migration, agentic development section
+
+**Type:** Work / Task completion
+**Task:** infrastructure-007 - Update README — multi-repo features, Konva.js migration, agentic development section
+**Summary:** Updated README.md to reflect the current state of the app: added multi-repo features to the feature list, replaced the outdated "future push/pull" sentence, corrected build commands to sh gradlew, swapped fabric.js and kotlin-react for Konva.js in the tech stack, and added an Agentic Development section linking to Claude Code and the agentheim plugin.
+**Verification:** PASS (iteration 1)
+**Commit:** b65046f
+**Files changed:** 1
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-05-25 -- Batch started: [infrastructure-007]
+
+**Type:** Work / Batch start
+**Tasks:** infrastructure-007 - Update README — multi-repo features, Konva.js migration, agentic development section
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-25 -- Model / Captured: infrastructure-007 - Update README — multi-repo features, Konva.js migration, agentic development section
+
+**Type:** Model / Capture
+**BC:** infrastructure
+**Filed to:** todo
+**Summary:** README still describes the original single-repo Fabric.js app. Update feature list (multi-repo, Add Repository, Share button), replace fabric.js with Konva.js in tech stack, fix build command (sh gradlew), add Agentic Development section with links to Claude Code and the agentheim plugin (https://github.com/heimeshoff/Agentheim).
+
+---
+
+## 2026-05-25 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 1 (first-try PASS: 1 [git-canvas-003])
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 1 (011bd02)
+
+---
+
+## 2026-05-25 -- Task verified and completed: git-canvas-003 - RepoRegion auto-resize — frame must grow with graph content
+
+**Type:** Work / Task completion
+**Task:** git-canvas-003 - RepoRegion auto-resize — frame must grow with graph content
+**Summary:** RepoRegion now dynamically grows its bounding rectangle after every graph-mutating operation by iterating all Commit positions; containsPoint() uses the updated bounds so click-to-focus works on commits rendered beyond the original static frame.
+**Verification:** PASS (iteration 1)
+**Commit:** 011bd02
+**Files changed:** 2
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-05-25 -- Batch started: [git-canvas-003]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-003 - RepoRegion auto-resize — frame must grow with graph content
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-25 -- Model / Captured: git-canvas-003 - RepoRegion auto-resize — frame must grow with graph content
+
+**Type:** Model / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** RepoRegion border is sized once at init and never updated; as commits and branches are added the graph overflows the frame and commits outside the original bounds become unclickable (containsPoint miss). Fix: recalculate and redraw the region bounds after every graph-mutating operation.
+
+---
+
+## 2026-05-25 -- Work session ended
+
+**Type:** Work / Session end
+**Completed:** 1 (first-try PASS: 1 [git-canvas-002])
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Commits:** 1 (fff62aa)
+
+---
+
+## 2026-05-25 -- Task verified and completed: git-canvas-002 - Initial 'main' commit for all new graphs — fix detached HEAD regression
+
+**Type:** Work / Task completion
+**Task:** git-canvas-002 - Initial 'main' commit for all new graphs — fix detached HEAD regression
+**Summary:** Fixed detached HEAD regression by calling initGraph() instead of renderEmptyRegion() when adding a new repository; removed dead renderEmptyRegion() method; renamed default branch from 'master' to 'main'.
+**Verification:** PASS (iteration 1)
+**Commit:** fff62aa
+**Files changed:** 2
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-05-25 -- Batch started: [git-canvas-002]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-002 - Initial 'main' commit for all new graphs — fix detached HEAD regression
+**Parallel:** no (1 worker)
+
+---
+
+## 2026-05-25 -- Model / Captured: git-canvas-002 - Initial 'main' commit for all new graphs — fix detached HEAD regression
+
+**Type:** Model / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Regression fix from infrastructure-006: dynamically added graphs start without an initial commit, causing detached HEAD on the first "Add Commit". Fix calls initGraph() instead of renderEmptyRegion() for user-triggered "Add Repository". Bundled: rename the default branch from 'master' to 'main'. URL-restored graphs are unaffected.
+
+---
+
 ## 2026-05-25 -- Work session ended
 
 **Type:** Work / Session end

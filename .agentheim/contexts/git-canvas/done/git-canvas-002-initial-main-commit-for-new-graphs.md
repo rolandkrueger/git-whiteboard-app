@@ -6,7 +6,7 @@ type: bug
 context: git-canvas
 created: 2026-05-25
 completed: 2026-05-25
-commit:
+commit: fff62aa
 depends_on: []
 blocks: []
 tags: [initialization, detached-head, default-branch, main, regression]

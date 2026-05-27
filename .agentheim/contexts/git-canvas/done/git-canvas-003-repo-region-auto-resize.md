@@ -6,7 +6,7 @@ type: bug
 context: git-canvas
 created: 2026-05-25
 completed: 2026-05-25
-commit:
+commit: 011bd02
 depends_on: []
 blocks: []
 tags: [region, resize, bounds, layout, reporegion, clickable, containspoint]

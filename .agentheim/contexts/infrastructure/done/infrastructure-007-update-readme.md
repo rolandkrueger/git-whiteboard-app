@@ -6,7 +6,7 @@ type: chore
 context: infrastructure
 created: 2026-05-25
 completed: 2026-05-25
-commit:
+commit: b65046f
 depends_on: []
 blocks: []
 tags: [readme, documentation, konvajs, multi-repo, agentic-development]

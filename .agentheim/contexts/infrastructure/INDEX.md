@@ -13,7 +13,7 @@ research touching this BC, and concept synthesis pages.
 - **Backlog:** 0
 - **Todo:** 0
 - **Doing:** 0
-- **Done:** 6
+- **Done:** 7
 <!-- task-counts:end -->
 
 ### Todo
@@ -26,6 +26,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **infrastructure-007** — Update README — multi-repo features, Konva.js migration, agentic development section — `done/infrastructure-007-update-readme.md`
 - **infrastructure-006** — Dynamic graph management — start with one, add up to two more — `done/infrastructure-006-dynamic-graph-management.md`
 - **infrastructure-005** — Canvas drag-to-pan broken after Konva.js migration — `done/infrastructure-005-canvas-pan-broken.md`
 - **infrastructure-004** — Konva.js integration: replace Fabric.js bindings and rewrite rendering — `done/infrastructure-004-konva-integration.md`

@@ -11,13 +11,14 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 0
+- **Todo:** 1
 - **Doing:** 0
-- **Done:** 1
+- **Done:** 3
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-004** — User-configurable initial repository name — `todo/git-canvas-004-user-configurable-initial-repository-name.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -26,6 +27,8 @@ research touching this BC, and concept synthesis pages.
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-003** — RepoRegion auto-resize — frame must grow with graph content — `done/git-canvas-003-repo-region-auto-resize.md`
+- **git-canvas-002** — Initial 'main' commit for all new graphs — fix detached HEAD regression — `done/git-canvas-002-initial-main-commit-for-new-graphs.md`
 - **git-canvas-001** — Multi-repo canvas layout strategy (decision) — `done/git-canvas-001-multi-repo-layout-decision.md`
 <!-- done-list:end -->
 
