@@ -6,7 +6,7 @@ type: feature
 context: git-canvas
 created: 2026-05-27
 completed: 2026-05-27
-commit: 869fc5c
+commit: 3fcdc43
 depends_on: []
 blocks: []
 tags: [repository, multi-repo]
