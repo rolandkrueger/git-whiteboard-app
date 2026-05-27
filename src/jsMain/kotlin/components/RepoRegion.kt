@@ -14,7 +14,7 @@ import konvajs.TextConfig
  * The region can grow to enclose new graph content via [updateBounds].
  */
 class RepoRegion(
-    private val repoName: String,
+    repoName: String,
     private val regionLeft: Int,
     initialTop: Int,
     initialWidth: Int = 700,
@@ -71,6 +71,10 @@ class RepoRegion(
     override fun removeFrom(layer: Layer) {
         borderRect.destroy()
         nameLabel.destroy()
+    }
+
+    fun setName(name: String) {
+        nameLabel.text(name)
     }
 
     fun setActive(active: Boolean) {

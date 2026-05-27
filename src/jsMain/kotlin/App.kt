@@ -45,7 +45,7 @@ fun startApp() {
 
     val repoSeparation = 800
 
-    // Dynamic list of graphs — starts with one "origin" graph
+    // Dynamic list of graphs — starts with one "my-repo" graph
     val graphs = mutableListOf<GitGraph>()
 
     var isDragging = false
@@ -117,6 +117,8 @@ fun startApp() {
     // Update the active-repo indicator in the control panel header
     fun updateActiveRepoLabel(activeGraph: GitGraph) {
         document.getElementById("activeRepoLabel")?.textContent = "Active: ${activeGraph.repoName}"
+        (document.getElementById("repoNameInput") as? HTMLInputElement)?.value = activeGraph.repoName
+        document.getElementById("repoNameError")?.classList?.add("hidden")
     }
 
     // Update the "Add Repository" button disabled state based on graph count
@@ -212,22 +214,22 @@ fun startApp() {
 
     // ---- Startup: restore from URL fragment if present, otherwise init blank graph ----
 
-    // Always create the initial "origin" graph synchronously so activeGraph is defined.
+    // Always create the initial "my-repo" graph synchronously so activeGraph is defined.
     // This graph is either initialized normally or replaced by the hash-restore callback.
     val initialLayer = Layer()
     stage.add(initialLayer.asDynamic())
-    val initialOriginGraph = GitGraph(initialLayer, repoName = "origin",
+    val initialGraph = GitGraph(initialLayer, repoName = "my-repo",
         config = GitGraphConfiguration(xOffset = 0, yOffset = 0))
-    activeGraph = initialOriginGraph
+    activeGraph = initialGraph
 
     // Populate graphs with default state (called when no URL state is present, or as fallback)
-    fun setupDefaultOriginGraph() {
+    fun setupDefaultGraph() {
         // graphs may already contain stale entries from a failed restore; clear them
         graphs.clear()
-        initialOriginGraph.initGraph()
-        graphs.add(initialOriginGraph)
-        activeGraph = initialOriginGraph
-        initialOriginGraph.isActive = true
+        initialGraph.initGraph()
+        graphs.add(initialGraph)
+        activeGraph = initialGraph
+        initialGraph.isActive = true
         updateActiveRepoLabel(activeGraph)
         updateBranchSelects(activeGraph.getBranches())
         updateTagSelects(activeGraph.getTags())
@@ -241,11 +243,11 @@ fun startApp() {
             val snapshot: MultiRepoSnapshot? = ScenarioSerializer.decode(json)
             if (snapshot == null || snapshot.version != 1 || snapshot.repos.isEmpty()) {
                 console.warn("URL state could not be decoded; falling back to blank canvas.")
-                setupDefaultOriginGraph()
+                setupDefaultGraph()
                 return@then
             }
             // Restore however many repos are in the snapshot (1, 2, or 3).
-            // The initialOriginGraph layer is reused for the first repo to avoid an orphan layer.
+            // The initial graph layer is reused for the first repo to avoid an orphan layer.
             graphs.clear()
             for ((index, repoSnapshot) in snapshot.repos.withIndex()) {
                 val graph = if (index == 0) {
@@ -266,7 +268,7 @@ fun startApp() {
             updateAddRepoButtonState()
         }, { _: dynamic ->
             console.warn("URL state decompression failed; falling back to blank canvas.")
-            setupDefaultOriginGraph()
+            setupDefaultGraph()
         })
     }
 
@@ -277,10 +279,10 @@ fun startApp() {
         if (encoded.isNotEmpty()) {
             restoreFromHash(encoded)
         } else {
-            setupDefaultOriginGraph()
+            setupDefaultGraph()
         }
     } else {
-        setupDefaultOriginGraph()
+        setupDefaultGraph()
     }
 
     // Use native mouseup on window so release outside canvas still clears isDragging
@@ -343,6 +345,26 @@ fun startApp() {
             updateActiveRepoLabel(activeGraph)
             updateBranchSelects(activeGraph.getBranches())
             updateTagSelects(activeGraph.getTags())
+        }
+    }
+
+    doWhenButtonClicked("renameRepoButton") {
+        val input = document.getElementById("repoNameInput") as? HTMLInputElement ?: return@doWhenButtonClicked
+        val errorLabel = document.getElementById("repoNameError") ?: return@doWhenButtonClicked
+        val name = input.value.trim()
+        when {
+            name.isEmpty() -> {
+                errorLabel.textContent = "Repository name must not be empty."
+                errorLabel.classList.remove("hidden")
+            }
+            graphs.any { it != activeGraph && it.repoName == name } -> {
+                errorLabel.textContent = "A repository named '$name' already exists."
+                errorLabel.classList.remove("hidden")
+            }
+            else -> {
+                activeGraph.renameRepository(name)
+                updateActiveRepoLabel(activeGraph)
+            }
         }
     }
 

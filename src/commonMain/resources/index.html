@@ -108,7 +108,7 @@
                 <div class="media-content">
                     <div class="content">
                         <h1 class="title is-5">Control Panel</h1>
-                        <p class="is-size-7" id="activeRepoLabel" style="color: #2196F3; font-weight: bold;">Active: origin</p>
+                        <p class="is-size-7" id="activeRepoLabel" style="color: #2196F3; font-weight: bold;">Active: my-repo</p>
                     </div>
                 </div>
             </article>
@@ -127,6 +127,18 @@
                 <div class="panel-block">
                     Check out branch with double-click on branch label.<br>
                     Zoom with Ctrl+Mouse Wheel, move with click and drag.
+                </div>
+                <div class="field">
+                    <label class="label is-size-7" for="repoNameInput">Repository name</label>
+                    <div class="field has-addons">
+                        <div class="control is-expanded">
+                            <input id="repoNameInput" class="input" type="text" value="my-repo">
+                        </div>
+                        <div class="control">
+                            <button id="renameRepoButton" class="button is-outlined">Rename</button>
+                        </div>
+                    </div>
+                    <p id="repoNameError" class="help is-danger hidden"></p>
                 </div>
                 <div class="field">
                     <button id="addRepoButton" class="button is-outlined is-fullwidth">

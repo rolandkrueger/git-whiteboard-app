@@ -11,7 +11,7 @@ import scenario.TagSnapshot
 
 class GitGraph(
     private val layer: Layer,
-    val repoName: String = "origin",
+    repoName: String = "my-repo",
     private val config: GitGraphConfiguration = GitGraphConfiguration()
 ) {
     private val checkoutHandler: (Commit) -> (() -> Unit)
@@ -30,7 +30,10 @@ class GitGraph(
     /** Fixed bottom anchor: the region never shrinks below its initial bottom edge. */
     private val regionBottom = regionInitialTop + regionInitialHeight
 
-    private val repoRegion = RepoRegion(repoName, regionLeft, regionInitialTop, regionInitialWidth, regionInitialHeight)
+    var repoName: String = repoName
+        private set
+
+    private val repoRegion = RepoRegion(this.repoName, regionLeft, regionInitialTop, regionInitialWidth, regionInitialHeight)
 
     /** The horizontal canvas offset for this repo's region, used to position new repos to the right. */
     val xOffset: Int get() = config.xOffset
@@ -49,6 +52,12 @@ class GitGraph(
 
     /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
     fun containsPoint(x: Double, y: Double): Boolean = repoRegion.containsPoint(x, y)
+
+    fun renameRepository(newName: String) {
+        repoName = newName
+        repoRegion.setName(newName)
+        layer.batchDraw()
+    }
 
     /**
      * Recalculates the region bounding box from actual commit positions and updates the
