@@ -4,7 +4,7 @@
 
 The Git Whiteboard App is a tool for quickly visualizing various features of the Git version control system. This comes in handy when you want to explain Git's features, for instance, when you're teaching Git to other people. The app allows you to demonstrate the dynamics of a Git graph which is a cumbersome task when you have to use traditional visualization tools such as whiteboards or flip charts.
 
-The app is always initialized with the default `master` branch and one initial commit. You can start adding commits and branches on top of that.
+The app is always initialized with one repository named `my-repo`, the default `main` branch, and one initial commit. You can rename the repository and start adding commits and branches on top of that.
 
 The app's control panel is subdivided into five tabs: `General`, `Commits`, `Refs`, `Merge/Rebase`, and `About`. Select one of these tabs to access the app's functionality.
 
@@ -16,6 +16,16 @@ The Git graph shown in the main area of the app can be moved and zoomed. To move
 
 When you want to start from scratch with a new Git graph, you can discard your current graph and get a new one by clicking `Clear graph` on the `General` tab.
 
+== Working With Repositories
+
+The app starts with one repository named `my-repo`. The active repository is shown in the control panel and highlighted on the canvas. Commands from the control panel always apply to the active repository.
+
+You can rename the active repository on the `General` tab by editing the `Repository name` field and clicking `Rename`. The repository label on the canvas and the active repository indicator are updated immediately. Repository names must not be empty, and two visible repositories cannot use the same name.
+
+To add another repository, click `Add Repository` on the `General` tab and enter a unique name. The app supports up to three repositories on the shared canvas. Click a repository region on the canvas to make that repository active.
+
+To share the current session, click `Share`. The app encodes the complete canvas state, including all repositories and their names, in the URL fragment and copies the URL to the clipboard. Opening such a URL restores the saved repositories and graph state.
+
 == Working With Commits
 
 As with Git itself, the Git Whiteboard App's Git graph is constructed by adding commits as children of the current HEAD commit. To add a new commit, click the `Add commit` button on the `Commits` tab. A new commit will then be added on top of the commit which is currently referenced by the HEAD pointer. Since the app is a demonstration tool, it is not possible to define the contents of a commit or its message.
@@ -26,7 +36,7 @@ Every branch in the Git graph has its own unique color. When a new commit is add
 
 === Commit Ids [[commit-ids]]
 
-The method to calculate a new commit id is as follows: for each branch in the graph, a global commit counter is managed. This counter is increased by one for every commit added to the branch. The commit id is then derived by the first character of the branch name plus the current commit count. For example, if the third commit is added to the `master` branch, the new commit id is `m3`.
+The method to calculate a new commit id is as follows: for each branch in the graph, a global commit counter is managed. This counter is increased by one for every commit added to the branch. The commit id is then derived by the first character of the branch name plus the current commit count. For example, if the third commit is added to the `main` branch, the new commit id is `m3`.
 
 If currently no branch is checked out (detached HEAD state), the HEAD's commit counter and the letter `H` is used, e.g. the second commit made in detached HEAD state gets the id `H2`.
 
@@ -40,7 +50,7 @@ The old commit is still available as a lost commit (see <<lost_commits,below>> f
 
 === Cherry-pick Commits
 
-To cherry-pick a commit, enter the id of the commit to be cherry-picked in the text field on the section `Cherry-pick commit` on the `Commits` tab and click the icon button on the text field. This will add a new commit to the current branch with the same color as the cherry-picked commit. The new commit gets a regular id with the cherry-picked commit's id appended in parentheses. For example, if you cherry-pick commit `f2` onto the `master` branch as the fourth commit, the new commit gets the id `m4(f2)`.
+To cherry-pick a commit, enter the id of the commit to be cherry-picked in the text field on the section `Cherry-pick commit` on the `Commits` tab and click the icon button on the text field. This will add a new commit to the current branch with the same color as the cherry-picked commit. The new commit gets a regular id with the cherry-picked commit's id appended in parentheses. For example, if you cherry-pick commit `f2` onto the `main` branch as the fourth commit, the new commit gets the id `m4(f2)`.
 
 === Check Out Individual Commits
 
