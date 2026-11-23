@@ -5,7 +5,9 @@ package scenario
  * schema changes in stored URLs (breaking on schema change as per ADR-0002).
  */
 data class MultiRepoSnapshot(
-    val version: Int = 1,
+    val version: Int = 2,
+    /** Next number the shared commit ID allocator will hand out (ADR 0004). Derived for version 1. */
+    val nextCommitId: Int,
     val repos: List<RepoSnapshot>
 )
 

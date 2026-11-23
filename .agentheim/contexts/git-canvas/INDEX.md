@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 8
-- **Doing:** 1
-- **Done:** 4
+- **Doing:** 0
+- **Done:** 5
 <!-- task-counts:end -->
 
 ### Todo
@@ -30,11 +30,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-j2m8z** — Shared commit ID allocator across repos (feature) — `doing/git-canvas-j2m8z-shared-commit-id-allocator.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-j2m8z** — Shared commit ID allocator across repos (feature) — `done/git-canvas-j2m8z-shared-commit-id-allocator.md`
 - **git-canvas-004** — User-configurable initial repository name — `done/git-canvas-004-user-configurable-initial-repository-name.md`
 - **git-canvas-003** — RepoRegion auto-resize — frame must grow with graph content — `done/git-canvas-003-repo-region-auto-resize.md`
 - **git-canvas-002** — Initial 'main' commit for all new graphs — fix detached HEAD regression — `done/git-canvas-002-initial-main-commit-for-new-graphs.md`

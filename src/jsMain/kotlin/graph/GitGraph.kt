@@ -11,6 +11,7 @@ import scenario.TagSnapshot
 
 class GitGraph(
     private val layer: Layer,
+    private val idAllocator: CommitIdAllocator,
     repoName: String = "my-repo",
     private val config: GitGraphConfiguration = GitGraphConfiguration()
 ) {
@@ -97,7 +98,7 @@ class GitGraph(
             initialized = true
         }
         val branchColor = BranchColors.nextColor()
-        val initialCommit = Commit("m1", globalCommitNumber++, 0, commitColor = branchColor, config = config)
+        val initialCommit = Commit("m${idAllocator.next()}", globalCommitNumber++, 0, commitColor = branchColor, config = config)
         initialCommit.commitCircle.onDoubleClick(checkoutHandler(initialCommit))
         commits.add(initialCommit)
         head = Head(initialCommit)
@@ -442,7 +443,7 @@ class GitGraph(
         traverseHistory(head.commit, resetLostInReflog)
     }
 
-    private fun calcCommitId(branch: AbstractBranch) = "${branch.id.substringAfter('/').first()}${branch.counter++}"
+    private fun calcCommitId(branch: AbstractBranch) = "${branch.id.substringAfter('/').first()}${idAllocator.next()}"
     override fun toString(): String = commits.reversed().joinToString("\n")
 
     fun runGarbageCollection() {
@@ -589,7 +590,7 @@ class GitGraph(
             initialized = true
         }
 
-        // Restore counters
+        // Restore counters (the shared commit ID allocator is re-seeded by the caller)
         globalCommitNumber = snapshot.globalCommitNumber
         globalSwimlaneCounter = snapshot.globalSwimlaneCounter
 

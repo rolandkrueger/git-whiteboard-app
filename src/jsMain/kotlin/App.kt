@@ -1,5 +1,6 @@
 import config.GitGraphConfiguration
 import graph.AbstractBranch
+import graph.CommitIdAllocator
 import graph.GitGraph
 import konvajs.Layer
 import konvajs.Stage
@@ -47,6 +48,8 @@ fun startApp() {
 
     // Dynamic list of graphs — starts with one "my-repo" graph
     val graphs = mutableListOf<GitGraph>()
+    // Single app-wide commit ID source shared by all repos (ADR 0004)
+    val commitIdAllocator = CommitIdAllocator()
 
     var isDragging = false
     var lastPosX = 0.0
@@ -132,7 +135,7 @@ fun startApp() {
         val layer = Layer()
         stage.add(layer.asDynamic())
         val config = GitGraphConfiguration(xOffset = xOffset, yOffset = 0)
-        return GitGraph(layer, repoName = repoName, config = config)
+        return GitGraph(layer, commitIdAllocator, repoName = repoName, config = config)
     }
 
     // ---- "Add Repository" dialog logic ----
@@ -218,7 +221,7 @@ fun startApp() {
     // This graph is either initialized normally or replaced by the hash-restore callback.
     val initialLayer = Layer()
     stage.add(initialLayer.asDynamic())
-    val initialGraph = GitGraph(initialLayer, repoName = "my-repo",
+    val initialGraph = GitGraph(initialLayer, commitIdAllocator, repoName = "my-repo",
         config = GitGraphConfiguration(xOffset = 0, yOffset = 0))
     activeGraph = initialGraph
 
@@ -241,7 +244,7 @@ fun startApp() {
         val promise = decompressFromBase64Url(encoded)
         promise.then({ json: String ->
             val snapshot: MultiRepoSnapshot? = ScenarioSerializer.decode(json)
-            if (snapshot == null || snapshot.version != 1 || snapshot.repos.isEmpty()) {
+            if (snapshot == null || snapshot.version > 2 || snapshot.repos.isEmpty()) {
                 console.warn("URL state could not be decoded; falling back to blank canvas.")
                 setupDefaultGraph()
                 return@then
@@ -249,10 +252,11 @@ fun startApp() {
             // Restore however many repos are in the snapshot (1, 2, or 3).
             // The initial graph layer is reused for the first repo to avoid an orphan layer.
             graphs.clear()
+            commitIdAllocator.seed(snapshot.nextCommitId)
             for ((index, repoSnapshot) in snapshot.repos.withIndex()) {
                 val graph = if (index == 0) {
                     // Reuse the pre-created layer for the first repo
-                    GitGraph(initialLayer, repoName = repoSnapshot.repoName,
+                    GitGraph(initialLayer, commitIdAllocator, repoName = repoSnapshot.repoName,
                         config = GitGraphConfiguration(xOffset = repoSnapshot.xOffset, yOffset = repoSnapshot.yOffset))
                 } else {
                     createGraph(repoSnapshot.repoName, xOffset = repoSnapshot.xOffset)
@@ -319,7 +323,8 @@ fun startApp() {
     // ---- Share button: encode current canvas state to URL fragment and clipboard ----
     doWhenButtonClicked("shareButton") {
         val snapshot = MultiRepoSnapshot(
-            version = 1,
+            version = 2,
+            nextCommitId = commitIdAllocator.peekLast() + 1,
             repos = graphs.map { it.getSnapshot() }
         )
         val json = ScenarioSerializer.encode(snapshot)

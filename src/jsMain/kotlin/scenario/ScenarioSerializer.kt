@@ -29,7 +29,7 @@ object ScenarioSerializer {
     private fun dynamicToSnapshot(obj: dynamic): MultiRepoSnapshot? {
         if (obj == null) return null
         val version = jsIntOrNull(obj.version) ?: return null
-        if (version != 1) return null
+        if (version != 1 && version != 2) return null
 
         val reposArr = obj.repos ?: return null
         val repos = mutableListOf<RepoSnapshot>()
@@ -37,7 +37,13 @@ object ScenarioSerializer {
         for (i in 0 until length) {
             repos.add(dynamicToRepoSnapshot(reposArr[i]) ?: return null)
         }
-        return MultiRepoSnapshot(version = version, repos = repos)
+        // Version 1 had no allocator: derive the next number from the highest numeric suffix of all IDs.
+        val nextCommitId = if (version >= 2) {
+            (obj.nextCommitId as? Int) ?: jsIntOrNull(obj.nextCommitId) ?: return null
+        } else {
+            graph.CommitIdAllocator.maxNumericSuffix(repos.flatMap { r -> r.commits.map { it.id } }) + 1
+        }
+        return MultiRepoSnapshot(version = version, nextCommitId = nextCommitId, repos = repos)
     }
 
     private fun dynamicToRepoSnapshot(obj: dynamic): RepoSnapshot? {
@@ -124,6 +130,7 @@ object ScenarioSerializer {
     private fun snapshotToDynamic(snapshot: MultiRepoSnapshot): dynamic {
         val obj: dynamic = js("({})")
         obj.version = snapshot.version
+        obj.nextCommitId = snapshot.nextCommitId
         obj.repos = snapshot.repos.map { repoSnapshotToDynamic(it) }.toJsArray()
         return obj
     }

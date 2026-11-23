@@ -57,6 +57,7 @@ core — this is the unique value the tool provides; everything else is support 
 
 - **Multi-repo canvas layout:** Single shared infinite canvas (ADR 0001). All repos are free-floating regions on one Konva.js stage; the trainer positions them by dragging. The active repo is indicated by a highlighted region border. Pan/zoom is global. Up to 3 repos (one initial, two more via "Add repository").
 - **Active repo selection:** Click anywhere in a repo region to make it active; all control-panel commands are routed to the active repo only.
+- **Commit IDs:** One app-wide `CommitIdAllocator` (ADR 0004) numbers all new commits as `<branch first letter><n>`; the same ID in two repos means the same commit. Rebased copies keep `<id>*`. `globalCommitNumber` is only the per-graph vertical layout slot, not an ID source.
 
 ## Open questions
 
