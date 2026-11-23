@@ -249,6 +249,37 @@ class GitGraph(
     fun doesCommitExist(id: String) = commits.any { it.id == id }
     fun findCommitFor(id: String) = commits.find { it.id == id }
 
+    /** Upstream state of the current branch, as shown in the Remote tab. */
+    class UpstreamStatus(
+        val detached: Boolean,
+        val branchName: String?,
+        val upstream: String?,
+        val ahead: Int,
+        val behind: Int
+    )
+
+    /** Describes the current branch's upstream and its ahead/behind counts (commit-id set difference). */
+    fun upstreamStatus(): UpstreamStatus {
+        if (head.isDetached) return UpstreamStatus(true, null, null, 0, 0)
+        val branch = head.targetBranch as? Branch ?: return UpstreamStatus(false, null, null, 0, 0)
+        val remote = branch.upstream?.let { up -> remoteBranches.find { it.id == up } }
+            ?: return UpstreamStatus(false, branch.id, null, 0, 0)
+        fun ancestry(start: Commit): Set<String> {
+            val ids = mutableSetOf<String>()
+            val stack = mutableListOf(start)
+            while (stack.isNotEmpty()) {
+                val c = stack.removeAt(stack.size - 1)
+                if (!ids.add(c.id)) continue
+                c.parent?.let { stack.add(it) }
+                c.mergedCommit?.let { stack.add(it) }
+            }
+            return ids
+        }
+        val local = ancestry(branch.commit)
+        val upstreamIds = ancestry(remote.commit)
+        return UpstreamStatus(false, branch.id, remote.id, (local - upstreamIds).size, (upstreamIds - local).size)
+    }
+
     /**
      * Calculates the current branch based on the HEAD pointer. If the HEAD is detached, return the HEAD as a result.
      * Otherwise return the currently checked out branch.

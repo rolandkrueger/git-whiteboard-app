@@ -221,6 +221,23 @@ fun startApp() {
     // Holds the currently active graph
     var activeGraph: GitGraph
 
+    // Refresh the Remote tab from the active repo; textContent is only touched when the text changes.
+    fun updateRemoteTab(g: GitGraph) {
+        fun setText(id: String, text: String) {
+            val el = document.getElementById(id) ?: return
+            if (el.textContent != text) el.textContent = text
+        }
+        val remote = g.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
+        val status = g.upstreamStatus()
+        setText("remoteStatus", if (remote != null) "origin: ${remote.repoName}" else "no remote")
+        setText("upstreamStatus", when {
+            status.detached -> "detached HEAD - no upstream"
+            status.upstream != null -> "${status.branchName} -> ${status.upstream}"
+            else -> "no upstream"
+        })
+        setText("aheadBehindStatus", if (status.upstream != null) "ahead ${status.ahead}, behind ${status.behind}" else "-")
+    }
+
     // ---- Startup: restore from URL fragment if present, otherwise init blank graph ----
 
     // Always create the initial "my-repo" graph synchronously so activeGraph is defined.
@@ -230,6 +247,9 @@ fun startApp() {
     val initialGraph = GitGraph(initialLayer, commitIdAllocator, repoName = "my-repo",
         config = GitGraphConfiguration(xOffset = 0, yOffset = 0))
     activeGraph = initialGraph
+
+    // Graph changes come from many places (buttons, canvas double-click, restore); a cheap poll keeps the tab current.
+    window.setInterval({ updateRemoteTab(activeGraph) }, 300)
 
     // Populate graphs with default state (called when no URL state is present, or as fallback)
     fun setupDefaultGraph() {
@@ -419,19 +439,23 @@ fun startApp() {
     }
 
     doWhenLinkClicked("generalTabControl") {
-        activateTab("generalTab", "commitTab", "refsTab", "mergeTab", "aboutTab")
+        activateTab("generalTab", "commitTab", "refsTab", "mergeTab", "aboutTab", "remoteTab")
     }
     doWhenLinkClicked("commitTabControl") {
-        activateTab("commitTab", "generalTab", "refsTab", "mergeTab", "aboutTab")
+        activateTab("commitTab", "generalTab", "refsTab", "mergeTab", "aboutTab", "remoteTab")
     }
     doWhenLinkClicked("refsTabControl") {
-        activateTab("refsTab", "generalTab", "commitTab", "mergeTab", "aboutTab")
+        activateTab("refsTab", "generalTab", "commitTab", "mergeTab", "aboutTab", "remoteTab")
     }
     doWhenLinkClicked("mergeTabControl") {
-        activateTab("mergeTab", "generalTab", "commitTab", "refsTab", "aboutTab")
+        activateTab("mergeTab", "generalTab", "commitTab", "refsTab", "aboutTab", "remoteTab")
+    }
+    doWhenLinkClicked("remoteTabControl") {
+        activateTab("remoteTab", "generalTab", "commitTab", "mergeTab", "refsTab", "aboutTab")
+        updateRemoteTab(activeGraph)
     }
     doWhenLinkClicked("aboutTabControl") {
-        activateTab("aboutTab", "generalTab", "commitTab", "mergeTab", "refsTab")
+        activateTab("aboutTab", "generalTab", "commitTab", "mergeTab", "refsTab", "remoteTab")
     }
 
     doWhenButtonClicked("runGCButton") {

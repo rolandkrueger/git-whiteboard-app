@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:43 -- Task verified and completed: git-canvas-r6szj - Remote tab in control panel with remote status
+
+**Type:** Work / Task completion
+**Task:** git-canvas-r6szj - Remote tab in control panel with remote status
+**Summary:** add Remote tab with remote, upstream and ahead/behind status
+**Duration:** 12m
+**Verification:** PASS (iteration 1)
+**Files changed:** 3
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-23 20:40 -- Batch started: [git-canvas-r6szj]
 
 **Type:** Work / Batch start

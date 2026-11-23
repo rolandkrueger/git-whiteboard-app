@@ -119,6 +119,7 @@
                     <li><a id="commitTabControl">Commits</a></li>
                     <li><a id="refsTabControl">Refs</a></li>
                     <li><a id="mergeTabControl">Merge/Rebase</a></li>
+                    <li><a id="remoteTabControl">Remote</a></li>
                     <li><a id="aboutTabControl">About</a></li>
                 </ul>
             </div>
@@ -147,15 +148,6 @@
                         </span>
                         <span>Add Repository</span>
                     </button>
-                </div>
-                <div class="field">
-                    <button id="cloneRepoButton" class="button is-outlined is-fullwidth" title="Clone the active repository">
-                        <span class="icon">
-                            <i class="fas fa-clone"></i>
-                        </span>
-                        <span>Clone repository</span>
-                    </button>
-                    <p id="cloneRepoHint" class="help hidden">Maximum of 3 repositories reached.</p>
                 </div>
                 <div class="field">
                     <button id="runGCButton" class="button is-outlined is-fullwidth">
@@ -380,6 +372,32 @@
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <div id="remoteTab" class="hidden">
+                <div class="field">
+                    <p class="is-size-7"><strong>Remote:</strong> <span id="remoteStatus">no remote</span></p>
+                    <p class="is-size-7"><strong>Upstream:</strong> <span id="upstreamStatus">no upstream</span></p>
+                    <p class="is-size-7"><strong>Ahead/behind:</strong> <span id="aheadBehindStatus">-</span></p>
+                </div>
+                <div class="field">
+                    <button id="cloneRepoButton" class="button is-outlined is-fullwidth" title="Clone the active repository">
+                        <span class="icon">
+                            <i class="fas fa-clone"></i>
+                        </span>
+                        <span>Clone repository</span>
+                    </button>
+                    <p id="cloneRepoHint" class="help hidden">Maximum of 3 repositories reached.</p>
+                </div>
+                <div class="field is-grouped">
+                    <button id="pushButton" class="button is-outlined mr-2" disabled>Push</button>
+                    <button id="fetchButton" class="button is-outlined mr-2" disabled>Fetch</button>
+                    <button id="pullButton" class="button is-outlined" disabled>Pull</button>
+                </div>
+                <div class="field">
+                    <label class="checkbox is-size-7"><input id="pullRebaseCheckbox" type="checkbox" disabled> rebase</label>
+                </div>
+                <p id="remoteMessage" class="help"></p>
             </div>
 
             <div id="aboutTab" class="hidden">
