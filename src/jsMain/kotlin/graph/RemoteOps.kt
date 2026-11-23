@@ -69,7 +69,7 @@ object RemoteOps {
     }
 
     /** Pull = fetch, then merge the upstream tracking ref into the current branch (fast-forward when possible). */
-    fun pull(local: GitGraph, remote: GitGraph?): Result {
+    fun pull(local: GitGraph, remote: GitGraph?, rebase: Boolean = false): Result {
         if (remote == null || !isAvailable(remote)) return Result(Kind.ERROR, "remote not available")
         val status = local.upstreamStatus()
         if (status.detached) return Result(Kind.ERROR, "Cannot pull: HEAD is detached")
@@ -88,6 +88,10 @@ object RemoteOps {
             return if (prefix.isEmpty()) Result(Kind.INFO, "Already up to date") else Result(Kind.SUCCESS, prefix + "Already up to date")
         }
         val fastForward = localTip.id in local.ancestorIds(upstreamTip)
+        if (rebase) {
+            local.rebase(upstream)
+            return Result(Kind.SUCCESS, prefix + if (fastForward) "Fast-forward" else "Rebased")
+        }
         local.merge(false, upstream)
         return Result(Kind.SUCCESS, prefix + if (fastForward) "Fast-forward" else "Merge made")
     }

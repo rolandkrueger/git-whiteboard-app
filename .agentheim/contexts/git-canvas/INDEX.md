@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 1
-- **Doing:** 1
-- **Done:** 11
+- **Doing:** 0
+- **Done:** 12
 <!-- task-counts:end -->
 
 ### Todo
@@ -23,11 +23,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-ktja3** — Pull with rebase option (feature) — `doing/git-canvas-ktja3-pull-with-rebase.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-ktja3** — Pull with rebase option (feature) — `done/git-canvas-ktja3-pull-with-rebase.md`
 - **git-canvas-sz7p8** — Pull as fetch plus merge (fast-forward or merge commit) (feature) — `done/git-canvas-sz7p8-pull-fetch-and-merge.md`
 - **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits (feature) — `done/git-canvas-rx1y3-fetch-remote-tracking-update.md`
 - **git-canvas-w3ndg** — Push with fast-forward and visible rejection (feature) — `done/git-canvas-w3ndg-push-with-fast-forward-and-rejection.md`

@@ -539,7 +539,8 @@ class GitGraph(
     }
 
     fun rebase(targetBranchName: String): Boolean {
-        val targetBranch = findBranch(targetBranchName)
+        // Target may also be a tracking ref (origin/<name>), used by pull --rebase; not listed in dropdowns.
+        val targetBranch: AbstractBranch? = findBranch(targetBranchName) ?: remoteBranches.find { it.id == targetBranchName }
         return if (targetBranch != null) {
             val commonBaseCommit = calculateCommonBaseCommit(targetBranch)
             if (commonBaseCommit == targetBranch.commit) {

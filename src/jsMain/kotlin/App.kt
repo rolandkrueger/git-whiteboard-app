@@ -250,6 +250,9 @@ fun startApp() {
         (document.getElementById("pullButton") as? org.w3c.dom.HTMLButtonElement)?.let {
             val canPull = remote != null && !status.detached && status.branchName != null && status.upstream != null
             if (it.disabled == canPull) it.disabled = !canPull
+            (document.getElementById("pullRebaseCheckbox") as? org.w3c.dom.HTMLInputElement)?.let { cb ->
+                if (cb.disabled == canPull) cb.disabled = !canPull
+            }
         }
         setText("aheadBehindStatus", if (status.upstream != null) "ahead ${status.ahead}, behind ${status.behind}" else "-")
     }
@@ -295,7 +298,8 @@ fun startApp() {
 
     document.getElementById("pullButton")?.addEventListener("click", {
         val remote = activeGraph.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
-        showRemoteResult(graph.RemoteOps.pull(activeGraph, remote))
+        val rebase = (document.getElementById("pullRebaseCheckbox") as? org.w3c.dom.HTMLInputElement)?.checked == true
+        showRemoteResult(graph.RemoteOps.pull(activeGraph, remote, rebase))
     })
 
     // Populate graphs with default state (called when no URL state is present, or as fallback)
