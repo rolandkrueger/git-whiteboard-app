@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 7
-- **Doing:** 1
-- **Done:** 5
+- **Doing:** 0
+- **Done:** 6
 <!-- task-counts:end -->
 
 ### Todo
@@ -29,11 +29,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-b5f0r** — Remote-tracking label model and rendering (feature) — `doing/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-b5f0r** — Remote-tracking label model and rendering (feature) — `done/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
 - **git-canvas-j2m8z** — Shared commit ID allocator across repos (feature) — `done/git-canvas-j2m8z-shared-commit-id-allocator.md`
 - **git-canvas-004** — User-configurable initial repository name — `done/git-canvas-004-user-configurable-initial-repository-name.md`
 - **git-canvas-003** — RepoRegion auto-resize — frame must grow with graph content — `done/git-canvas-003-repo-region-auto-resize.md`

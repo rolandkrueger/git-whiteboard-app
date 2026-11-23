@@ -19,7 +19,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **Detached HEAD** — state where HEAD points directly at a commit, not a branch
 - **Lost commit** — a commit no longer reachable from any branch or tag (visible in reflog, removable by GC)
 - **Merge commit** — a commit with two parent lines
-- **Remote-tracking branch** — a label representing the last known state of a branch on a remote repo (e.g. origin/main)
+- **Remote-tracking branch** — a label representing the last known state of a branch on a remote repo (e.g. origin/main). Rendered as an unfilled pill with a dashed border in the branch colour and grey text `origin/<name>`; held in its own list, not draggable, not checkout-able, ignored by branch-name uniqueness and pickers (ADR 0005)
 - **Local repo** — one complete graph representing a developer's local clone
 - **Remote repo** — one complete graph representing the upstream repository
 - **Multi-repo canvas** — a canvas view showing two or more repos simultaneously
@@ -61,4 +61,4 @@ core — this is the unique value the tool provides; everything else is support 
 
 ## Open questions
 
-- Should remote-tracking branch labels be visually distinct from local branch labels?
+- (resolved) Remote-tracking labels are visually distinct: dashed, unfilled, grey text (ADR 0005).

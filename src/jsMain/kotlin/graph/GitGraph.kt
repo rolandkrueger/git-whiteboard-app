@@ -6,6 +6,7 @@ import konvajs.Layer
 import scenario.BranchSnapshot
 import scenario.CommitSnapshot
 import scenario.HeadSnapshot
+import scenario.RemoteBranchSnapshot
 import scenario.RepoSnapshot
 import scenario.TagSnapshot
 
@@ -19,6 +20,7 @@ class GitGraph(
     private val commits = mutableListOf<Commit>()
     private val branches = mutableListOf<AbstractBranch>()
     private val tags = mutableListOf<AbstractBranch>()
+    private val remoteBranches = mutableListOf<RemoteBranch>()
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
     private var head: Head
@@ -297,6 +299,28 @@ class GitGraph(
 
     fun getTags(): List<AbstractBranch> = tags
 
+    fun getRemoteBranches(): List<RemoteBranch> = remoteBranches
+
+    /** Creates or moves the remote-tracking label `origin/<name>` onto [commit]. */
+    fun setRemoteBranch(name: String, commit: Commit) {
+        val existing = remoteBranches.find { it.name == name }
+        if (existing != null) {
+            existing.commit.removeBranch(existing)
+            val oldCommit = existing.commit
+            existing.commit = commit
+            existing.attachToCommit(commit, layer)
+            oldCommit.repositionBranches(layer)
+        } else {
+            val remote = RemoteBranch(name, commit.swimlane, commit, commit.commitColor)
+            remoteBranches.add(remote)
+            remoteBranches.sortBy { it.name }
+            remote.render(layer)
+            remote.attachToCommit(commit, layer)
+        }
+        calculateLostCommits()
+        layer.batchDraw()
+    }
+
     fun checkout(id: String, doShowLostCommits: Boolean) {
         console.log("Checking out $id")
         val oldHeadCommit = head.commit
@@ -440,6 +464,9 @@ class GitGraph(
         tags.forEach {
             traverseHistory(it.commit, resetLostInReflog)
         }
+        remoteBranches.forEach {
+            traverseHistory(it.commit, resetLostInReflog)
+        }
         traverseHistory(head.commit, resetLostInReflog)
     }
 
@@ -529,6 +556,8 @@ class GitGraph(
         branches.clear()
         tags.forEach { it.removeFrom(layer) }
         tags.clear()
+        remoteBranches.forEach { it.removeFrom(layer) }
+        remoteBranches.clear()
         globalCommitNumber = 0
         globalSwimlaneCounter = 0
         head = Head(Commit("", 0, 0, config = config))
@@ -556,12 +585,14 @@ class GitGraph(
                     id = branch.id,
                     swimlane = branch.swimlane,
                     targetCommitId = branch.commit.id,
-                    commitColor = branch.commitColor
+                    commitColor = branch.commitColor,
+                    upstream = (branch as? Branch)?.upstream
                 )
             }
         val tagSnapshots = tags.map { tag ->
             TagSnapshot(id = tag.id, targetCommitId = tag.commit.id)
         }
+        val remoteBranchSnapshots = remoteBranches.map { RemoteBranchSnapshot(it.name, it.commit.id) }
         val headSnapshot = HeadSnapshot(
             targetBranchId = if (head.isDetached) null else head.targetBranch?.id,
             detachedCommitId = if (head.isDetached) head.commit.id else null
@@ -575,7 +606,8 @@ class GitGraph(
             commits = commitSnapshots,
             branches = branchSnapshots,
             tags = tagSnapshots,
-            head = headSnapshot
+            head = headSnapshot,
+            remoteBranches = remoteBranchSnapshots
         )
     }
 
@@ -643,6 +675,7 @@ class GitGraph(
                 commit = targetCommit,
                 commitColor = bs.commitColor
             )
+            branch.upstream = bs.upstream
             branch.onDoubleClick { checkout(bs.id, showLostCommits) }
             branches.add(branch)
             targetCommit.addBranch(branch)
@@ -660,6 +693,16 @@ class GitGraph(
             tags.add(tag)
         }
         tags.sortBy { it.id }
+
+        // Restore remote-tracking labels
+        for (rs in snapshot.remoteBranches) {
+            val targetCommit = commitMap[rs.targetCommitId] ?: continue
+            val remote = RemoteBranch(rs.name, targetCommit.swimlane, targetCommit, targetCommit.commitColor)
+            remoteBranches.add(remote)
+            remote.render(layer)
+            remote.attachToCommit(targetCommit, layer)
+        }
+        remoteBranches.sortBy { it.name }
 
         // Restore HEAD
         val headSnapshot = snapshot.head

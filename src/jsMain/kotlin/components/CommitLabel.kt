@@ -13,12 +13,13 @@ abstract class CommitLabel protected constructor(
     private val color: String,
     var position: Point,
     private val labelOpacity: Double = 1.0,
-    private val textColor: String = "#000"
+    private val textColor: String = "#000",
+    private val dashed: Boolean = false
 ) : Renderable {
 
     private var labelWidth: Int = calcLabelWidth(text)
 
-    private var rectangle: Rect = createRect(position, labelWidth, color, labelOpacity)
+    private var rectangle: Rect = createRect(position, labelWidth, color, labelOpacity, dashed)
     private var textObject: Text = createText(text, position, textColor)
     private var line = Line(Point(0, 0), Point(0, 0))
     private var lineRendered = false
@@ -89,15 +90,22 @@ abstract class CommitLabel protected constructor(
     companion object {
         fun calcLabelWidth(text: String) = text.length * 10 + 10
 
-        fun createRect(position: Point, width: Int, color: String, opacity: Double): Rect {
+        fun createRect(position: Point, width: Int, color: String, opacity: Double, dashed: Boolean = false): Rect {
             return Rect(
                 jso<RectConfig> {
                     x = position.x
                     y = position.y
                     this.width = width
                     height = GitGraphConfiguration.labelHeight
-                    fill = color
-                    stroke = "black"
+                    if (dashed) {
+                        // Unfilled pill with a dashed border in the branch colour (remote-tracking label)
+                        fill = "rgba(255,255,255,0.01)"
+                        stroke = color
+                        dash = arrayOf(6, 4)
+                    } else {
+                        fill = color
+                        stroke = "black"
+                    }
                     strokeWidth = 1
                     this.opacity = opacity
                     cornerRadius = 5
@@ -127,3 +135,7 @@ class HeadLabel(position: Point) : CommitLabel("HEAD", "#7CA1EC", position, text
 class TagLabel(tagName: String, position: Point) : CommitLabel(tagName, "#FFE068", position)
 
 class BranchLabel(branchName: String, position: Point) : CommitLabel(branchName, "#6ECC84", position)
+
+/** Remote-tracking label: outlined, dashed, grey-ish text. [color] is the branch colour used for the border. */
+class RemoteBranchLabel(text: String, color: String, position: Point) :
+    CommitLabel(text, color.ifEmpty { "#888888" }, position, textColor = "#777", dashed = true)

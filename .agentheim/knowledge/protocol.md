@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:35 -- Task verified and completed: git-canvas-b5f0r - Remote-tracking label model and rendering
+
+**Type:** Work / Task completion
+**Task:** git-canvas-b5f0r - Remote-tracking label model and rendering
+**Summary:** add remote-tracking label kind (RemoteBranch) with dashed rendering and snapshot support
+**Duration:** 8m
+**Verification:** PASS (iteration 1)
+**Files changed:** 7
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-23 20:32 -- Batch started: [git-canvas-b5f0r]
 
 **Type:** Work / Batch start

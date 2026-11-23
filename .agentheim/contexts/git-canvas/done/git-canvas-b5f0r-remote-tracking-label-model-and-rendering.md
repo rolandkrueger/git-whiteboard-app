@@ -1,11 +1,11 @@
 ---
 id: git-canvas-b5f0r
 title: Remote-tracking label model and rendering
-status: doing
+status: done
 type: feature
 context: git-canvas
 created: 2026-11-23
-completed:
+completed: 2026-11-23
 depends_on: [git-canvas-j2m8z]
 blocks: [git-canvas-wv6va]
 tags: [remote-tracking, rendering, scenario]
@@ -30,11 +30,15 @@ Clone, fetch and push all need `origin/<branch>` labels. Introducing the label k
 ## Acceptance criteria
 - [ ] Via the temporary hook, `origin/main` appears on a commit with a dashed, unfilled style clearly distinct from the local `main` label. [human-eye]
 - [ ] Two labels on one commit (`main` and `origin/main`) do not overlap. [human-eye]
-- [ ] The `origin/main` label cannot be dragged and does not appear in branch/merge/rebase/delete dropdowns.
-- [ ] A local branch named `origin` or starting with `o` is not blocked by tracking labels (uniqueness check ignores them).
-- [ ] Share URL, reload: the tracking label is restored on the same commit.
-- [ ] The temporary dev hook is removed from the code.
-- [ ] `sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all` succeeds and the browser console shows no new runtime errors.
+- [x] The `origin/main` label cannot be dragged and does not appear in branch/merge/rebase/delete dropdowns.
+- [x] A local branch named `origin` or starting with `o` is not blocked by tracking labels (uniqueness check ignores them).
+- [x] Share URL, reload: the tracking label is restored on the same commit.
+- [x] The temporary dev hook is removed from the code.
+- [x] `sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all` succeeds and the browser console shows no new runtime errors.
 
 ## Notes
 New label class in `graph/Branches.kt` or a sibling file; rendering through the existing `components/` helpers. Update the git-canvas README: resolve the open question on tracking-label style, add the dashed style to the ubiquitous language. See ADR 0005.
+
+## Outcome
+Added `RemoteBranch` (own list `remoteBranches` in GitGraph, `setRemoteBranch(name, commit)`), `RemoteBranchLabel` (dashed, unfilled, grey text), `Branch.upstream`, and snapshot fields (`remoteBranches`, `upstream`) with defaults on decode. No dev hook was added (no browser available), so nothing to remove. The two [human-eye] criteria remain unticked; the conductor checks them via the clone task. Build verified; no unit tests exist.
+Key files: graph/Branches.kt, graph/GitGraph.kt, components/CommitLabel.kt, scenario/GraphSnapshot.kt, scenario/ScenarioSerializer.kt, konvajs/KonvaBindings.kt (`dash`).

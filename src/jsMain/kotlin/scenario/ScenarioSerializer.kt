@@ -77,6 +77,19 @@ object ScenarioSerializer {
 
         val head = dynamicToHeadSnapshot(obj.head) ?: return null
 
+        // Missing in older snapshots: default to empty
+        val remoteBranches = mutableListOf<RemoteBranchSnapshot>()
+        val remoteArr = obj.remoteBranches
+        if (remoteArr != null) {
+            val remoteLen = remoteArr.length as Int
+            for (i in 0 until remoteLen) {
+                val r = remoteArr[i]
+                val name = r?.name as? String ?: return null
+                val target = r.targetCommitId as? String ?: return null
+                remoteBranches.add(RemoteBranchSnapshot(name, target))
+            }
+        }
+
         return RepoSnapshot(
             repoName = repoName,
             xOffset = xOffset,
@@ -86,7 +99,8 @@ object ScenarioSerializer {
             commits = commits,
             branches = branches,
             tags = tags,
-            head = head
+            head = head,
+            remoteBranches = remoteBranches
         )
     }
 
@@ -108,7 +122,7 @@ object ScenarioSerializer {
         val swimlane = (obj.swimlane as? Int) ?: jsIntOrNull(obj.swimlane) ?: return null
         val targetCommitId = obj.targetCommitId as? String ?: return null
         val commitColor = obj.commitColor as? String ?: ""
-        return BranchSnapshot(id, swimlane, targetCommitId, commitColor)
+        return BranchSnapshot(id, swimlane, targetCommitId, commitColor, obj.upstream as? String)
     }
 
     private fun dynamicToTagSnapshot(obj: dynamic): TagSnapshot? {
@@ -146,6 +160,12 @@ object ScenarioSerializer {
         obj.branches = repo.branches.map { branchSnapshotToDynamic(it) }.toJsArray()
         obj.tags = repo.tags.map { tagSnapshotToDynamic(it) }.toJsArray()
         obj.head = headSnapshotToDynamic(repo.head)
+        obj.remoteBranches = repo.remoteBranches.map { r ->
+            val o: dynamic = js("({})")
+            o.name = r.name
+            o.targetCommitId = r.targetCommitId
+            o
+        }.toJsArray()
         return obj
     }
 
@@ -167,6 +187,7 @@ object ScenarioSerializer {
         obj.swimlane = branch.swimlane
         obj.targetCommitId = branch.targetCommitId
         obj.commitColor = branch.commitColor
+        if (branch.upstream != null) obj.upstream = branch.upstream
         return obj
     }
 

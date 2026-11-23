@@ -21,7 +21,14 @@ data class RepoSnapshot(
     val commits: List<CommitSnapshot>,
     val branches: List<BranchSnapshot>,
     val tags: List<TagSnapshot>,
-    val head: HeadSnapshot
+    val head: HeadSnapshot,
+    /** Remote-tracking labels (ADR 0005); empty for older snapshots. */
+    val remoteBranches: List<RemoteBranchSnapshot> = emptyList()
+)
+
+data class RemoteBranchSnapshot(
+    val name: String,
+    val targetCommitId: String
 )
 
 data class CommitSnapshot(
@@ -38,7 +45,9 @@ data class BranchSnapshot(
     val id: String,
     val swimlane: Int,
     val targetCommitId: String,
-    val commitColor: String
+    val commitColor: String,
+    /** Tracked remote ref such as "origin/main"; null when none. */
+    val upstream: String? = null
 )
 
 data class TagSnapshot(

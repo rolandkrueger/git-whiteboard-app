@@ -51,6 +51,9 @@ external interface ShapeConfig : NodeConfig {
     var strokeWidth: Number?
         get() = definedExternally
         set(value) = definedExternally
+    var dash: Array<Number>?
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 external interface ContainerConfig : NodeConfig

@@ -78,7 +78,31 @@ open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit, c
         return id.hashCode()
     }
 
+    /** Remote-tracking ref this branch tracks (e.g. "origin/main"); data only for now. */
+    var upstream: String? = null
+
     override fun toString(): String = "Branch $id -> $commit"
+}
+
+/**
+ * Remote-tracking label such as `origin/main` (ADR 0005). Lives in its own list in GitGraph, never in
+ * `branches`, so it is invisible to checkout, pickers, uniqueness, deletion, drag and reset.
+ */
+class RemoteBranch(val name: String, swimlane: Int, commit: Commit, commitColor: String) :
+    AbstractBranch("origin/$name", swimlane, 1, commit, commitColor) {
+
+    private val remoteLabel = RemoteBranchLabel(
+        id,
+        commitColor,
+        commit.commitCircle.getRightDockPoint() + GitGraphConfiguration.labelOffset + Point(
+            0,
+            GitGraphConfiguration.labelYOffset * commit.branches.size
+        )
+    )
+
+    override fun getLabel(): CommitLabel = remoteLabel
+
+    override fun toString(): String = "RemoteBranch $id -> $commit"
 }
 
 class Head(commit: Commit, var targetBranch: AbstractBranch? = null) : AbstractBranch("HEAD", 0, commit = commit, commitColor = BranchColors.HEAD_COLOR) {
