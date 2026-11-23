@@ -10,14 +10,23 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 0
-- **Todo:** 0
+- **Backlog:** 1
+- **Todo:** 9
 - **Doing:** 0
 - **Done:** 4
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-j2m8z** — Shared commit ID allocator across repos — `todo/git-canvas-j2m8z-shared-commit-id-allocator.md`
+- **git-canvas-b5f0r** — Remote-tracking label model and rendering — `todo/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
+- **git-canvas-wv6va** — Clone repository with origin remote — `todo/git-canvas-wv6va-clone-repository-with-origin-remote.md`
+- **git-canvas-r6szj** — Remote tab in control panel with remote status — `todo/git-canvas-r6szj-remote-tab-in-control-panel.md`
+- **git-canvas-w3ndg** — Push with fast-forward and visible rejection — `todo/git-canvas-w3ndg-push-with-fast-forward-and-rejection.md`
+- **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits — `todo/git-canvas-rx1y3-fetch-remote-tracking-update.md`
+- **git-canvas-sz7p8** — Pull as fetch plus merge (fast-forward or merge commit) — `todo/git-canvas-sz7p8-pull-fetch-and-merge.md`
+- **git-canvas-ktja3** — Pull with rebase option — `todo/git-canvas-ktja3-pull-with-rebase.md`
+- **git-canvas-bdecz** — Remote operations documentation and doc sync — `todo/git-canvas-bdecz-remote-operations-documentation.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -34,12 +43,15 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
+- **git-canvas-mrfrh** — Conflict demonstration for pull, merge and rebase — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- backlog-list:end -->
 
 ## ADRs scoped to this BC
 
 <!-- adr-local:start -->
 - **0001** — Multi-repo canvas layout strategy — `knowledge/decisions/0001-multi-repo-canvas-layout.md`
+- **0004** — Shared commit ID allocator across repos — `knowledge/decisions/0004-shared-commit-id-allocator.md`
+- **0005** — Remote operations model — `knowledge/decisions/0005-remote-operations-model.md`
 <!-- adr-local:end -->
 
 ## Research touching this BC

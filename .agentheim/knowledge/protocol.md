@@ -5,6 +5,16 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:26 -- Modeling / Captured: git-canvas remote operations (9 tasks + 1 backlog)
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo (9), backlog (1)
+**Summary:** Decomposed remote operations into a dependency chain: shared commit ID allocator (git-canvas-j2m8z) -> remote-tracking labels (git-canvas-b5f0r) -> clone (git-canvas-wv6va) -> Remote tab (git-canvas-r6szj) -> push (git-canvas-w3ndg) and fetch (git-canvas-rx1y3) -> pull merge (git-canvas-sz7p8) -> pull rebase (git-canvas-ktja3) -> docs (git-canvas-bdecz). Conflict demonstration (git-canvas-mrfrh) captured to backlog, under-refined. Builder decisions: clone creates a new repo with origin/* labels; globally unique commit IDs; fetch + pull with merge or rebase; non-fast-forward push rejected like Git, no force push.
+**ADRs written:** 0004, 0005
+
+---
+
 ## 2026-05-27 00:00 -- Work session ended
 
 **Type:** Work / Session end
