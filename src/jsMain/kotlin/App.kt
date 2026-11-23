@@ -128,14 +128,20 @@ fun startApp() {
     fun updateAddRepoButtonState() {
         val btn = document.getElementById("addRepoButton") as? HTMLButtonElement
         btn?.disabled = graphs.size >= 3
+        val cloneBtn = document.getElementById("cloneRepoButton") as? HTMLButtonElement
+        cloneBtn?.disabled = graphs.size >= 3
+        cloneBtn?.title = if (graphs.size >= 3) "Maximum of 3 repositories reached" else "Clone the active repository"
+        document.getElementById("cloneRepoHint")?.classList?.toggle("hidden", graphs.size < 3)
     }
+
+    var nextRepoId = 1
 
     // Create a new GitGraph with its own Layer at the given xOffset and add it to the stage/list
     fun createGraph(repoName: String, xOffset: Int): GitGraph {
         val layer = Layer()
         stage.add(layer.asDynamic())
         val config = GitGraphConfiguration(xOffset = xOffset, yOffset = 0)
-        return GitGraph(layer, commitIdAllocator, repoName = repoName, config = config)
+        return GitGraph(layer, commitIdAllocator, repoName = repoName, config = config).also { it.repoId = nextRepoId++ }
     }
 
     // ---- "Add Repository" dialog logic ----
@@ -261,9 +267,14 @@ fun startApp() {
                 } else {
                     createGraph(repoSnapshot.repoName, xOffset = repoSnapshot.xOffset)
                 }
+                graph.repoId = index
                 graph.restoreFromSnapshot(repoSnapshot)
                 graphs.add(graph)
             }
+            for ((index, repoSnapshot) in snapshot.repos.withIndex()) {
+                graphs[index].remoteRepoId = repoSnapshot.remoteRepoIndex?.let { graphs.getOrNull(it)?.repoId }
+            }
+            nextRepoId = graphs.size
             activeGraph = graphs.first()
             activeGraph.isActive = true
             updateActiveRepoLabel(activeGraph)
@@ -325,7 +336,9 @@ fun startApp() {
         val snapshot = MultiRepoSnapshot(
             version = 2,
             nextCommitId = commitIdAllocator.peekLast() + 1,
-            repos = graphs.map { it.getSnapshot() }
+            repos = graphs.map { g ->
+                g.getSnapshot().copy(remoteRepoIndex = g.remoteRepoId?.let { id -> graphs.indexOfFirst { it.repoId == id }.takeIf { it >= 0 } })
+            }
         )
         val json = ScenarioSerializer.encode(snapshot)
         val compressPromise = compressToBase64Url(json)
@@ -351,6 +364,29 @@ fun startApp() {
             updateBranchSelects(activeGraph.getBranches())
             updateTagSelects(activeGraph.getTags())
         }
+    }
+
+    doWhenButtonClicked("cloneRepoButton") {
+        if (graphs.size >= 3) return@doWhenButtonClicked
+        val source = activeGraph
+        var cloneName = "${source.repoName}-clone"
+        var suffix = 2
+        while (graphs.any { it.repoName == cloneName }) {
+            cloneName = "${source.repoName}-clone-$suffix"
+            suffix++
+        }
+        val xOffset = (graphs.maxOf { it.xOffset }) + repoSeparation
+        val clone = createGraph(cloneName, xOffset)
+        clone.restoreFromSnapshot(source.buildCloneSnapshot(cloneName, xOffset))
+        clone.remoteRepoId = source.repoId
+        graphs.add(clone)
+        updateAddRepoButtonState()
+        activeGraph.isActive = false
+        activeGraph = clone
+        activeGraph.isActive = true
+        updateActiveRepoLabel(activeGraph)
+        updateBranchSelects(activeGraph.getBranches())
+        updateTagSelects(activeGraph.getTags())
     }
 
     doWhenButtonClicked("renameRepoButton") {

@@ -23,7 +23,9 @@ data class RepoSnapshot(
     val tags: List<TagSnapshot>,
     val head: HeadSnapshot,
     /** Remote-tracking labels (ADR 0005); empty for older snapshots. */
-    val remoteBranches: List<RemoteBranchSnapshot> = emptyList()
+    val remoteBranches: List<RemoteBranchSnapshot> = emptyList(),
+    /** Index in MultiRepoSnapshot.repos of this repo's "origin" remote; null when none (ADR 0005). */
+    val remoteRepoIndex: Int? = null
 )
 
 data class RemoteBranchSnapshot(

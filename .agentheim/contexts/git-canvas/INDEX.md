@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 6
-- **Doing:** 1
-- **Done:** 6
+- **Doing:** 0
+- **Done:** 7
 <!-- task-counts:end -->
 
 ### Todo
@@ -28,11 +28,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-wv6va** — Clone repository with origin remote (feature) — `doing/git-canvas-wv6va-clone-repository-with-origin-remote.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-wv6va** — Clone repository with origin remote (feature) — `done/git-canvas-wv6va-clone-repository-with-origin-remote.md`
 - **git-canvas-b5f0r** — Remote-tracking label model and rendering (feature) — `done/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
 - **git-canvas-j2m8z** — Shared commit ID allocator across repos (feature) — `done/git-canvas-j2m8z-shared-commit-id-allocator.md`
 - **git-canvas-004** — User-configurable initial repository name — `done/git-canvas-004-user-configurable-initial-repository-name.md`

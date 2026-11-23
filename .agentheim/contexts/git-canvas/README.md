@@ -22,6 +22,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **Remote-tracking branch** — a label representing the last known state of a branch on a remote repo (e.g. origin/main). Rendered as an unfilled pill with a dashed border in the branch colour and grey text `origin/<name>`; held in its own list, not draggable, not checkout-able, ignored by branch-name uniqueness and pickers (ADR 0005)
 - **Local repo** — one complete graph representing a developer's local clone
 - **Remote repo** — one complete graph representing the upstream repository
+- **Clone** — creates a new repo region (max 3 total) copying all non-lost commits 1:1 (ID, colour, links, layout) and tags, an `origin/<name>` label per source branch and one checked-out local branch tracking its `origin/<name>`. The remote link is the source's stable repo id (`remoteRepoId`; snapshot `remoteRepoIndex`), name always "origin" (ADR 0005)
 - **Multi-repo canvas** — a canvas view showing two or more repos simultaneously
 
 ## Aggregates

@@ -100,7 +100,8 @@ object ScenarioSerializer {
             branches = branches,
             tags = tags,
             head = head,
-            remoteBranches = remoteBranches
+            remoteBranches = remoteBranches,
+            remoteRepoIndex = (obj.remoteRepoIndex as? Int) ?: jsIntOrNull(obj.remoteRepoIndex)
         )
     }
 
@@ -160,6 +161,7 @@ object ScenarioSerializer {
         obj.branches = repo.branches.map { branchSnapshotToDynamic(it) }.toJsArray()
         obj.tags = repo.tags.map { tagSnapshotToDynamic(it) }.toJsArray()
         obj.head = headSnapshotToDynamic(repo.head)
+        if (repo.remoteRepoIndex != null) obj.remoteRepoIndex = repo.remoteRepoIndex
         obj.remoteBranches = repo.remoteBranches.map { r ->
             val o: dynamic = js("({})")
             o.name = r.name

@@ -41,6 +41,12 @@ class GitGraph(
     /** The horizontal canvas offset for this repo's region, used to position new repos to the right. */
     val xOffset: Int get() = config.xOffset
 
+    /** Stable identity of this repo for remote links (ADR 0005); unlike repoName it never changes on rename. */
+    var repoId: Int = 0
+
+    /** Repo id of this repo's "origin" remote, or null when it was not created by a clone. */
+    var remoteRepoId: Int? = null
+
     var isActive: Boolean = false
         set(value) {
             field = value
@@ -563,6 +569,34 @@ class GitGraph(
         head = Head(Commit("", 0, 0, config = config))
         initGraph()
         layer.batchDraw()
+    }
+
+    /**
+     * Builds the snapshot a clone of this repo starts from (ADR 0005): all non-lost commits 1:1,
+     * tags, an origin/<name> label per local branch and one local branch (the current one, or
+     * main/first branch when HEAD is detached) checked out and tracking its origin counterpart.
+     */
+    fun buildCloneSnapshot(cloneName: String, cloneXOffset: Int): RepoSnapshot {
+        val source = getSnapshot()
+        val keptCommits = source.commits.filter { !it.isLostInReflog }
+        val keptIds = keptCommits.map { it.id }.toSet()
+        val localBranches = source.branches.filter { it.targetCommitId in keptIds }
+        val currentId = source.head.targetBranchId
+        val localBranch = localBranches.firstOrNull { it.id == currentId }
+            ?: localBranches.firstOrNull { it.id == "main" }
+            ?: localBranches.firstOrNull()
+        return RepoSnapshot(
+            repoName = cloneName,
+            xOffset = cloneXOffset,
+            yOffset = source.yOffset,
+            globalCommitNumber = source.globalCommitNumber,
+            globalSwimlaneCounter = source.globalSwimlaneCounter,
+            commits = keptCommits,
+            branches = listOfNotNull(localBranch?.copy(upstream = "origin/${localBranch.id}")),
+            tags = source.tags.filter { it.targetCommitId in keptIds },
+            head = HeadSnapshot(targetBranchId = localBranch?.id, detachedCommitId = null),
+            remoteBranches = localBranches.map { RemoteBranchSnapshot(it.id, it.targetCommitId) }
+        )
     }
 
     /** Returns a snapshot of the current state for URL encoding. */
