@@ -1,7 +1,7 @@
 ---
 id: git-canvas-ktja3
 title: Pull with rebase option
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23
