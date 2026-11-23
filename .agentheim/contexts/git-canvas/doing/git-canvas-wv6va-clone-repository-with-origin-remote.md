@@ -1,7 +1,7 @@
 ---
 id: git-canvas-wv6va
 title: Clone repository with origin remote
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23
