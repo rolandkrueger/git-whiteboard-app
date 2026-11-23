@@ -1,7 +1,7 @@
 ---
 id: git-canvas-sz7p8
 title: Pull as fetch plus merge (fast-forward or merge commit)
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23
