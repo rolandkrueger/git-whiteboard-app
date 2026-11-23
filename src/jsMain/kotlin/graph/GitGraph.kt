@@ -521,7 +521,9 @@ class GitGraph(
     }
 
     fun merge(noFF: Boolean, targetBranchId: String): Boolean {
-        val targetBranch = findBranch(targetBranchId) ?: throw IllegalStateException("target branch is null")
+        // Source may also be a tracking ref (origin/<name>), used by pull; those are not listed in dropdowns.
+        val targetBranch = findBranch(targetBranchId) ?: remoteBranches.find { it.id == targetBranchId }
+            ?: throw IllegalStateException("target branch is null")
         if (targetBranch == currentBranch() || targetBranch.commit.isAncestorOf(currentBranch().commit)) {
             return false
         }

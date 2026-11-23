@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 2
-- **Doing:** 1
-- **Done:** 10
+- **Doing:** 0
+- **Done:** 11
 <!-- task-counts:end -->
 
 ### Todo
@@ -24,11 +24,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-sz7p8** — Pull as fetch plus merge (fast-forward or merge commit) (feature) — `doing/git-canvas-sz7p8-pull-fetch-and-merge.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-sz7p8** — Pull as fetch plus merge (fast-forward or merge commit) (feature) — `done/git-canvas-sz7p8-pull-fetch-and-merge.md`
 - **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits (feature) — `done/git-canvas-rx1y3-fetch-remote-tracking-update.md`
 - **git-canvas-w3ndg** — Push with fast-forward and visible rejection (feature) — `done/git-canvas-w3ndg-push-with-fast-forward-and-rejection.md`
 - **git-canvas-r6szj** — Remote tab in control panel with remote status (feature) — `done/git-canvas-r6szj-remote-tab-in-control-panel.md`

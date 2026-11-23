@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:57 -- Task verified and completed: git-canvas-sz7p8 - Pull as fetch plus merge (fast-forward or merge commit)
+
+**Type:** Work / Task completion
+**Task:** git-canvas-sz7p8 - Pull as fetch plus merge (fast-forward or merge commit)
+**Summary:** pull as fetch plus merge (fast-forward or merge commit)
+**Duration:** 9m
+**Verification:** PASS (iteration 1)
+**Files changed:** 4
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-23 20:54 -- Batch started: [git-canvas-sz7p8]
 
 **Type:** Work / Batch start

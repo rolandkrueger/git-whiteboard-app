@@ -67,4 +67,28 @@ object RemoteOps {
         return if (changes.isEmpty()) Result(Kind.INFO, "Already up to date")
         else Result(Kind.SUCCESS, "Fetched: " + changes.joinToString(", "))
     }
+
+    /** Pull = fetch, then merge the upstream tracking ref into the current branch (fast-forward when possible). */
+    fun pull(local: GitGraph, remote: GitGraph?): Result {
+        if (remote == null || !isAvailable(remote)) return Result(Kind.ERROR, "remote not available")
+        val status = local.upstreamStatus()
+        if (status.detached) return Result(Kind.ERROR, "Cannot pull: HEAD is detached")
+        val branchName = status.branchName ?: return Result(Kind.ERROR, "Cannot pull: no branch checked out")
+        if (local.branchUpstream(branchName) == null) {
+            return Result(Kind.ERROR, "Cannot pull: $branchName has no upstream branch")
+        }
+        val fetched = fetch(local, remote)
+        if (fetched.kind == Kind.ERROR) return fetched
+        val upstream = local.upstreamStatus().upstream
+            ?: return Result(Kind.ERROR, "Cannot pull: upstream of $branchName no longer exists on the remote")
+        val localTip = local.branchTip(branchName) ?: return Result(Kind.ERROR, "Cannot pull: no branch checked out")
+        val upstreamTip = local.getRemoteBranches().first { it.id == upstream }.commit
+        val prefix = if (fetched.kind == Kind.SUCCESS) fetched.message + "; " else ""
+        if (upstreamTip.id in local.ancestorIds(localTip)) {
+            return if (prefix.isEmpty()) Result(Kind.INFO, "Already up to date") else Result(Kind.SUCCESS, prefix + "Already up to date")
+        }
+        val fastForward = localTip.id in local.ancestorIds(upstreamTip)
+        local.merge(false, upstream)
+        return Result(Kind.SUCCESS, prefix + if (fastForward) "Fast-forward" else "Merge made")
+    }
 }
