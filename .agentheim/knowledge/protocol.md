@@ -5,6 +5,30 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 21:04 -- Task verified and completed: git-canvas-bdecz - Remote operations documentation and doc sync
+
+**Type:** Work / Task completion
+**Task:** git-canvas-bdecz - Remote operations documentation and doc sync
+**Summary:** document remote operations in manual, READMEs and agent guidance
+**Duration:** 12m
+**Verification:** PASS (iteration 2)
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-11-23 21:02 -- Verification failed: git-canvas-bdecz - Remote operations documentation and doc sync
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-bdecz - Remote operations documentation and doc sync
+**Iteration:** 1 of 3
+**Reasons:** manual "Commit Ids" section still describes per-branch counters, contradicting the shared CommitIdAllocator
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-23 21:00 -- Batch started: [git-canvas-bdecz]
 
 **Type:** Work / Batch start

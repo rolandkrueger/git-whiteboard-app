@@ -27,6 +27,8 @@ src/jsMain/kotlin/
     Commit.kt               # Commit node: position, branches, rendering
     Branches.kt             # Branch/Tag/Head abstractions
     BranchColors.kt         # Color cycling for branches
+    CommitIdAllocator.kt    # App-wide commit ID numbering shared by all repos (ADR-0004)
+    RemoteOps.kt            # Push/fetch/pull orchestration between a local repo and its remote (ADR-0005)
   components/               # Konva-rendered visual elements (circles, lines, labels, RepoRegion)
   konvajs/                  # Kotlin external bindings for Konva.js (handwritten)
   scenario/                 # Graph snapshot serialization for shareable URLs (ADR-0002)
@@ -64,6 +66,8 @@ Use `sh gradlew` (not `./gradlew`) unless the executable bit is confirmed set.
 - Multi-repo: one Konva `Stage` (global pan/zoom) holds one `Layer` per repo; each `GitGraph` draws inside a draggable `RepoRegion`. Up to 3 repos; clicking a region makes it the active repo that receives control-panel commands (ADR-0001).
 - The app initializes directly from `Main.kt` → `App.kt` → DOM. Do not reintroduce React to mount the canvas.
 - Swimlane layout: commits are positioned on a 2D grid. `swimlane` = horizontal axis, `linePosition` = vertical axis. `GitGraph` manages `globalSwimlaneCounter` and `globalCommitNumber`.
+- `CommitIdAllocator` hands out commit IDs (`<branch first letter><n>`) for all repos, so the same ID in two repos means the same commit. `globalCommitNumber` is only the vertical layout slot, not an ID source.
+- `RemoteOps` (`graph/RemoteOps.kt`) orchestrates push, fetch and pull between a local `GitGraph` and the one it was cloned from; remote-tracking labels (`origin/<name>`) are `RemoteBranch`es held apart from local branches.
 - Branch name uniqueness is enforced by first-letter uniqueness (see `isBranchNameValid`).
 
 ## Testing

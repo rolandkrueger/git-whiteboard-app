@@ -47,6 +47,8 @@ The project targets JDK 17 through Gradle toolchains.
 - `GitGraph` currently combines graph state, Git-like operations, and Konva rendering. Be careful when changing it: visual behavior and graph semantics are tightly coupled.
 - Konva.js is used through handwritten external bindings. If upgrading Konva, check the JavaScript module export shape in the browser, not only Kotlin compilation.
 - The app currently uses direct DOM initialization from `Main.kt`/`App.kt`; do not reintroduce React just to mount the canvas.
+- `CommitIdAllocator` (`graph/CommitIdAllocator.kt`) numbers new commits across all repos, so the same ID in two repos means the same commit. `globalCommitNumber` is only a layout slot.
+- `RemoteOps` (`graph/RemoteOps.kt`) orchestrates push, fetch and pull between a local repo and its clone source; remote-tracking labels (`origin/<name>`) are kept separate from local branches.
 - Keep generated build output out of commits. The `build/` directory is ignored.
 - Keep `kotlin-js-store/yarn.lock` updated when npm dependencies change. Use:
   ```bash

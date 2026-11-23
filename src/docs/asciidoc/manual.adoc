@@ -36,11 +36,13 @@ Every branch in the Git graph has its own unique color. When a new commit is add
 
 === Commit Ids [[commit-ids]]
 
-The method to calculate a new commit id is as follows: for each branch in the graph, a global commit counter is managed. This counter is increased by one for every commit added to the branch. The commit id is then derived by the first character of the branch name plus the current commit count. For example, if the third commit is added to the `main` branch, the new commit id is `m3`.
+A commit id consists of the first letter of the branch the commit is created on, followed by a number taken from one counter that is shared by all branches (and all repositories, see <<remote-repositories>>). The counter is increased by one for every new commit, no matter which branch it is added to. For example, if the first three commits are made on `main`, they get the ids `m1`, `m2` and `m3`. If you then create a branch `feature` and add a commit, its id is `f4`, not `f1`, because the counter continues across branches.
 
-If currently no branch is checked out (detached HEAD state), the HEAD's commit counter and the letter `H` is used, e.g. the second commit made in detached HEAD state gets the id `H2`.
+If currently no branch is checked out (detached HEAD state), the letter `H` is used, e.g. the next commit made in detached HEAD state after `m3` gets the id `H4`.
 
-In order to keep all commit ids unique, it is not allowed to create more than one branch with the same first letter. For example, it is not possible to create both a branch `feature_1` and `feature_2`. However, if you're using the namespace notation in your branch names, the namespace part of a branch name is ignored when calculating commit ids. For example, it is allowed to have two branches `feature/foo` and `feature/bar`. Commits on `feature/foo` will then be named `f1`, `f2`, `f3`, etc. while commits on `feature/bar` get the ids `b1`, `b2`, `b3`, and so on.
+Because the counter is shared by all repositories on the canvas, a commit that is cloned, pushed, or fetched keeps its id, so the same id in two repositories always denotes the same commit.
+
+In order to keep commit ids recognizable, it is not allowed to create more than one branch with the same first letter. For example, it is not possible to create both a branch `feature_1` and `feature_2`. However, if you're using the namespace notation in your branch names, the namespace part of a branch name is ignored when calculating commit ids. For example, it is allowed to have two branches `feature/foo` and `feature/bar`. Commits on `feature/foo` will then be named e.g. `f4` and `f6` while commits on `feature/bar` get ids such as `b5` and `b7`, drawn from the same shared counter.
 
 === Amend Commits
 
@@ -89,3 +91,31 @@ The commit id for a merge commit consists of the concatenated ids of the merge c
 === Rebase
 
 To rebase the currently checked out branch onto another branch, you select the target branch with the drop-down list on section `Rebase branch onto`. This will create new commits on the target branch for each commit on the rebased branch. The old commits will be lost in the reflog. The new commits are given the color and ids of the rebased commits with an additional asterisk appended. 
+
+== Remote Repositories [[remote-repositories]]
+
+The `Remote` tab lets you demonstrate working with a remote repository. A remote is simply another repository on the canvas; no network is involved.
+
+=== Clone
+
+Select a repository and click `Clone repository`. A new repository region appears (the canvas holds at most three repositories). It contains copies of all commits and tags (lost commits are not copied) with the same ids, colors and layout, plus one checked-out local branch. For each branch of the source, a _remote-tracking branch_ labeled `origin/<name>` is shown as a dashed, unfilled label. The checked-out branch tracks its `origin/<name>` as its _upstream_. The source repository becomes the clone's `origin`.
+
+=== Remote Tab Status
+
+For the active repository the tab shows its remote (`origin: <repository name>`, or `(not available)` if the remote repository was cleared), the upstream of the checked-out branch, the ahead/behind counts relative to that upstream, and a message area with the result of the last operation.
+
+=== Push
+
+`Push` transfers the commits of the checked-out branch that the remote lacks and moves the branch on the remote to the local tip. A branch without an upstream gets `origin/<same name>` as upstream on its first push. If the remote branch has commits that the local branch does not contain, the push is rejected with `rejected: non-fast-forward - fetch first`, and the remote region flashes red briefly. Fetch and integrate the remote changes first. If the remote already has everything, the message is `Everything up-to-date`. If the remote repository is not available, the message is `remote not available`.
+
+=== Fetch
+
+`Fetch` copies all commits from the remote that are missing locally and creates, moves, or removes the `origin/<name>` labels to match the remote's branches. Local branches and HEAD are never moved. If nothing changed, the message is `Already up to date`.
+
+=== Pull
+
+`Pull` is a fetch followed by merging the upstream `origin/<name>` into the checked-out branch. The fetch summary (e.g. `Fetched: ...`) is shown in front of the pull result. If the branch already contains the upstream, nothing is merged and the message is `Already up to date`. If a fast-forward is possible it is performed (message `Fast-forward`); otherwise a merge commit is created (`Merge made`). Pull is not possible in detached HEAD state or for a branch without upstream.
+
+=== Pull With Rebase
+
+If the `rebase` checkbox is selected, `Pull` rebases the checked-out branch onto its upstream instead of merging, so no merge commit is created (message `Rebased`, or `Fast-forward` if the branch had no own commits). The rebased commits get the usual asterisk suffix.

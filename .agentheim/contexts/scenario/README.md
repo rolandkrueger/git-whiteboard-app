@@ -42,6 +42,13 @@ JSON + gzip + base64url in the URL fragment (`#state=<base64url>`). The fragment
 - `App.kt` — Share button handler; startup hash detection and async restore path
 - `index.html` — Share button in control panel header
 
+### Snapshot version 2 (remote operations)
+
+- `MultiRepoSnapshot.version` is `2`; `nextCommitId` stores the next number of the shared commit ID allocator (ADR 0004).
+- `RepoSnapshot.remoteRepoIndex` is the index (in the repo list) of the repo this one was cloned from, or null; `RepoSnapshot.remoteBranches` lists the `origin/<name>` tracking labels (`name`, `targetCommitId`).
+- `BranchSnapshot.upstream` is the branch's upstream tracking label name, or null.
+- Version 1 URLs still load: `nextCommitId` is derived, and the new repo/branch fields default to empty/null.
+
 ## Open questions
 - Should the app ship with a preset scenario library (cherry-pick demo, rebase demo, conflict demo)?
 - Should the URL update live as the trainer manipulates the graph, or only on explicit "Share" action? (Current answer: explicit "Share" button, no live update.)

@@ -23,6 +23,8 @@ core — this is the unique value the tool provides; everything else is support 
 - **Push** — transfers the commits the remote lacks (same IDs, receiver-chosen layout via `GitGraph.receiveCommits`) and moves the remote branch to the local tip; allowed only as fast-forward, otherwise rejected with `rejected: non-fast-forward - fetch first` and a brief red flash of the remote region. A branch without upstream gets `origin/<same name>` as upstream on first push. Orchestrated by `RemoteOps.push` (ADR 0005)
 - **Fetch** — copies the commits missing locally from all branches of the remote (same `receiveCommits` primitive, placed on the lane of the tracking ref) and creates, moves or removes the `origin/<name>` labels to match; local branches and HEAD never move. Reports `Already up to date` when nothing changed. Orchestrated by `RemoteOps.fetch`
 - **Pull** — `fetch`, then either merges the upstream tracking ref (`origin/<name>`) into the current branch via `GitGraph.merge` (messages `Fast-forward`, `Merge made`, `Already up to date`) or, with the rebase checkbox set, rebases the current branch onto `origin/<name>` via `GitGraph.rebase` (messages `Rebased`, `Fast-forward`, `Already up to date`). Both `merge` and `rebase` accept tracking refs as source/onto, though these are never listed in dropdowns. Messages are prefixed by the fetch summary if the fetch changed something; refused on detached HEAD, without upstream, or with an unavailable remote. Orchestrated by `RemoteOps.pull`
+- **Upstream** — the remote-tracking branch a local branch is linked to (snapshot `BranchSnapshot.upstream`); set by clone or by the first push of a branch. Push, pull and the Remote tab status use it
+- **Ahead/behind** — number of commits the local branch has that its upstream lacks / vice versa; shown on the Remote tab
 - **Local repo** — one complete graph representing a developer's local clone
 - **Remote repo** — one complete graph representing the upstream repository
 - **Clone** — creates a new repo region (max 3 total) copying all non-lost commits 1:1 (ID, colour, links, layout) and tags, an `origin/<name>` label per source branch and one checked-out local branch tracking its `origin/<name>`. The remote link is the source's stable repo id (`remoteRepoId`; snapshot `remoteRepoIndex`), name always "origin" (ADR 0005)
@@ -41,7 +43,10 @@ core — this is the unique value the tool provides; everything else is support 
 - CommitAmended
 - LostCommitsToggled
 - GarbageCollected
+- Cloned
 - PushedToRemote
+- PushRejected
+- Fetched
 - PulledFromRemote
 
 ## Key commands
@@ -50,7 +55,7 @@ core — this is the unique value the tool provides; everything else is support 
 - AddTag, DeleteTag, CheckoutTag
 - CheckoutCommit
 - Merge, Rebase
-- Push, Pull, Clone
+- Push, Fetch, Pull (optionally with rebase), Clone
 - RunGarbageCollection, ToggleLostCommits
 
 ## Relationships with other contexts
@@ -65,4 +70,4 @@ core — this is the unique value the tool provides; everything else is support 
 
 ## Open questions
 
-- (resolved) Remote-tracking labels are visually distinct: dashed, unfilled, grey text (ADR 0005).
+None.
