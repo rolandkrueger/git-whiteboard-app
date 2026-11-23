@@ -1,7 +1,7 @@
 # git-canvas
 
 ## Purpose
-Manages Git graph state and visual rendering on a Fabric.js canvas. Every Git operation the trainer can perform — from adding a commit to rebasing a branch to pushing between repos — lives here. This is the core of the app.
+Manages Git graph state and visual rendering on a Konva.js canvas. Every Git operation the trainer can perform — from adding a commit to rebasing a branch to pushing between repos — lives here. This is the core of the app.
 
 ## Classification
 core — this is the unique value the tool provides; everything else is support infrastructure.
@@ -55,10 +55,9 @@ core — this is the unique value the tool provides; everything else is support 
 
 ## Layout decisions
 
-- **Multi-repo canvas layout:** Single shared infinite canvas (ADR 0001). All repos are free-floating regions on one Fabric.js canvas; the trainer positions them by dragging. Active repo is indicated by full color; inactive repos are faded/desaturated. Pan/zoom is global.
+- **Multi-repo canvas layout:** Single shared infinite canvas (ADR 0001). All repos are free-floating regions on one Konva.js stage; the trainer positions them by dragging. The active repo is indicated by a highlighted region border. Pan/zoom is global. Up to 3 repos (one initial, two more via "Add repository").
 - **Active repo selection:** Click anywhere in a repo region to make it active; all control-panel commands are routed to the active repo only.
 
 ## Open questions
 
-- How many simultaneous repos should be supported on one canvas?
 - Should remote-tracking branch labels be visually distinct from local branch labels?

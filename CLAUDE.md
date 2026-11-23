@@ -9,7 +9,7 @@ A stateless Kotlin/JS browser application for drawing and manipulating Git commi
 | Layer | Technology |
 |-------|-----------|
 | Language | Kotlin 2.x, Kotlin Multiplatform (JS + JVM targets) |
-| Canvas rendering | Fabric.js 5.3 via handwritten Kotlin external bindings |
+| Canvas rendering | Konva.js 10.3 via handwritten Kotlin external bindings (ADR-0003) |
 | CSS | Bulma framework + Font Awesome |
 | Local dev server | Ktor 3.x on Netty (JVM target) |
 | Build | Gradle with Kotlin wrapper (`sh gradlew`) |
@@ -23,12 +23,13 @@ src/jsMain/kotlin/
   App.kt                    # DOM wiring: buttons → GitGraph calls
   Main.kt                   # Entry point, calls startApp()
   graph/
-    GitGraph.kt             # Core graph state + Git semantics + Fabric rendering (tightly coupled)
+    GitGraph.kt             # Core graph state + Git semantics + Konva rendering (tightly coupled)
     Commit.kt               # Commit node: position, branches, rendering
     Branches.kt             # Branch/Tag/Head abstractions
     BranchColors.kt         # Color cycling for branches
-  components/               # Fabric-rendered visual elements (circles, lines, labels)
-  fabricjs/                 # Kotlin external bindings for Fabric.js (handwritten)
+  components/               # Konva-rendered visual elements (circles, lines, labels, RepoRegion)
+  konvajs/                  # Kotlin external bindings for Konva.js (handwritten)
+  scenario/                 # Graph snapshot serialization for shareable URLs (ADR-0002)
   config/GitGraphConfiguration.kt  # Layout constants (offsets, distances)
   ui/                       # DOM helpers and dialogs
 
@@ -58,8 +59,9 @@ Use `sh gradlew` (not `./gradlew`) unless the executable bit is confirmed set.
 
 ## Architecture Notes
 
-- **`GitGraph`** combines graph state, Git-like operations, and Fabric canvas rendering in one class. Visual behavior and graph semantics are tightly coupled — change it carefully.
-- Fabric.js is accessed via handwritten external bindings (`fabricjs/`). When upgrading Fabric, verify the JavaScript module export shape in the browser, not just Kotlin compilation.
+- **`GitGraph`** combines graph state, Git-like operations, and Konva rendering in one class. Visual behavior and graph semantics are tightly coupled — change it carefully.
+- Konva.js is accessed via handwritten external bindings (`konvajs/`). When upgrading Konva, verify the JavaScript module export shape in the browser, not just Kotlin compilation.
+- Multi-repo: one Konva `Stage` (global pan/zoom) holds one `Layer` per repo; each `GitGraph` draws inside a draggable `RepoRegion`. Up to 3 repos; clicking a region makes it the active repo that receives control-panel commands (ADR-0001).
 - The app initializes directly from `Main.kt` → `App.kt` → DOM. Do not reintroduce React to mount the canvas.
 - Swimlane layout: commits are positioned on a 2D grid. `swimlane` = horizontal axis, `linePosition` = vertical axis. `GitGraph` manages `globalSwimlaneCounter` and `globalCommitNumber`.
 - Branch name uniqueness is enforced by first-letter uniqueness (see `isBranchNameValid`).
@@ -70,8 +72,9 @@ No unit tests exist. For any non-trivial change, run the full verification build
 
 - Page title is `Git Whiteboard App`
 - Control panel renders
-- Initial canvas shows commit `m1`, branch `master`, and `HEAD`
+- Initial canvas shows repo `my-repo` with commit `m1`, branch `main`, and `HEAD`
 - Adding a commit updates the graph
+- Adding a second repo and switching the active repo works
 - Browser console has no new runtime errors
 
 Known non-blocking: Gradle/Kotlin tooling warnings, Webpack bundle size warnings, Netty startup warnings, Asciidoctor/JRuby warnings.

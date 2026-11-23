@@ -4,14 +4,15 @@
 
 Git Whiteboard App is a stateless Kotlin/JS web application for drawing and manipulating Git commit graphs in the browser. It is intended for Git training, demos, and lectures where a dynamic visual graph is more useful than slides or a physical whiteboard.
 
-The core UI is a static HTML control panel plus a Fabric.js canvas. Kotlin/JS initializes the canvas and wires DOM controls to graph operations. A small Ktor JVM server exists for local development and serving the built static assets.
+The core UI is a static HTML control panel plus a Konva.js canvas. Kotlin/JS initializes the canvas and wires DOM controls to graph operations. A small Ktor JVM server exists for local development and serving the built static assets.
 
 ## Repository Layout
 
 - `src/jsMain/kotlin/` contains the browser application.
 - `src/jsMain/kotlin/graph/` contains the Git graph model and operation logic.
 - `src/jsMain/kotlin/components/` contains canvas-rendered visual elements.
-- `src/jsMain/kotlin/fabricjs/` contains local Kotlin external bindings for Fabric.js.
+- `src/jsMain/kotlin/konvajs/` contains local Kotlin external bindings for Konva.js.
+- `src/jsMain/kotlin/scenario/` contains graph snapshot serialization for shareable URLs.
 - `src/jsMain/kotlin/ui/` contains small DOM helper utilities and dialogs.
 - `src/commonMain/resources/index.html` contains the static control panel and page shell.
 - `src/jvmMain/kotlin/Server.kt` contains the local Ktor development server.
@@ -43,8 +44,8 @@ The project targets JDK 17 through Gradle toolchains.
 
 - Prefer Kotlin/JS and existing project patterns over introducing new frontend frameworks.
 - Keep the app stateless and client-side. Do not add server persistence unless explicitly requested.
-- `GitGraph` currently combines graph state, Git-like operations, and Fabric rendering. Be careful when changing it: visual behavior and graph semantics are tightly coupled.
-- Fabric.js is used through handwritten external bindings. If upgrading Fabric, check the JavaScript module export shape in the browser, not only Kotlin compilation.
+- `GitGraph` currently combines graph state, Git-like operations, and Konva rendering. Be careful when changing it: visual behavior and graph semantics are tightly coupled.
+- Konva.js is used through handwritten external bindings. If upgrading Konva, check the JavaScript module export shape in the browser, not only Kotlin compilation.
 - The app currently uses direct DOM initialization from `Main.kt`/`App.kt`; do not reintroduce React just to mount the canvas.
 - Keep generated build output out of commits. The `build/` directory is ignored.
 - Keep `kotlin-js-store/yarn.lock` updated when npm dependencies change. Use:
@@ -64,7 +65,7 @@ For UI or graph behavior changes, also run `sh gradlew run` and smoke-test the b
 
 - page title is `Git Whiteboard App`
 - the control panel renders
-- the Fabric canvas renders the initial `m1` commit, `master`, and `HEAD`
+- the canvas renders repo `my-repo` with the initial `m1` commit, `main`, and `HEAD`
 - adding a commit updates the graph visually
 - browser console has no new runtime errors
 

@@ -3,7 +3,7 @@
 ## Contexts
 
 ### git-canvas
-- **Purpose:** Manages the Git graph model and its visual rendering on a Fabric.js canvas. All Git operations (commit, branch, merge, rebase, checkout, reset, push, pull) live here, as does the canvas layout logic (swimlanes, line positions, label placement).
+- **Purpose:** Manages the Git graph model and its visual rendering on a Konva.js canvas. All Git operations (commit, branch, merge, rebase, checkout, reset, push, pull) live here, as does the canvas layout logic (swimlanes, line positions, label placement).
 - **Core language:** commit, branch, tag, HEAD, swimlane, line position, merge, rebase, detached HEAD, lost commit, reflog, remote-tracking branch
 - **Classification:** core — this is the primary value the tool delivers; no other tool does this in the same way for trainers
 - **Key actors:** Git Trainer (via control panel)

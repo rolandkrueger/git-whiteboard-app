@@ -38,8 +38,10 @@ For remote operations (push, pull, clone, conflict resolution), the problem is e
 - **Remote repo** — a graph representing the upstream repository (origin)
 - **Scenario** — a named initial graph state, optionally encoded in a URL, used as a starting point for a demo
 
+## Resolved questions
+- Repos displayable simultaneously: up to 3 (e.g. 1 remote + 2 local clones)
+- Multi-repo layout: single shared infinite canvas with labelled regions (ADR-0001)
+- Scenario URL format: JSON + gzip + base64url in the URL fragment (ADR-0002)
+
 ## Open questions
-- How many local repos should be displayable simultaneously? (Current thinking: at least 2 + 1 remote)
-- What is the canvas layout strategy for multi-repo: side-by-side panels, floating windows, or a single shared canvas with labelled regions?
-- What is the URL encoding format for scenarios? (binary, JSON, custom DSL?)
 - Should scenarios be bundled with the app (preset library) or purely user-generated via URL?
