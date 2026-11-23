@@ -11,14 +11,13 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 1
-- **Todo:** 4
-- **Doing:** 0
+- **Todo:** 3
+- **Doing:** 1
 - **Done:** 9
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits — `todo/git-canvas-rx1y3-fetch-remote-tracking-update.md`
 - **git-canvas-sz7p8** — Pull as fetch plus merge (fast-forward or merge commit) — `todo/git-canvas-sz7p8-pull-fetch-and-merge.md`
 - **git-canvas-ktja3** — Pull with rebase option — `todo/git-canvas-ktja3-pull-with-rebase.md`
 - **git-canvas-bdecz** — Remote operations documentation and doc sync — `todo/git-canvas-bdecz-remote-operations-documentation.md`
@@ -26,6 +25,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits (feature) — `doing/git-canvas-rx1y3-fetch-remote-tracking-update.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)

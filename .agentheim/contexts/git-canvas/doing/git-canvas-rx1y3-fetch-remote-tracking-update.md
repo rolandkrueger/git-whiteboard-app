@@ -1,7 +1,7 @@
 ---
 id: git-canvas-rx1y3
 title: Fetch updates tracking labels and brings in missing commits
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23
