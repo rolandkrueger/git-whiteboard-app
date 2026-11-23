@@ -1,7 +1,7 @@
 ---
 id: git-canvas-r6szj
 title: Remote tab in control panel with remote status
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23

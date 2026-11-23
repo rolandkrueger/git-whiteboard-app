@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:40 -- Batch started: [git-canvas-r6szj]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-r6szj - Remote tab in control panel with remote status
+**Parallel:** no (1 worker — only ready task in the sequential remote-ops chain)
+
+---
+
 ## 2026-11-23 20:39 -- Task verified and completed: git-canvas-wv6va - Clone repository with origin remote
 
 **Type:** Work / Task completion
