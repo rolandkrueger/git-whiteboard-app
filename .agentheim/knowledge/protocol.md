@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:27 -- Batch started: [git-canvas-j2m8z]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-j2m8z - Shared commit ID allocator across repos
+**Parallel:** no (1 worker — only ready task; remaining 8 remote-ops tasks blocked on the dependency chain)
+
+---
+
 ## 2026-11-23 20:26 -- Modeling / Captured: git-canvas remote operations (9 tasks + 1 backlog)
 
 **Type:** Modeling / Capture

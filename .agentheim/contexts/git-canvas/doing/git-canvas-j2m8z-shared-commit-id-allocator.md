@@ -1,7 +1,7 @@
 ---
 id: git-canvas-j2m8z
 title: Shared commit ID allocator across repos
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23

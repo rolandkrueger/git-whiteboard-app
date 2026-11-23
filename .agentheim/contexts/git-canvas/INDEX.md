@@ -11,14 +11,13 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 1
-- **Todo:** 9
-- **Doing:** 0
+- **Todo:** 8
+- **Doing:** 1
 - **Done:** 4
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-j2m8z** — Shared commit ID allocator across repos — `todo/git-canvas-j2m8z-shared-commit-id-allocator.md`
 - **git-canvas-b5f0r** — Remote-tracking label model and rendering — `todo/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
 - **git-canvas-wv6va** — Clone repository with origin remote — `todo/git-canvas-wv6va-clone-repository-with-origin-remote.md`
 - **git-canvas-r6szj** — Remote tab in control panel with remote status — `todo/git-canvas-r6szj-remote-tab-in-control-panel.md`
@@ -31,6 +30,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-j2m8z** — Shared commit ID allocator across repos (feature) — `doing/git-canvas-j2m8z-shared-commit-id-allocator.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
