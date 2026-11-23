@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 21:00 -- Batch started: [git-canvas-bdecz]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-bdecz - Remote operations documentation and doc sync
+**Parallel:** no (1 worker — last task in the remote-ops chain)
+
+---
+
 ## 2026-11-23 21:00 -- Task verified and completed: git-canvas-ktja3 - Pull with rebase option
 
 **Type:** Work / Task completion

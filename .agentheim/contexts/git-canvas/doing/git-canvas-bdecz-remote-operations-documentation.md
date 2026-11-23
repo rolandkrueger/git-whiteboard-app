@@ -1,7 +1,7 @@
 ---
 id: git-canvas-bdecz
 title: Remote operations documentation and doc sync
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23
