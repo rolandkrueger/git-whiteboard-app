@@ -89,6 +89,13 @@ class RepoRegion(
         }
     }
 
+    /** Shows a red alert border (used briefly to flag a rejected push); [setActive] restores the normal look. */
+    fun setAlert() {
+        borderRect.stroke("#F14668")
+        borderRect.strokeWidth(6.0)
+        nameLabel.fill("#F14668")
+    }
+
     /**
      * Updates the region bounds to the given values, growing the border rect.
      * Only expands — never shrinks below current size.

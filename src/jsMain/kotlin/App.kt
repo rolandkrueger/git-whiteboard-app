@@ -229,12 +229,20 @@ fun startApp() {
         }
         val remote = g.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
         val status = g.upstreamStatus()
-        setText("remoteStatus", if (remote != null) "origin: ${remote.repoName}" else "no remote")
+        setText("remoteStatus", when {
+            remote == null -> "no remote"
+            !graph.RemoteOps.isAvailable(remote) -> "origin: ${remote.repoName} (not available)"
+            else -> "origin: ${remote.repoName}"
+        })
         setText("upstreamStatus", when {
             status.detached -> "detached HEAD - no upstream"
             status.upstream != null -> "${status.branchName} -> ${status.upstream}"
             else -> "no upstream"
         })
+        (document.getElementById("pushButton") as? org.w3c.dom.HTMLButtonElement)?.let {
+            val canPush = remote != null && !status.detached && status.branchName != null
+            if (it.disabled == canPush) it.disabled = !canPush
+        }
         setText("aheadBehindStatus", if (status.upstream != null) "ahead ${status.ahead}, behind ${status.behind}" else "-")
     }
 
@@ -250,6 +258,24 @@ fun startApp() {
 
     // Graph changes come from many places (buttons, canvas double-click, restore); a cheap poll keeps the tab current.
     window.setInterval({ updateRemoteTab(activeGraph) }, 300)
+
+    document.getElementById("pushButton")?.addEventListener("click", {
+        val remote = activeGraph.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
+        val result = graph.RemoteOps.push(activeGraph, remote)
+        val msg = document.getElementById("remoteMessage")
+        if (msg != null) {
+            msg.textContent = result.message
+            msg.classList.remove("is-danger", "is-success", "is-info")
+            msg.classList.add(when (result.kind) {
+                graph.RemoteOps.Kind.ERROR -> "is-danger"
+                graph.RemoteOps.Kind.SUCCESS -> "is-success"
+                graph.RemoteOps.Kind.INFO -> "is-info"
+            })
+            if (result.kind == graph.RemoteOps.Kind.ERROR) msg.classList.add("has-text-weight-bold")
+            else msg.classList.remove("has-text-weight-bold")
+        }
+        updateRemoteTab(activeGraph)
+    })
 
     // Populate graphs with default state (called when no URL state is present, or as fallback)
     fun setupDefaultGraph() {

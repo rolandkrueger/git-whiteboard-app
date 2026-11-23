@@ -2,6 +2,7 @@ package graph
 
 import components.RepoRegion
 import config.GitGraphConfiguration
+import kotlinx.browser.window
 import konvajs.Layer
 import scenario.BranchSnapshot
 import scenario.CommitSnapshot
@@ -46,6 +47,9 @@ class GitGraph(
 
     /** Repo id of this repo's "origin" remote, or null when it was not created by a clone. */
     var remoteRepoId: Int? = null
+
+    /** True once this repo was wiped by clearGraph(); clones treat such a remote as not available (ADR 0005). Not persisted. */
+    var wasCleared: Boolean = false
 
     var isActive: Boolean = false
         set(value) {
@@ -264,20 +268,135 @@ class GitGraph(
         val branch = head.targetBranch as? Branch ?: return UpstreamStatus(false, null, null, 0, 0)
         val remote = branch.upstream?.let { up -> remoteBranches.find { it.id == up } }
             ?: return UpstreamStatus(false, branch.id, null, 0, 0)
-        fun ancestry(start: Commit): Set<String> {
-            val ids = mutableSetOf<String>()
-            val stack = mutableListOf(start)
-            while (stack.isNotEmpty()) {
-                val c = stack.removeAt(stack.size - 1)
-                if (!ids.add(c.id)) continue
-                c.parent?.let { stack.add(it) }
-                c.mergedCommit?.let { stack.add(it) }
-            }
-            return ids
-        }
-        val local = ancestry(branch.commit)
-        val upstreamIds = ancestry(remote.commit)
+        val local = ancestorIds(branch.commit)
+        val upstreamIds = ancestorIds(remote.commit)
         return UpstreamStatus(false, branch.id, remote.id, (local - upstreamIds).size, (upstreamIds - local).size)
+    }
+
+    /** IDs of [start] and everything reachable through parent and merged-parent links. */
+    fun ancestorIds(start: Commit): Set<String> {
+        val ids = mutableSetOf<String>()
+        val stack = mutableListOf(start)
+        while (stack.isNotEmpty()) {
+            val c = stack.removeAt(stack.size - 1)
+            if (!ids.add(c.id)) continue
+            c.parent?.let { stack.add(it) }
+            c.mergedCommit?.let { stack.add(it) }
+        }
+        return ids
+    }
+
+    /** What a receiver needs to recreate a commit: identity, colour and parent links (ADR 0004/0005). */
+    class CommitDescription(val id: String, val commitColor: String, val parentId: String?, val mergedParentId: String?)
+
+    /**
+     * Describes the commits reachable from [tip] that the receiver lacks ([receiverHas] is false), parents first.
+     * Traversal stops at commits the receiver already has.
+     */
+    fun describeMissingCommits(tip: Commit, receiverHas: (String) -> Boolean): List<CommitDescription> {
+        val result = mutableListOf<CommitDescription>()
+        val seen = mutableSetOf<String>()
+        // iterative post-order DFS: (commit, parentsExpanded)
+        val stack = mutableListOf(tip to false)
+        while (stack.isNotEmpty()) {
+            val (c, expanded) = stack.removeAt(stack.size - 1)
+            if (expanded) {
+                result.add(CommitDescription(c.id, c.commitColor, c.parent?.id, c.mergedCommit?.id))
+                continue
+            }
+            if (receiverHas(c.id) || !seen.add(c.id)) continue
+            stack.add(c to true)
+            c.mergedCommit?.let { stack.add(it to false) }
+            c.parent?.let { stack.add(it to false) }
+        }
+        return result
+    }
+
+    /**
+     * Generic commit-receiving primitive for push and fetch (ADR 0005 decision 5). Creates the commits of
+     * [descriptions] (parents first) that do not exist here yet, keeping ID, colour and parents; the layout is
+     * decided here: new linePositions and one lane. With [preferredSwimlane] the lane of the receiving ref is used,
+     * shifting to the right when it holds commits that are not ancestors of the new ones; null allocates a new lane.
+     * Moves no refs. Returns the created commits.
+     */
+    fun receiveCommits(descriptions: List<CommitDescription>, preferredSwimlane: Int?): List<Commit> {
+        val missing = descriptions.filter { !doesCommitExist(it.id) }
+        if (missing.isEmpty()) return emptyList()
+        var lane = preferredSwimlane
+        if (lane == null) {
+            lane = globalSwimlaneCounter++
+        } else {
+            val base = missing.first().parentId?.let { findCommitFor(it) }
+            val occupied = commits.any { it.swimlane == lane && it != base && (base == null || !it.isAncestorOf(base)) }
+            if (occupied) {
+                shiftCommitsToTheRight(lane + 1)
+                lane++
+            }
+        }
+        if (globalSwimlaneCounter <= lane) globalSwimlaneCounter = lane + 1
+        val created = mutableListOf<Commit>()
+        for (d in missing) {
+            val parent = d.parentId?.let { findCommitFor(it) }
+            val merged = d.mergedParentId?.let { findCommitFor(it) }
+            val commit = Commit(d.id, globalCommitNumber++, lane, parent, d.commitColor, config)
+            parent?.childCommit = commit
+            merged?.childCommit = commit
+            commit.mergedCommit = merged
+            commit.render(layer)
+            commit.commitCircle.onDoubleClick(checkoutHandler(commit))
+            commits.add(commit)
+            created.add(commit)
+        }
+        calculateLostCommits()
+        updateRegionBounds()
+        layer.batchDraw()
+        return created
+    }
+
+    fun branchTip(name: String): Commit? = (findBranch(name) as? Branch)?.commit
+
+    fun branchUpstream(name: String): String? = (findBranch(name) as? Branch)?.upstream
+
+    fun setBranchUpstream(name: String, upstream: String?) {
+        (findBranch(name) as? Branch)?.upstream = upstream
+    }
+
+    /** Moves an existing local branch (and HEAD, if it is checked out) onto [commit]; a plain ref move. */
+    fun moveBranchTo(name: String, commit: Commit) {
+        val branch = findBranch(name) ?: return
+        val old = branch.commit
+        old.removeBranch(branch)
+        if (branch.isCheckedOut()) old.removeBranch(head)
+        branch.swimlane = commit.swimlane
+        branch.commit = commit
+        branch.attachToCommit(commit, layer)
+        old.repositionBranches(layer)
+        calculateLostCommits()
+        layer.batchDraw()
+    }
+
+    /** Creates a local branch label at [commit] without checking it out (used by push into this repo). */
+    fun createBranchAt(name: String, commit: Commit, color: String) {
+        val branch = Branch(name, commit.swimlane, commit = commit, commitColor = color)
+        branches.add(branch)
+        branches.sortBy { it.id }
+        branch.onDoubleClick { checkout(name, showLostCommits) }
+        branch.render(layer)
+        branch.attachToCommit(commit, layer)
+        calculateLostCommits()
+        layer.batchDraw()
+    }
+
+    fun branchColor(name: String): String = findBranch(name)?.commitColor ?: ""
+
+    /** Flags this repo's region red for ~1.5 s (rejected push). */
+    fun flashAlert() {
+        repoRegion.setAlert()
+        layer.batchDraw()
+        window.setTimeout({
+            repoRegion.setActive(isActive)
+            layer.batchDraw()
+        }, 1500)
     }
 
     /**
@@ -587,6 +706,7 @@ class GitGraph(
      * to the initial state. The region border is preserved.
      */
     fun clearGraph() {
+        wasCleared = true
         commits.forEach { it.removeFrom(layer) }
         commits.clear()
         branches.forEach { it.removeFrom(layer) }

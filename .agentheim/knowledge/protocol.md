@@ -5,6 +5,30 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:50 -- Task verified and completed: git-canvas-w3ndg - Push with fast-forward and visible rejection
+
+**Type:** Work / Task completion
+**Task:** git-canvas-w3ndg - Push with fast-forward and visible rejection
+**Summary:** push with fast-forward, visible non-fast-forward rejection and unavailable-remote handling
+**Duration:** 25m
+**Verification:** PASS (iteration 2)
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-11-23 20:48 -- Verification failed: git-canvas-w3ndg - Push with fast-forward and visible rejection
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-w3ndg - Push with fast-forward and visible rejection
+**Iteration:** 1 of 3
+**Reasons:** pushing to a cleared remote shows "rejected: non-fast-forward" instead of "remote not available" (cleared repo keeps its repoId and gets a fresh root commit)
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-23 20:43 -- Batch started: [git-canvas-w3ndg]
 
 **Type:** Work / Batch start
