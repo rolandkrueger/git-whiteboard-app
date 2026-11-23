@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-23 20:43 -- Batch started: [git-canvas-w3ndg]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-w3ndg - Push with fast-forward and visible rejection
+**Parallel:** no (1 worker — git-canvas-rx1y3 (fetch) is also ready but held to the next wave: both need the same new GitGraph commit-receiving primitive, so they run sequentially to avoid a merge conflict)
+
+---
+
 ## 2026-11-23 20:43 -- Task verified and completed: git-canvas-r6szj - Remote tab in control panel with remote status
 
 **Type:** Work / Task completion

@@ -1,7 +1,7 @@
 ---
 id: git-canvas-w3ndg
 title: Push with fast-forward and visible rejection
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23
