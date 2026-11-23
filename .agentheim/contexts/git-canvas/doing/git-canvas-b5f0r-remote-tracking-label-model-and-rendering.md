@@ -1,7 +1,7 @@
 ---
 id: git-canvas-b5f0r
 title: Remote-tracking label model and rendering
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-23

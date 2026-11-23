@@ -11,14 +11,13 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 1
-- **Todo:** 8
-- **Doing:** 0
+- **Todo:** 7
+- **Doing:** 1
 - **Done:** 5
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-b5f0r** — Remote-tracking label model and rendering — `todo/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
 - **git-canvas-wv6va** — Clone repository with origin remote — `todo/git-canvas-wv6va-clone-repository-with-origin-remote.md`
 - **git-canvas-r6szj** — Remote tab in control panel with remote status — `todo/git-canvas-r6szj-remote-tab-in-control-panel.md`
 - **git-canvas-w3ndg** — Push with fast-forward and visible rejection — `todo/git-canvas-w3ndg-push-with-fast-forward-and-rejection.md`
@@ -30,6 +29,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-b5f0r** — Remote-tracking label model and rendering (feature) — `doing/git-canvas-b5f0r-remote-tracking-label-model-and-rendering.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
