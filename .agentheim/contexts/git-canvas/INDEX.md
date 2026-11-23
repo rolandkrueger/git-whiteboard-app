@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 3
-- **Doing:** 1
-- **Done:** 9
+- **Doing:** 0
+- **Done:** 10
 <!-- task-counts:end -->
 
 ### Todo
@@ -25,11 +25,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits (feature) — `doing/git-canvas-rx1y3-fetch-remote-tracking-update.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-rx1y3** — Fetch updates tracking labels and brings in missing commits (feature) — `done/git-canvas-rx1y3-fetch-remote-tracking-update.md`
 - **git-canvas-w3ndg** — Push with fast-forward and visible rejection (feature) — `done/git-canvas-w3ndg-push-with-fast-forward-and-rejection.md`
 - **git-canvas-r6szj** — Remote tab in control panel with remote status (feature) — `done/git-canvas-r6szj-remote-tab-in-control-panel.md`
 - **git-canvas-wv6va** — Clone repository with origin remote (feature) — `done/git-canvas-wv6va-clone-repository-with-origin-remote.md`

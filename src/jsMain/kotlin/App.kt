@@ -243,6 +243,10 @@ fun startApp() {
             val canPush = remote != null && !status.detached && status.branchName != null
             if (it.disabled == canPush) it.disabled = !canPush
         }
+        (document.getElementById("fetchButton") as? org.w3c.dom.HTMLButtonElement)?.let {
+            val canFetch = remote != null
+            if (it.disabled == canFetch) it.disabled = !canFetch
+        }
         setText("aheadBehindStatus", if (status.upstream != null) "ahead ${status.ahead}, behind ${status.behind}" else "-")
     }
 
@@ -259,9 +263,7 @@ fun startApp() {
     // Graph changes come from many places (buttons, canvas double-click, restore); a cheap poll keeps the tab current.
     window.setInterval({ updateRemoteTab(activeGraph) }, 300)
 
-    document.getElementById("pushButton")?.addEventListener("click", {
-        val remote = activeGraph.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
-        val result = graph.RemoteOps.push(activeGraph, remote)
+    fun showRemoteResult(result: graph.RemoteOps.Result) {
         val msg = document.getElementById("remoteMessage")
         if (msg != null) {
             msg.textContent = result.message
@@ -275,6 +277,16 @@ fun startApp() {
             else msg.classList.remove("has-text-weight-bold")
         }
         updateRemoteTab(activeGraph)
+    }
+
+    document.getElementById("pushButton")?.addEventListener("click", {
+        val remote = activeGraph.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
+        showRemoteResult(graph.RemoteOps.push(activeGraph, remote))
+    })
+
+    document.getElementById("fetchButton")?.addEventListener("click", {
+        val remote = activeGraph.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
+        showRemoteResult(graph.RemoteOps.fetch(activeGraph, remote))
     })
 
     // Populate graphs with default state (called when no URL state is present, or as fallback)

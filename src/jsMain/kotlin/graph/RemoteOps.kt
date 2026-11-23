@@ -42,4 +42,29 @@ object RemoteOps {
         return if (upToDate) Result(Kind.INFO, "Everything up-to-date")
         else Result(Kind.SUCCESS, "Pushed $branchName -> origin/$targetName")
     }
+
+    /** Updates all tracking labels (origin/...) of [local] from [remote]; local branches and HEAD are untouched. */
+    fun fetch(local: GitGraph, remote: GitGraph?): Result {
+        if (remote == null || !isAvailable(remote)) return Result(Kind.ERROR, "remote not available")
+        val changes = mutableListOf<String>()
+        val remoteBranches = remote.getBranches().filterIsInstance<Branch>()
+        for (rb in remoteBranches) {
+            val label = local.getRemoteBranches().find { it.name == rb.id }
+            if (label != null && label.commit.id == rb.commit.id) continue
+            val missing = remote.describeMissingCommits(rb.commit) { local.doesCommitExist(it) }
+            local.receiveCommits(missing, label?.swimlane)
+            val tip = local.findCommitFor(rb.commit.id) ?: return Result(Kind.ERROR, "fetch failed")
+            local.setRemoteBranch(rb.id, tip)
+            changes.add(if (label == null) "new branch origin/${rb.id}" else "updated origin/${rb.id}")
+        }
+        val names = remoteBranches.map { it.id }.toSet()
+        for (label in local.getRemoteBranches().toList()) {
+            if (label.name !in names) {
+                local.removeRemoteBranch(label.name)
+                changes.add("deleted origin/${label.name}")
+            }
+        }
+        return if (changes.isEmpty()) Result(Kind.INFO, "Already up to date")
+        else Result(Kind.SUCCESS, "Fetched: " + changes.joinToString(", "))
+    }
 }

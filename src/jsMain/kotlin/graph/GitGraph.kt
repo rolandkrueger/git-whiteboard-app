@@ -477,6 +477,17 @@ class GitGraph(
         layer.batchDraw()
     }
 
+    /** Removes the remote-tracking label `origin/<name>`; commits stay. */
+    fun removeRemoteBranch(name: String) {
+        val existing = remoteBranches.find { it.name == name } ?: return
+        existing.commit.removeBranch(existing)
+        existing.removeFrom(layer)
+        remoteBranches.remove(existing)
+        existing.commit.repositionBranches(layer)
+        calculateLostCommits()
+        layer.batchDraw()
+    }
+
     fun checkout(id: String, doShowLostCommits: Boolean) {
         console.log("Checking out $id")
         val oldHeadCommit = head.commit
