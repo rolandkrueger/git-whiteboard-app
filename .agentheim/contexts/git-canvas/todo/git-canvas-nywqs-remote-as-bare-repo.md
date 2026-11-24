@@ -1,7 +1,7 @@
 ---
 id: git-canvas-nywqs
 title: Grey out the remote repo's HEAD label to hint at a bare repository
-status: backlog
+status: todo
 type: feature
 context: git-canvas
 created: 2026-11-24

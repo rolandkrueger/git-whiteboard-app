@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:05 -- Modeling / Promoted: git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
+
+**Type:** Modeling / Promote
+**BC:** git-canvas
+**From → To:** backlog → todo
+
+---
+
 ## 2026-11-24 16:05 -- Modeling / Refined: git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
 
 **Type:** Modeling / Refine

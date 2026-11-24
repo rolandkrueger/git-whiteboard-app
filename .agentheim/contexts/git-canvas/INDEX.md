@@ -10,14 +10,15 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 2
-- **Todo:** 1
+- **Backlog:** 1
+- **Todo:** 2
 - **Doing:** 0
 - **Done:** 16
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository (feature) — `todo/git-canvas-nywqs-remote-as-bare-repo.md`
 - **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `todo/git-canvas-wcbec-relayout-repos-on-growth.md`
 <!-- todo-list:end -->
 
@@ -47,7 +48,6 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
-- **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository — `backlog/git-canvas-nywqs-remote-as-bare-repo.md`
 - **git-canvas-mrfrh** — Conflict demonstration for pull, merge and rebase — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- backlog-list:end -->
 
