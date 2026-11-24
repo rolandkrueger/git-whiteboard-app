@@ -6,7 +6,7 @@ The Git Whiteboard App is a tool for quickly visualizing various features of the
 
 The app is always initialized with one repository named `my-repo`, the default `main` branch, and one initial commit. You can rename the repository and start adding commits and branches on top of that.
 
-The app's control panel is subdivided into five tabs: `General`, `Commits`, `Refs`, `Merge/Rebase`, and `About`. Select one of these tabs to access the app's functionality.
+The app's control panel is subdivided into six tabs: `General`, `Commits`, `Refs`, `Merge/Rebase`, `Remote`, and `About`. Select one of these tabs to access the app's functionality.
 
 You can hide the control panel to get more screen space for the Git graph. To do that, click on the chevron icon in the upper right corner of the control panel. The same button is used to make the panel visible again.
 
@@ -24,13 +24,13 @@ You can rename the active repository on the `General` tab by editing the `Reposi
 
 To add another repository, click `Add Repository` on the `General` tab and enter a unique name. The app supports up to three repositories on the shared canvas. Click a repository region on the canvas to make that repository active.
 
-To share the current session, click `Share`. The app encodes the complete canvas state, including all repositories and their names, in the URL fragment and copies the URL to the clipboard. Opening such a URL restores the saved repositories and graph state.
+To share the current session, click `Share`. The app encodes the complete canvas state, including all repositories and their names, in the URL fragment and copies the URL to the clipboard. Opening such a URL restores the saved repositories and graph state, including the positions of the repository regions on the canvas (and thereby the layout of clones below their origin).
 
 == Working With Commits
 
 As with Git itself, the Git Whiteboard App's Git graph is constructed by adding commits as children of the current HEAD commit. To add a new commit, click the `Add commit` button on the `Commits` tab. A new commit will then be added on top of the commit which is currently referenced by the HEAD pointer. Since the app is a demonstration tool, it is not possible to define the contents of a commit or its message.
 
-The app automatically generates a commit id for each new commit. This id is kept very simple but is still unique for the current graph so that it is easy to refer to each commit when explaining the graph.
+The app automatically generates a commit id for each new commit. This id is kept very simple but is still unique across all repositories on the canvas (see <<commit-ids>>) so that it is easy to refer to each commit when explaining the graph.
 
 Every branch in the Git graph has its own unique color. When a new commit is added to a branch, the new commit will be colored in that branch's color. Commits created in detached HEAD state are red.
 
@@ -68,7 +68,7 @@ You can simulate a garbage collection run by clicking the button `Run garbage co
 
 == Working with Refs (Branches and Tags)
 
-On the `Refs` tab, you can add, delete, and check out branches and tags. To check out a branch or tag, you can double-click the corresponding branch/tag label. Alternatively, you can select the branch or tag to be checked out with the drop-down list on sections `Check out branch` and `Check out tag`. The currently checked out branch is highlighted with a bold font and enclosed in asterisks.
+On the `Refs` tab, you can add, delete, and check out branches and tags, using the sections `Add branch`, `Delete branch`, `Add tag`, and `Delete tag` as well as the check-out sections described below. To check out a branch or tag, you can double-click the corresponding branch/tag label. Alternatively, you can select the branch or tag to be checked out with the drop-down list on sections `Check out branch` and `Check out tag`. The currently checked out branch is highlighted with a bold font and enclosed in asterisks.
 
 When adding a new branch, the naming rules apply as described in section <<commit-ids>>. If you happen to use a whitespace character in a branch or tag name, then this will automatically be replaced with an underscore.
 

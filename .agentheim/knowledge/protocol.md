@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:15 -- Task verified and completed: git-canvas-vj6gr - Sync the user manual with the current app
+
+**Type:** Work / Task completion
+**Task:** git-canvas-vj6gr - Sync the user manual with the current app
+**Summary:** sync the user manual with the current app
+**Duration:** 2m
+**Verification:** PASS (iteration 1)
+**Files changed:** 1
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-24 16:13 -- Batch started: [git-canvas-vj6gr]
 
 **Type:** Work / Batch start

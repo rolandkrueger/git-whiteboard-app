@@ -1,11 +1,11 @@
 ---
 id: git-canvas-vj6gr
 title: Sync the user manual with the current app
-status: doing
+status: done
 type: chore
 context: git-canvas
 created: 2026-11-24
-completed:
+completed: 2026-11-24
 depends_on: [git-canvas-wcbec, git-canvas-nywqs]
 blocks: []
 tags: [docs, manual]
@@ -47,3 +47,10 @@ not re-describe them; it only checks that the result reads consistently.
 - Project language is English; keep the manual's existing tone and AsciiDoc structure.
 - If the audit finds a behavior gap (the manual describes something the app doesn't do), record it
   in the Outcome as a follow-up idea instead of changing code.
+
+## Outcome
+Edited `src/docs/asciidoc/manual.adoc`: intro now lists six tabs incl. `Remote`; the "unique for the current graph" sentence now says ids are unique across all repositories and links to Commit Ids; `Share` paragraph states region positions (clone layout) are restored; `Refs` intro names the `Add branch`, `Delete branch`, `Add tag`, `Delete tag` sections. Asciidoctor build exits 0 with the same warning count (13) as before.
+
+- Intentionally undocumented controls: panel hide/show chevrons (described by icon), the `Ok`/`Yes`/`No, cancel` confirmation dialog buttons and the `Add`/`Cancel` buttons of the Add Repository dialog (self-explanatory dialogs); `User Manual` link on the About tab.
+- `try-it-out/manual.html` is a stale prebuilt snapshot (predates the whole Remote section) and was deliberately not regenerated; follow-up idea: refresh the `try-it-out/` bundle as a release step.
+- No behavior gaps found.
