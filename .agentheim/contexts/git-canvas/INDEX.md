@@ -11,18 +11,18 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 3
-- **Todo:** 1
-- **Doing:** 0
+- **Todo:** 0
+- **Doing:** 1
 - **Done:** 15
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-f2ced** — Highlight the remote repo and connect clones to their origin (feature) — `todo/git-canvas-f2ced-highlight-remote-repo.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-f2ced** — Highlight the remote repo and connect clones to their origin (feature) — `doing/git-canvas-f2ced-highlight-remote-repo.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)

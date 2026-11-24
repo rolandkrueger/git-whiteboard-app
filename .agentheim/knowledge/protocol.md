@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:45 -- Batch started: [git-canvas-f2ced]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-f2ced - Highlight the remote repo and connect clones to their origin
+**Parallel:** no (1 worker — only ready task)
+
+---
+
 ## 2026-11-24 08:45 -- Task verified and completed: git-canvas-dxt9c - Place clones below their origin in a triangle layout
 
 **Type:** Work / Task completion

@@ -1,7 +1,7 @@
 ---
 id: git-canvas-f2ced
 title: Highlight the remote repo and connect clones to their origin
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-24
