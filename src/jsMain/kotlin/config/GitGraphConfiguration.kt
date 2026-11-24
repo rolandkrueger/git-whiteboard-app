@@ -17,7 +17,8 @@ class GitGraphConfiguration(val xOffset: Int = 0, val yOffset: Int = 0) {
     val labelYOffset: Int get() = Companion.labelYOffset
 
     companion object {
-        val leftOffset = maxOf(550, window.innerWidth / 3)
+        // Keeps the first repo region clear of the 660px control panel.
+        val leftOffset = maxOf(650, window.innerWidth / 3 + 100)
         val bottomOffset = window.innerHeight / 2
         val commitDistance = 70
         val swimlaneDistance = 80
