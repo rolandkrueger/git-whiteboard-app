@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 09:25 -- Modeling / Captured: git-canvas-vj6gr - Sync the user manual with the current app
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Whole-manual audit after the remote features: fixes the stale five-tabs intro, the per-graph commit-id sentence and the Share paragraph (positions), and checks every control is documented. Depends on wcbec and nywqs (which document themselves) to avoid concurrent manual edits. Also added a manual criterion to backlog task git-canvas-mrfrh.
+
+---
+
 ## 2026-11-24 16:08 -- Batch started: [git-canvas-nywqs, git-canvas-wcbec]
 
 **Type:** Work / Batch start

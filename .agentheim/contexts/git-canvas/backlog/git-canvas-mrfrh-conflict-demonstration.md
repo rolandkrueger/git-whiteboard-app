@@ -22,6 +22,7 @@ Open: how a conflict is represented without file contents (a flag on commits, a 
 
 ## Acceptance criteria
 - [ ] To be refined.
+- [ ] The user manual describes how to demonstrate conflicts (pull, merge, rebase).
 
 ## Notes
 Under-refined; out of scope until pull merge/rebase exist. Likely needs the tactical-modeler first.
