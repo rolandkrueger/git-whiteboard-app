@@ -4,7 +4,7 @@ title: Multi-repo canvas layout strategy
 status: accepted
 date: 2026-05-23
 scope: git-canvas
-related_tasks: [git-canvas-001]
+related_tasks: [git-canvas-001, git-canvas-dxt9c]
 related_research: []
 ---
 
@@ -27,6 +27,8 @@ All repos live on one Fabric.js canvas. The trainer positions repo regions freel
 ### Spatial arrangement
 
 Repos are free-floating regions on the shared canvas. Placement is entirely at the trainer's discretion. A clearly visible label banner (e.g. "origin", "alice", "bob") sits above each repo region so the audience can always identify which repo is which.
+
+**Amendment (git-canvas-dxt9c):** Clones are auto-placed below their origin: the first clone is centered under its origin with a fixed vertical gap (`GitGraphConfiguration.cloneVerticalGap`); a second clone of the same origin makes the first clone move half a separation left and is placed half a separation right, forming a symmetric triangle. A clone of a clone goes below its own origin. "Add repository" (non-clone) still places the repo to the right of the existing ones. Moving the first clone rebuilds it at the new offset (snapshot + restore into a fresh layer) so snapshot offsets stay truthful; offsets (x and y) survive the Share URL round-trip.
 
 ### Active repo selection
 

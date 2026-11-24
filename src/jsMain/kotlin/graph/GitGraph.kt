@@ -42,6 +42,24 @@ class GitGraph(
     /** The horizontal canvas offset for this repo's region, used to position new repos to the right. */
     val xOffset: Int get() = config.xOffset
 
+    val yOffset: Int get() = config.yOffset
+
+    /** Initial height of the repo region; a clone below this repo is offset by this plus the clone gap. */
+    val initialRegionHeight: Int get() = regionInitialHeight
+
+    /** Current region height: it grows upward from the fixed bottom edge as commits climb. */
+    val currentRegionHeight: Int get() {
+        val minCommitY = commits.minOfOrNull { config.bottomOffset - it.linePosition * config.commitDistance }
+            ?: return regionInitialHeight
+        val neededTop = minCommitY - config.commitRadius - 60
+        return maxOf(regionBottom - minOf(neededTop, regionInitialTop), regionInitialHeight)
+    }
+
+    /** Removes this repo's Konva layer (used when the graph is rebuilt at a new position). */
+    fun destroy() {
+        layer.destroy()
+    }
+
     /** Stable identity of this repo for remote links (ADR 0005); unlike repoName it never changes on rename. */
     var repoId: Int = 0
 

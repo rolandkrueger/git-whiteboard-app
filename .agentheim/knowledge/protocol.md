@@ -5,6 +5,30 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:45 -- Task verified and completed: git-canvas-dxt9c - Place clones below their origin in a triangle layout
+
+**Type:** Work / Task completion
+**Task:** git-canvas-dxt9c - Place clones below their origin in a triangle layout
+**Summary:** place clones below their origin in a triangle layout
+**Duration:** 8m
+**Verification:** PASS (iteration 2)
+**Files changed:** 6
+**Tests added:** 0
+**ADRs written:** 0001 (amended)
+
+---
+
+## 2026-11-24 08:40 -- Verification failed: git-canvas-dxt9c - Place clones below their origin in a triangle layout
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-dxt9c - Place clones below their origin in a triangle layout
+**Iteration:** 1 of 3
+**Reasons:** clone y offset uses the origin's initial region height, so the gap shrinks below 150 px (and regions overlap) once the origin has grown; same for the triangle level
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-24 08:37 -- Batch started: [git-canvas-dxt9c]
 
 **Type:** Work / Batch start

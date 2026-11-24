@@ -98,7 +98,7 @@ The `Remote` tab lets you demonstrate working with a remote repository. A remote
 
 === Clone
 
-Select a repository and click `Clone repository`. A new repository region appears (the canvas holds at most three repositories). It contains copies of all commits and tags (lost commits are not copied) with the same ids, colors and layout, plus one checked-out local branch. For each branch of the source, a _remote-tracking branch_ labeled `origin/<name>` is shown as a dashed, unfilled label. The checked-out branch tracks its `origin/<name>` as its _upstream_. The source repository becomes the clone's `origin`.
+Select a repository and click `Clone repository`. A new repository region appears (the canvas holds at most three repositories). It contains copies of all commits and tags (lost commits are not copied) with the same ids, colors and layout, plus one checked-out local branch. For each branch of the source, a _remote-tracking branch_ labeled `origin/<name>` is shown as a dashed, unfilled label. The checked-out branch tracks its `origin/<name>` as its _upstream_. The source repository becomes the clone's `origin`. The clone is placed directly below its origin; cloning the same origin a second time moves the first clone to the left and puts the new clone to the right, so origin and clones form a triangle. A clone of a clone appears below that clone.
 
 === Remote Tab Status
 

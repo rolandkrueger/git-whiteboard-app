@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 3
 - **Todo:** 1
-- **Doing:** 1
-- **Done:** 14
+- **Doing:** 0
+- **Done:** 15
 <!-- task-counts:end -->
 
 ### Todo
@@ -23,11 +23,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-dxt9c** — Place clones below their origin in a triangle layout (feature) — `doing/git-canvas-dxt9c-clone-placement-below-origin.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-dxt9c** — Place clones below their origin in a triangle layout (feature) — `done/git-canvas-dxt9c-clone-placement-below-origin.md`
 - **git-canvas-a95rx** — HEAD label stays on the previous commit after restoring a snapshot or cloning (bug) — `done/git-canvas-a95rx-head-label-stuck-after-restore.md`
 - **git-canvas-bdecz** — Remote operations documentation and doc sync (feature) — `done/git-canvas-bdecz-remote-operations-documentation.md`
 - **git-canvas-ktja3** — Pull with rebase option (feature) — `done/git-canvas-ktja3-pull-with-rebase.md`

@@ -137,10 +137,10 @@ fun startApp() {
     var nextRepoId = 1
 
     // Create a new GitGraph with its own Layer at the given xOffset and add it to the stage/list
-    fun createGraph(repoName: String, xOffset: Int): GitGraph {
+    fun createGraph(repoName: String, xOffset: Int, yOffset: Int = 0): GitGraph {
         val layer = Layer()
         stage.add(layer.asDynamic())
-        val config = GitGraphConfiguration(xOffset = xOffset, yOffset = 0)
+        val config = GitGraphConfiguration(xOffset = xOffset, yOffset = yOffset)
         return GitGraph(layer, commitIdAllocator, repoName = repoName, config = config).also { it.repoId = nextRepoId++ }
     }
 
@@ -336,7 +336,7 @@ fun startApp() {
                     GitGraph(initialLayer, commitIdAllocator, repoName = repoSnapshot.repoName,
                         config = GitGraphConfiguration(xOffset = repoSnapshot.xOffset, yOffset = repoSnapshot.yOffset))
                 } else {
-                    createGraph(repoSnapshot.repoName, xOffset = repoSnapshot.xOffset)
+                    createGraph(repoSnapshot.repoName, xOffset = repoSnapshot.xOffset, yOffset = repoSnapshot.yOffset)
                 }
                 graph.repoId = index
                 graph.restoreFromSnapshot(repoSnapshot)
@@ -446,9 +446,24 @@ fun startApp() {
             cloneName = "${source.repoName}-clone-$suffix"
             suffix++
         }
-        val xOffset = (graphs.maxOf { it.xOffset }) + repoSeparation
-        val clone = createGraph(cloneName, xOffset)
-        clone.restoreFromSnapshot(source.buildCloneSnapshot(cloneName, xOffset))
+        // Clones go below their origin (a clone's region starts as tall as the origin's current one);  a second clone of the same origin forms a triangle with the first.
+        val cloneYOffset = source.yOffset + source.currentRegionHeight + GitGraphConfiguration.cloneVerticalGap
+        val siblings = graphs.filter { it.remoteRepoId == source.repoId }
+        val cloneXOffset = if (siblings.isEmpty()) source.xOffset else source.xOffset + repoSeparation / 2
+        siblings.firstOrNull()?.let { first ->
+            val index = graphs.indexOf(first)
+            val moved = createGraph(first.repoName, source.xOffset - repoSeparation / 2, cloneYOffset)
+            moved.restoreFromSnapshot(first.getSnapshot().copy(xOffset = moved.xOffset, yOffset = moved.yOffset))
+            moved.repoId = first.repoId
+            moved.remoteRepoId = first.remoteRepoId
+            moved.wasCleared = first.wasCleared
+            val wasActive = activeGraph === first
+            first.destroy()
+            graphs[index] = moved
+            if (wasActive) activeGraph = moved
+        }
+        val clone = createGraph(cloneName, cloneXOffset, cloneYOffset)
+        clone.restoreFromSnapshot(source.buildCloneSnapshot(cloneName, cloneXOffset).copy(yOffset = cloneYOffset))
         clone.remoteRepoId = source.repoId
         graphs.add(clone)
         updateAddRepoButtonState()
