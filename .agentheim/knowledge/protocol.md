@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:11 -- Task verified and completed: git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
+
+**Type:** Work / Task completion
+**Task:** git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
+**Summary:** grey out the remote repo's HEAD label
+**Duration:** 3m
+**Verification:** PASS (iteration 1)
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-24 09:25 -- Modeling / Captured: git-canvas-vj6gr - Sync the user manual with the current app
 
 **Type:** Modeling / Capture

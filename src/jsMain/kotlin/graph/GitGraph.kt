@@ -24,7 +24,14 @@ class GitGraph(
     private val remoteBranches = mutableListOf<RemoteBranch>()
     private var globalCommitNumber = 0
     private var globalSwimlaneCounter = 0
+    private var isRemoteRepo = false
+    private lateinit var headRef: Head
     private var head: Head
+        get() = headRef
+        set(value) {
+            headRef = value
+            value.isBare = isRemoteRepo
+        }
     private var showLostCommits = true
 
     private val regionLeft = config.leftOffset - 60
@@ -93,6 +100,8 @@ class GitGraph(
     /** Updates the remote cues of this repo's region: remote styling/badge and `origin -> <name>` on a clone. */
     fun setRemoteLinks(isRemote: Boolean, originName: String?) {
         repoRegion.setRemoteLinks(isRemote, originName)
+        isRemoteRepo = isRemote
+        head.isBare = isRemote
         layer.batchDraw()
     }
 

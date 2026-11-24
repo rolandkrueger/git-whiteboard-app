@@ -110,6 +110,13 @@ class Head(commit: Commit, var targetBranch: AbstractBranch? = null) : AbstractB
         get() = targetBranch == null
     private val headLabel = HeadLabel(Point(0, 0))
 
+    /** A remote repo is conceptually bare, so its HEAD label is shown greyed out. */
+    var isBare: Boolean = false
+        set(value) {
+            field = value
+            headLabel.setMuted(value)
+        }
+
     override fun getLabel(): CommitLabel {
         return headLabel
     }

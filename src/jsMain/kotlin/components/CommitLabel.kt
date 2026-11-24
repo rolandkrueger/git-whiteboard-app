@@ -47,6 +47,13 @@ abstract class CommitLabel protected constructor(
             field = value
         }
 
+    /** Greys the label out and makes it semi-transparent (or restores the normal look). */
+    fun setMuted(muted: Boolean) {
+        rectangle.fill(if (muted) MUTED_FILL else color)
+        rectangle.opacity(if (muted) MUTED_OPACITY else labelOpacity)
+        textObject.opacity(if (muted) MUTED_OPACITY else 1.0)
+    }
+
     fun attachToCommit(commit: Commit, layer: Layer) {
         setPosition(
             commit.commitCircle.getRightDockPoint()
@@ -88,6 +95,9 @@ abstract class CommitLabel protected constructor(
     }
 
     companion object {
+        private const val MUTED_FILL = "#9E9E9E"
+        private const val MUTED_OPACITY = 0.5
+
         fun calcLabelWidth(text: String) = text.length * 10 + 10
 
         fun createRect(position: Point, width: Int, color: String, opacity: Double, dashed: Boolean = false): Rect {

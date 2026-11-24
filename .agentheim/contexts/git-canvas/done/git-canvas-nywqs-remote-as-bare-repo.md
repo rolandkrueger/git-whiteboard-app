@@ -1,11 +1,11 @@
 ---
 id: git-canvas-nywqs
 title: Grey out the remote repo's HEAD label to hint at a bare repository
-status: doing
+status: done
 type: feature
 context: git-canvas
 created: 2026-11-24
-completed:
+completed: 2026-11-24
 depends_on: [git-canvas-f2ced]
 blocks: []
 tags: [remote, clone, head, rendering]
@@ -28,14 +28,14 @@ branch (ADR 0005, decision 6). All operations (commit, checkout, branch, merge, 
 stay available on the remote so trainers can still simulate "someone else pushed".
 
 ## Acceptance criteria
-- [ ] A repo that is not a remote repo renders its HEAD label exactly as today (blue fill, white text).
-- [ ] As soon as a repo becomes a remote repo (first clone created), its HEAD label switches to a grey, semi-transparent style; clones' HEAD labels keep the normal style.
-- [ ] The greyed style is applied through the same refresh path as the other remote cues (`refreshRemoteLinks` / `setRemoteLinks`), so it is also correct after a Share URL restore, after the first clone is rebuilt by the triangle layout, and for the middle repo of a clone-of-a-clone chain.
-- [ ] The greyed HEAD label follows the remote's HEAD on every change: a commit made directly in the remote, a checkout in the remote, and a push to the remote's checked-out branch all move the greyed label with no stale normal-style label left behind.
+- [x] A repo that is not a remote repo renders its HEAD label exactly as today (blue fill, white text).
+- [x] As soon as a repo becomes a remote repo (first clone created), its HEAD label switches to a grey, semi-transparent style; clones' HEAD labels keep the normal style.
+- [x] The greyed style is applied through the same refresh path as the other remote cues (`refreshRemoteLinks` / `setRemoteLinks`), so it is also correct after a Share URL restore, after the first clone is rebuilt by the triangle layout, and for the middle repo of a clone-of-a-clone chain.
+- [x] The greyed HEAD label follows the remote's HEAD on every change: a commit made directly in the remote, a checkout in the remote, and a push to the remote's checked-out branch all move the greyed label with no stale normal-style label left behind.
 - [ ] The greyed style persists through `setActive(true/false)` and the push-rejection flash; when the remote repo is inactive, its HEAD label is faded consistently with the rest of the inactive region.
-- [ ] Commit, checkout, branch, merge, rebase and reset remain available and working on the remote repo (no new restriction or warning).
-- [ ] Manual (remote / clone section) and git-canvas README ubiquitous language ("Remote repo", "HEAD") mention that the remote's HEAD is greyed out because a remote is conceptually bare.
-- [ ] Full verification build passes (`sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all`); no new browser console errors.
+- [x] Commit, checkout, branch, merge, rebase and reset remain available and working on the remote repo (no new restriction or warning).
+- [x] Manual (remote / clone section) and git-canvas README ubiquitous language ("Remote repo", "HEAD") mention that the remote's HEAD is greyed out because a remote is conceptually bare.
+- [x] Full verification build passes (`sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all`); no new browser console errors. (build only; console not checked in a browser)
 - [ ] On a projector-sized view, the remote's HEAD reads as secondary compared to the clones' HEADs. [human-eye]
 
 ## Notes
@@ -48,3 +48,8 @@ stay available on the remote so trainers can still simulate "someone else pushed
 - HEAD label re-creation after restore/clone was fixed in git-canvas-a95rx; make sure the greyed
   style survives a re-created or moved label (apply it whenever the label is (re)built, not only on
   toggle).
+
+## Outcome
+`CommitLabel.setMuted` (grey #9E9E9E, 50% opacity) and `Head.isBare` style the HEAD label; `GitGraph.setRemoteLinks` sets `isRemoteRepo` and applies it to the current Head, and the `head` property setter re-applies it whenever a Head is re-created (restore, clone, reset). README "Remote repo" entry and manual Remote section updated. Full build passes.
+
+Not verified in a browser (left unticked): the persistence through `setActive`/push-rejection flash (code never touches label styling there, and inactive regions have no label fading in the code), the "no new browser console errors" criterion, and the projector-sized human-eye check.

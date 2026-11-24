@@ -94,7 +94,7 @@ To rebase the currently checked out branch onto another branch, you select the t
 
 == Remote Repositories [[remote-repositories]]
 
-The `Remote` tab lets you demonstrate working with a remote repository. A remote is simply another repository on the canvas; no network is involved.
+The `Remote` tab lets you demonstrate working with a remote repository. A remote is simply another repository on the canvas; no network is involved. The remote repository's HEAD label is greyed out, because a real remote is a bare repository without a working tree; you can still commit or check out in it to simulate a colleague's push.
 
 === Clone
 
