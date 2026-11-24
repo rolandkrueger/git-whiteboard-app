@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:37 -- Batch started: [git-canvas-dxt9c]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-dxt9c - Place clones below their origin in a triangle layout
+**Parallel:** no (1 worker — only ready task; git-canvas-f2ced blocked on it)
+
+---
+
 ## 2026-11-24 08:34 -- Modeling / Captured: git-canvas-dxt9c, git-canvas-f2ced, git-canvas-wcbec, git-canvas-nywqs - Clone placement below origin and remote highlighting
 
 **Type:** Modeling / Capture

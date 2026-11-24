@@ -11,19 +11,19 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 3
-- **Todo:** 2
-- **Doing:** 0
+- **Todo:** 1
+- **Doing:** 1
 - **Done:** 14
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-dxt9c** — Place clones below their origin in a triangle layout (feature) — `todo/git-canvas-dxt9c-clone-placement-below-origin.md`
 - **git-canvas-f2ced** — Highlight the remote repo and connect clones to their origin (feature) — `todo/git-canvas-f2ced-highlight-remote-repo.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-dxt9c** — Place clones below their origin in a triangle layout (feature) — `doing/git-canvas-dxt9c-clone-placement-below-origin.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)

@@ -1,7 +1,7 @@
 ---
 id: git-canvas-dxt9c
 title: Place clones below their origin in a triangle layout
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-24
