@@ -11,13 +11,14 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 1
-- **Todo:** 0
+- **Todo:** 1
 - **Doing:** 0
 - **Done:** 13
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-a95rx** — HEAD label stays on the previous commit after restoring a snapshot or cloning — `todo/git-canvas-a95rx-head-label-stuck-after-restore.md`
 <!-- todo-list:end -->
 
 ### Doing

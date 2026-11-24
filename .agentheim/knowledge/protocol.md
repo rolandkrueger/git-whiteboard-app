@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:23 -- Modeling / Captured: git-canvas-a95rx - HEAD label stays on the previous commit after restoring a snapshot or cloning
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Pre-existing rendering bug found during remote-ops smoke tests: after restoreFromSnapshot (Share URL load, clones) the first new commit leaves the HEAD label behind. Likely cause noted (Head registered in the commit's label list during restore).
+
+---
+
 ## 2026-11-23 21:04 -- Work session ended
 
 **Type:** Work / Session end
