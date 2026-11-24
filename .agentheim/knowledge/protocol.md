@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:34 -- Modeling / Captured: git-canvas-dxt9c, git-canvas-f2ced, git-canvas-wcbec, git-canvas-nywqs - Clone placement below origin and remote highlighting
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo (dxt9c, f2ced), backlog (wcbec, nywqs)
+**Summary:** Clones are placed below their origin (triangle for two clones, first clone shifts left; fixed vertical gap; Share URL keeps y offsets) and the remote repo gets dashed/tinted region, REMOTE badge, origin header on clones and a connection line. Growth-triggered re-layout and bare-repo semantics captured as backlog follow-ups.
+
+---
+
 ## 2026-11-24 08:31 -- Work session ended
 
 **Type:** Work / Session end
