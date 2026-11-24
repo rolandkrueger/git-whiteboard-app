@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:26 -- Batch started: [git-canvas-a95rx]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-a95rx - HEAD label stays on the previous commit after restoring a snapshot or cloning
+**Parallel:** no (1 worker — only ready task)
+
+---
+
 ## 2026-11-24 08:23 -- Modeling / Captured: git-canvas-a95rx - HEAD label stays on the previous commit after restoring a snapshot or cloning
 
 **Type:** Modeling / Capture

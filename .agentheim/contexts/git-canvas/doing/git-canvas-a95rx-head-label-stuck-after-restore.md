@@ -1,7 +1,7 @@
 ---
 id: git-canvas-a95rx
 title: HEAD label stays on the previous commit after restoring a snapshot or cloning
-status: todo
+status: doing
 type: bug
 context: git-canvas
 created: 2026-11-24
