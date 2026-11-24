@@ -1,7 +1,7 @@
 ---
 id: git-canvas-wcbec
 title: Re-layout repo regions when they grow into each other
-status: backlog
+status: todo
 type: feature
 context: git-canvas
 created: 2026-11-24

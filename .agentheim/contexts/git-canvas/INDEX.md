@@ -10,14 +10,15 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 3
-- **Todo:** 0
+- **Backlog:** 2
+- **Todo:** 1
 - **Doing:** 0
 - **Done:** 16
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `todo/git-canvas-wcbec-relayout-repos-on-growth.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -46,7 +47,6 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
-- **git-canvas-wcbec** — Re-layout repo regions when they grow into each other — `backlog/git-canvas-wcbec-relayout-repos-on-growth.md`
 - **git-canvas-nywqs** — Show the remote repo as a bare repository (no working tree / HEAD emphasis) — `backlog/git-canvas-nywqs-remote-as-bare-repo.md`
 - **git-canvas-mrfrh** — Conflict demonstration for pull, merge and rebase — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- backlog-list:end -->

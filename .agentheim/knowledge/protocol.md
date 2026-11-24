@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:05 -- Modeling / Promoted: git-canvas-wcbec - Re-layout repo regions when they grow into each other
+
+**Type:** Modeling / Promote
+**BC:** git-canvas
+**From → To:** backlog → todo
+
+---
+
 ## 2026-11-24 09:10 -- Modeling / Refined: git-canvas-wcbec - Re-layout repo regions when they grow into each other
 
 **Type:** Modeling / Refine
