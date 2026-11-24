@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 09:10 -- Modeling / Refined: git-canvas-wcbec - Re-layout repo regions when they grow into each other
+
+**Type:** Modeling / Refine
+**BC:** git-canvas
+**Status after:** todo
+**Summary:** Decided automatic re-layout after every bounds change: the lower/right region of a colliding pair is pushed down/right (cascading, never back), instant jump via the dxt9c snapshot-rebuild, clearances as named constants (vertical = cloneVerticalGap, new horizontal constant), also resolved after scenario restore. Concrete acceptance criteria written; resolution must be deferred out of onRegionBoundsChanged to avoid re-entrancy.
+
+---
+
 ## 2026-11-24 08:49 -- Work session ended
 
 **Type:** Work / Session end
