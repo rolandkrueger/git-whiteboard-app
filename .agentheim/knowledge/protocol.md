@@ -5,6 +5,22 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:15 -- Work session ended
+
+**Type:** Work / Session end
+**Duration:** from 16:08 (first batch start) to 16:15, about 8m
+**Completed:** 3 (first-try PASS: 3, re-dispatched: 0, skipped: 0)
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Dispatches:** nywqs: 1, wcbec: 1, vj6gr: 1
+**Commits:** 6
+**Vision-conformance:** none — batch aligns with vision (remote/clone relationship readable at a glance; manual consistent)
+**Batch mix:** 67% product-facing / 33% harness / 0% bookkeeping (3 tasks)
+**Carry-over:** .agentheim/.dashboard/: left behind (owner: Agentheim dashboard, runtime state of the running /dashboard server)
+
+---
+
 ## 2026-11-24 16:15 -- Task verified and completed: git-canvas-vj6gr - Sync the user manual with the current app
 
 **Type:** Work / Task completion
