@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:13 -- Batch started: [git-canvas-vj6gr]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-vj6gr - Sync the user manual with the current app
+**Parallel:** no (1 worker — only ready task; unblocked by nywqs and wcbec)
+
+---
+
 ## 2026-11-24 16:13 -- Task verified and completed: git-canvas-wcbec - Re-layout repo regions when they grow into each other
 
 **Type:** Work / Task completion

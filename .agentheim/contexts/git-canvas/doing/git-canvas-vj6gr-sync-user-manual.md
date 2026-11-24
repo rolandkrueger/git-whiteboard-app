@@ -1,7 +1,7 @@
 ---
 id: git-canvas-vj6gr
 title: Sync the user manual with the current app
-status: todo
+status: doing
 type: chore
 context: git-canvas
 created: 2026-11-24

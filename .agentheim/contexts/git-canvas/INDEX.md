@@ -11,18 +11,18 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 1
-- **Todo:** 1
-- **Doing:** 0
+- **Todo:** 0
+- **Doing:** 1
 - **Done:** 18
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-vj6gr** — Sync the user manual with the current app (chore) — `todo/git-canvas-vj6gr-sync-user-manual.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-vj6gr** — Sync the user manual with the current app (chore) — `doing/git-canvas-vj6gr-sync-user-manual.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
