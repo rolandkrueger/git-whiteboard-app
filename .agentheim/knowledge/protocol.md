@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 08:30 -- Task verified and completed: git-canvas-a95rx - HEAD label stays on the previous commit after restoring a snapshot or cloning
+
+**Type:** Work / Task completion
+**Task:** git-canvas-a95rx - HEAD label stays on the previous commit after restoring a snapshot or cloning
+**Summary:** HEAD label follows commits after snapshot restore and clone
+**Duration:** 18m
+**Verification:** PASS (iteration 1)
+**Files changed:** 1
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-24 08:26 -- Batch started: [git-canvas-a95rx]
 
 **Type:** Work / Batch start

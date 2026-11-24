@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 0
-- **Doing:** 1
-- **Done:** 13
+- **Doing:** 0
+- **Done:** 14
 <!-- task-counts:end -->
 
 ### Todo
@@ -22,11 +22,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-a95rx** — HEAD label stays on the previous commit after restoring a snapshot or cloning (bug) — `doing/git-canvas-a95rx-head-label-stuck-after-restore.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-a95rx** — HEAD label stays on the previous commit after restoring a snapshot or cloning (bug) — `done/git-canvas-a95rx-head-label-stuck-after-restore.md`
 - **git-canvas-bdecz** — Remote operations documentation and doc sync (feature) — `done/git-canvas-bdecz-remote-operations-documentation.md`
 - **git-canvas-ktja3** — Pull with rebase option (feature) — `done/git-canvas-ktja3-pull-with-rebase.md`
 - **git-canvas-sz7p8** — Pull as fetch plus merge (fast-forward or merge commit) (feature) — `done/git-canvas-sz7p8-pull-fetch-and-merge.md`

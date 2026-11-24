@@ -911,7 +911,6 @@ class GitGraph(
             if (targetBranch != null) {
                 head = Head(targetBranch.commit, targetBranch)
                 targetBranch.checkedOut(head)
-                targetBranch.commit.addBranch(head)
                 head.attachToBranch(targetBranch, layer)
             } else {
                 // Fallback: detach to the first commit
@@ -924,7 +923,6 @@ class GitGraph(
             val targetCommit = commitMap[headSnapshot.detachedCommitId]
             if (targetCommit != null) {
                 head = Head(targetCommit)
-                targetCommit.addBranch(head)
                 head.attachToCommit(targetCommit, layer)
             }
         }
