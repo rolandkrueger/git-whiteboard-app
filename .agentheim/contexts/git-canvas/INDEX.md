@@ -11,19 +11,19 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 1
-- **Todo:** 2
-- **Doing:** 0
+- **Todo:** 0
+- **Doing:** 2
 - **Done:** 16
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository (feature) — `todo/git-canvas-nywqs-remote-as-bare-repo.md`
-- **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `todo/git-canvas-wcbec-relayout-repos-on-growth.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `doing/git-canvas-wcbec-relayout-repos-on-growth.md`
+- **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository (feature) — `doing/git-canvas-nywqs-remote-as-bare-repo.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)

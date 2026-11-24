@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:08 -- Batch started: [git-canvas-nywqs, git-canvas-wcbec]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository, git-canvas-wcbec - Re-layout repo regions when they grow into each other
+**Parallel:** yes (2 workers — both touch App.kt, git-canvas README and manual; merge sequentially)
+
+---
+
 ## 2026-11-24 16:05 -- Modeling / Promoted: git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
 
 **Type:** Modeling / Promote
