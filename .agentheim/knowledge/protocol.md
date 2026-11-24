@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:05 -- Modeling / Refined: git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
+
+**Type:** Modeling / Refine
+**BC:** git-canvas
+**Status after:** todo
+**Summary:** Builder decided visual only: the remote repo's HEAD label is greyed out and semi-transparent, and all operations stay available on the remote. Blocking or warning on operations, a bare toggle, and hiding the HEAD were rejected. Concrete criteria cover the refresh path (restore, triangle rebuild, clone chain), HEAD movement, active/inactive and docs.
+
+---
+
 ## 2026-11-24 16:05 -- Modeling / Promoted: git-canvas-wcbec - Re-layout repo regions when they grow into each other
 
 **Type:** Modeling / Promote

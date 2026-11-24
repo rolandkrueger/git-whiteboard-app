@@ -47,7 +47,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
-- **git-canvas-nywqs** — Show the remote repo as a bare repository (no working tree / HEAD emphasis) — `backlog/git-canvas-nywqs-remote-as-bare-repo.md`
+- **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository — `backlog/git-canvas-nywqs-remote-as-bare-repo.md`
 - **git-canvas-mrfrh** — Conflict demonstration for pull, merge and rebase — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- backlog-list:end -->
 
