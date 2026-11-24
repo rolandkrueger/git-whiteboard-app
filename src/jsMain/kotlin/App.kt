@@ -143,6 +143,11 @@ fun startApp() {
     }
 
     var nextRepoId = 1
+    // Holds the currently active graph
+    lateinit var activeGraph: GitGraph
+    // Forward reference: resolveRegionOverlaps is defined after refreshRemoteLinks, which schedules it.
+    var resolveRegionOverlapsRef: () -> Unit = {}
+    var layoutResolutionPending = false
 
     // Create a new GitGraph with its own Layer at the given xOffset and add it to the stage/list
     fun createGraph(repoName: String, xOffset: Int, yOffset: Int = 0): GitGraph {
@@ -156,7 +161,17 @@ fun startApp() {
     fun refreshRemoteLinks() {
         connectorLayer.destroyChildren()
         for (g in graphs) {
-            g.onRegionBoundsChanged = { refreshRemoteLinks() }
+            g.onRegionBoundsChanged = {
+                refreshRemoteLinks()
+                // The callback fires mid-operation; rebuild graphs only after the operation has finished.
+                if (!layoutResolutionPending) {
+                    layoutResolutionPending = true
+                    window.setTimeout({
+                        layoutResolutionPending = false
+                        resolveRegionOverlapsRef()
+                    }, 0)
+                }
+            }
             val origin = g.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
             g.setRemoteLinks(graphs.any { it.remoteRepoId == g.repoId }, origin?.repoName)
             if (origin == null) continue
@@ -189,6 +204,70 @@ fun startApp() {
         }
         connectorLayer.batchDraw()
     }
+
+    // Rebuilds a graph at new offsets (snapshot + restore into a fresh layer); keeps identity, links and view state.
+    fun rebuildGraph(old: GitGraph, xOffset: Int, yOffset: Int): GitGraph {
+        val index = graphs.indexOf(old)
+        val moved = createGraph(old.repoName, xOffset, yOffset)
+        moved.restoreFromSnapshot(old.getSnapshot().copy(xOffset = xOffset, yOffset = yOffset))
+        moved.repoId = old.repoId
+        moved.remoteRepoId = old.remoteRepoId
+        moved.wasCleared = old.wasCleared
+        moved.showLostCommits(old.lostCommitsShown)
+        val wasActive = activeGraph === old
+        old.destroy()
+        graphs[index] = moved
+        if (wasActive) {
+            activeGraph = moved
+            moved.isActive = true
+        }
+        return moved
+    }
+
+    // Pushes regions apart (ADR 0001): of a colliding pair only the lower / right region moves, down or right.
+    fun resolveRegionOverlaps() {
+        val vGap = GitGraphConfiguration.cloneVerticalGap
+        val hGap = GitGraphConfiguration.regionHorizontalClearance
+        // Mutable rects [left, top, right, bottom] per graph, plus accumulated shifts [dx, dy].
+        val rects = graphs.map { g -> g.regionBounds.let { (l, t, w, h) -> intArrayOf(l, t, l + w, t + h) } }
+        val shifts = graphs.map { intArrayOf(0, 0) }
+        var changed = true
+        var guard = 0
+        while (changed && guard++ < 20) {
+            changed = false
+            for (i in graphs.indices) for (j in graphs.indices) {
+                if (i == j) continue
+                val a = rects[i]
+                val b = rects[j]
+                val bLower = b[3] > a[3] || (b[3] == a[3] && b[0] > a[0])
+                if (!bLower) continue
+                val horizontalOverlap = a[0] - hGap < b[2] && b[0] < a[2] + hGap
+                if (!horizontalOverlap) continue
+                if (b[3] > a[3]) {
+                    val dy = a[3] + vGap - b[1]
+                    if (dy > 0) {
+                        b[1] += dy; b[3] += dy; shifts[j][1] += dy; changed = true
+                    }
+                } else if (b[1] < a[3] && a[1] < b[3]) {
+                    val dx = a[2] + hGap - b[0]
+                    if (dx > 0) {
+                        b[0] += dx; b[2] += dx; shifts[j][0] += dx; changed = true
+                    }
+                }
+            }
+        }
+        var anyMoved = false
+        for (i in graphs.indices.toList()) {
+            val (dx, dy) = shifts[i].let { it[0] to it[1] }
+            if (dx == 0 && dy == 0) continue
+            val g = graphs[i]
+            rebuildGraph(g, g.xOffset + dx, g.yOffset + dy)
+            anyMoved = true
+        }
+        if (anyMoved) refreshRemoteLinks()
+    }
+
+    resolveRegionOverlapsRef = { resolveRegionOverlaps() }
 
     // ---- "Add Repository" dialog logic ----
     fun showAddRepoDialog(onNewGraph: (GitGraph) -> Unit) {
@@ -263,9 +342,6 @@ fun startApp() {
             }
         }
     }
-
-    // Holds the currently active graph
-    var activeGraph: GitGraph
 
     // Refresh the Remote tab from the active repo; textContent is only touched when the text changes.
     fun updateRemoteTab(g: GitGraph) {
@@ -399,6 +475,7 @@ fun startApp() {
             updateTagSelects(activeGraph.getTags())
             updateAddRepoButtonState()
             refreshRemoteLinks()
+            resolveRegionOverlaps()
         }, { _: dynamic ->
             console.warn("URL state decompression failed; falling back to blank canvas.")
             setupDefaultGraph()
@@ -498,16 +575,7 @@ fun startApp() {
         val siblings = graphs.filter { it.remoteRepoId == source.repoId }
         val cloneXOffset = if (siblings.isEmpty()) source.xOffset else source.xOffset + repoSeparation / 2
         siblings.firstOrNull()?.let { first ->
-            val index = graphs.indexOf(first)
-            val moved = createGraph(first.repoName, source.xOffset - repoSeparation / 2, cloneYOffset)
-            moved.restoreFromSnapshot(first.getSnapshot().copy(xOffset = moved.xOffset, yOffset = moved.yOffset))
-            moved.repoId = first.repoId
-            moved.remoteRepoId = first.remoteRepoId
-            moved.wasCleared = first.wasCleared
-            val wasActive = activeGraph === first
-            first.destroy()
-            graphs[index] = moved
-            if (wasActive) activeGraph = moved
+            rebuildGraph(first, source.xOffset - repoSeparation / 2, cloneYOffset)
         }
         val clone = createGraph(cloneName, cloneXOffset, cloneYOffset)
         clone.restoreFromSnapshot(source.buildCloneSnapshot(cloneName, cloneXOffset).copy(yOffset = cloneYOffset))

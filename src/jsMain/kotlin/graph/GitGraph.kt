@@ -736,6 +736,9 @@ class GitGraph(
 
     private fun findTag(tagName: String): AbstractBranch? = tags.find { it.id == tagName }
 
+    /** Whether lost commits are currently shown; carried over when the graph is rebuilt at a new position. */
+    val lostCommitsShown: Boolean get() = showLostCommits
+
     fun showLostCommits(doShowLostCommits: Boolean) {
         showLostCommits = doShowLostCommits
         commits.forEach {

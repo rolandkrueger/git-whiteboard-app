@@ -1,11 +1,11 @@
 ---
 id: git-canvas-wcbec
 title: Re-layout repo regions when they grow into each other
-status: doing
+status: done
 type: feature
 context: git-canvas
 created: 2026-11-24
-completed:
+completed: 2026-11-24
 depends_on: [git-canvas-dxt9c]
 blocks: []
 tags: [layout, repo-region, multi-repo]
@@ -79,3 +79,7 @@ that no two regions are closer than a minimum clearance. Decisions made in refin
 - Not auto-panning the stage after a move is acceptable; the trainer can pan.
 - Out of scope: animated moves, a manual "tidy layout" button, re-compacting regions when space
   frees up, draggable regions.
+
+## Outcome
+Implemented in `App.kt`: `rebuildGraph` (shared with the dxt9c triangle move; also carries lost-commit visibility via new `GitGraph.lostCommitsShown`) and `resolveRegionOverlaps` (lower/right region moves down or right, cascading, rebuilt once per moved graph). It is scheduled via `window.setTimeout(0)` from `onRegionBoundsChanged` and run after Share-URL restore. Clearance constant `regionHorizontalClearance` added to `GitGraphConfiguration`. ADR 0001 amended; README and manual updated. Full build passes.
+Not verified in a browser (no browser run done): the smoke-test, push/fetch/pull after moves, share-URL round trip, console errors and the human-eye criterion are left unticked.

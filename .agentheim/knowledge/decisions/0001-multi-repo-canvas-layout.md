@@ -4,7 +4,7 @@ title: Multi-repo canvas layout strategy
 status: accepted
 date: 2026-05-23
 scope: git-canvas
-related_tasks: [git-canvas-001, git-canvas-dxt9c]
+related_tasks: [git-canvas-001, git-canvas-dxt9c, git-canvas-wcbec]
 related_research: []
 ---
 
@@ -70,3 +70,7 @@ Rejected. Fabric.js is not a window manager. Implementing draggable, resizable w
 - The control panel must always reflect which repo is currently active so the trainer does not accidentally operate the wrong repo.
 - Visual desaturation of inactive repos must be implemented consistently across all Fabric.js components (commit nodes, branch labels, edges).
 - No pan/zoom changes are required.
+
+## Amendment (git-canvas-wcbec): automatic growth re-layout
+
+Regions grow upward and rightward as commits are added. After every operation that changes a region's bounds, the app resolves collisions automatically: for a colliding pair only the lower / right region moves, and only down (to at least `cloneVerticalGap` below the upper region's bottom edge) or right (to at least `regionHorizontalClearance` beyond the left region's right edge), repeated until no pair conflicts. The moved graph is rebuilt instantly (snapshot + restore, no animation), so persisted offsets stay truthful. Regions never move back up or left. The resolution is deferred until the triggering operation finishes and also runs after a Share-URL restore.

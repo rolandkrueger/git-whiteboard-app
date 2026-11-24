@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-24 16:13 -- Task verified and completed: git-canvas-wcbec - Re-layout repo regions when they grow into each other
+
+**Type:** Work / Task completion
+**Task:** git-canvas-wcbec - Re-layout repo regions when they grow into each other
+**Summary:** re-layout repo regions when they grow into each other
+**Duration:** 5m
+**Verification:** PASS (iteration 1)
+**Files changed:** 6
+**Tests added:** 0
+**ADRs written:** 0001 (amended)
+
+---
+
 ## 2026-11-24 16:11 -- Task verified and completed: git-canvas-nywqs - Grey out the remote repo's HEAD label to hint at a bare repository
 
 **Type:** Work / Task completion

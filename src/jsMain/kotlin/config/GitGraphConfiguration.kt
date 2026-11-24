@@ -24,6 +24,9 @@ class GitGraphConfiguration(val xOffset: Int = 0, val yOffset: Int = 0) {
 
         /** Vertical gap between an origin region's bottom edge and the top edge of a clone placed below it. */
         val cloneVerticalGap = 200
+
+        /** Minimum horizontal gap kept between two repo regions; a region that grows into it pushes the right one away. */
+        val regionHorizontalClearance = 100
         val swimlaneDistance = 80
         val commitRadius = 25
         val labelHeight = 24

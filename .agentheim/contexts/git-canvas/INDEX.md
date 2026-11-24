@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 1
-- **Doing:** 1
-- **Done:** 17
+- **Doing:** 0
+- **Done:** 18
 <!-- task-counts:end -->
 
 ### Todo
@@ -23,11 +23,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `doing/git-canvas-wcbec-relayout-repos-on-growth.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `done/git-canvas-wcbec-relayout-repos-on-growth.md`
 - **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository (feature) — `done/git-canvas-nywqs-remote-as-bare-repo.md`
 - **git-canvas-f2ced** — Highlight the remote repo and connect clones to their origin (feature) — `done/git-canvas-f2ced-highlight-remote-repo.md`
 - **git-canvas-dxt9c** — Place clones below their origin in a triangle layout (feature) — `done/git-canvas-dxt9c-clone-placement-below-origin.md`
