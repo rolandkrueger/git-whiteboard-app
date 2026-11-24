@@ -220,5 +220,6 @@ abstract external class Shape<Config : ShapeConfig>(config: Config = definedExte
     fun stroke(v: String): Shape<Config>
     fun strokeWidth(): Number
     fun strokeWidth(v: Number): Shape<Config>
+    fun dash(v: Array<Number>): Shape<Config>
 }
 

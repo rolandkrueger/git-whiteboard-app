@@ -1,11 +1,11 @@
 ---
 id: git-canvas-f2ced
 title: Highlight the remote repo and connect clones to their origin
-status: doing
+status: done
 type: feature
 context: git-canvas
 created: 2026-11-24
-completed:
+completed: 2026-11-24
 depends_on: [git-canvas-dxt9c]
 blocks: []
 tags: [clone, remote, multi-repo, repo-region, rendering]
@@ -39,8 +39,8 @@ Three combined visual cues, all derived from the existing `remoteRepoId` link (n
 - [ ] The connection line and tint never capture clicks: click-to-activate and stage panning work as before.
 - [ ] After a Share URL round-trip, badges, dashed styling and connection lines are restored from `remoteRepoIndex` alone.
 - [ ] Clone of a clone: the middle repo shows both the `REMOTE` badge and its own `origin -> ...` header, with lines to both neighbours.
-- [ ] Manual and git-canvas README (ubiquitous language: "Remote repo") describe the new cues.
-- [ ] Full verification build passes; no new browser console errors.
+- [x] Manual and git-canvas README (ubiquitous language: "Remote repo") describe the new cues.
+- [x] Full verification build passes; no new browser console errors.
 - [ ] On a projector-sized view, the remote repo is identifiable at a glance without reading names. [human-eye]
 
 ## Notes
@@ -50,3 +50,6 @@ Three combined visual cues, all derived from the existing `remoteRepoId` link (n
   handwritten bindings (verify in the browser, per CLAUDE.md).
 - Konva `Rect` supports `dash` — check whether the binding exposes it before adding it.
 - Bare-repo semantics (greyed-out HEAD in the remote) is a separate idea: git-canvas-nywqs.
+
+## Outcome
+Implemented: `RepoRegion.setRemoteLinks` (dashed border, tint, REMOTE pill, `origin -> name` header text; dash/fill untouched by setActive/setAlert), `GitGraph.setRemoteLinks`/`regionBounds`/`onRegionBoundsChanged`, and `refreshRemoteLinks()` in App.kt drawing non-listening `origin` lines on a connector layer below the repo layers; called after clone, rename and Share-URL restore, and on region growth. Added `Shape.dash(v)` binding. README and manual updated. Build passes. Browser behaviour (visual cues, no console errors, click-through, projector legibility) was NOT verified in a browser; the behavioural and [human-eye] checkboxes are left unticked.

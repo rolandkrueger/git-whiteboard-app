@@ -26,7 +26,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **Upstream** — the remote-tracking branch a local branch is linked to (snapshot `BranchSnapshot.upstream`); set by clone or by the first push of a branch. Push, pull and the Remote tab status use it
 - **Ahead/behind** — number of commits the local branch has that its upstream lacks / vice versa; shown on the Remote tab
 - **Local repo** — one complete graph representing a developer's local clone
-- **Remote repo** — one complete graph representing the upstream repository
+- **Remote repo** — one complete graph representing the upstream repository. Derived, not stored: a repo is a remote repo exactly when another repo's `remoteRepoId` points at it. Its region gets a dashed border, a light tinted fill and a `REMOTE` pill in the header; each clone's header shows `origin -> <remote name>` and a line labelled `origin` connects the clone region to its origin region (drawn on a non-listening connector layer below the repo layers, redrawn on region growth, clone, rename and restore; `GitGraph.setRemoteLinks`, `RepoRegion.setRemoteLinks`, `refreshRemoteLinks` in App.kt)
 - **Clone** — creates a new repo region (max 3 total) copying all non-lost commits 1:1 (ID, colour, links, layout) and tags, an `origin/<name>` label per source branch and one checked-out local branch tracking its `origin/<name>`. The remote link is the source's stable repo id (`remoteRepoId`; snapshot `remoteRepoIndex`), name always "origin" (ADR 0005)
 - **Multi-repo canvas** — a canvas view showing two or more repos simultaneously
 

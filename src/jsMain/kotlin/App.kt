@@ -3,6 +3,10 @@ import graph.AbstractBranch
 import graph.CommitIdAllocator
 import graph.GitGraph
 import konvajs.Layer
+import konvajs.Line
+import konvajs.LineConfig
+import konvajs.Text
+import konvajs.TextConfig
 import konvajs.Stage
 import konvajs.StageConfig
 import components.jso
@@ -45,6 +49,10 @@ fun startApp() {
     )
 
     val repoSeparation = 800
+
+    // Connector layer sits below all repo layers; its shapes never listen, so clicks and panning pass through.
+    val connectorLayer = Layer()
+    stage.add(connectorLayer.asDynamic())
 
     // Dynamic list of graphs — starts with one "my-repo" graph
     val graphs = mutableListOf<GitGraph>()
@@ -142,6 +150,44 @@ fun startApp() {
         stage.add(layer.asDynamic())
         val config = GitGraphConfiguration(xOffset = xOffset, yOffset = yOffset)
         return GitGraph(layer, commitIdAllocator, repoName = repoName, config = config).also { it.repoId = nextRepoId++ }
+    }
+
+    // Applies the remote cues (region styling, header badges, origin lines) from the remoteRepoId links.
+    fun refreshRemoteLinks() {
+        connectorLayer.destroyChildren()
+        for (g in graphs) {
+            g.onRegionBoundsChanged = { refreshRemoteLinks() }
+            val origin = g.remoteRepoId?.let { rid -> graphs.find { it.repoId == rid } }
+            g.setRemoteLinks(graphs.any { it.remoteRepoId == g.repoId }, origin?.repoName)
+            if (origin == null) continue
+            val (ol, ot, ow, oh) = origin.regionBounds
+            val (cl, ct, cw, ch) = g.regionBounds
+            val pts: Array<Number> = if (ct >= ot + oh) {
+                arrayOf(ol + ow / 2, ot + oh, cl + cw / 2, ct)
+            } else if (cl >= ol + ow) {
+                arrayOf(ol + ow, ot + oh / 2, cl, ct + ch / 2)
+            } else if (cl + cw <= ol) {
+                arrayOf(ol, ot + oh / 2, cl + cw, ct + ch / 2)
+            } else {
+                arrayOf(ol + ow / 2, ot, cl + cw / 2, ct + ch)
+            }
+            connectorLayer.add(Line(jso<LineConfig> {
+                points = pts
+                stroke = "#B7791F"
+                strokeWidth = 3
+                listening = false
+            }).asDynamic())
+            connectorLayer.add(Text(jso<TextConfig> {
+                x = (pts[0].toInt() + pts[2].toInt()) / 2 + 8
+                y = (pts[1].toInt() + pts[3].toInt()) / 2 - 10
+                text = "origin"
+                fontSize = 16
+                fontFamily = "Courier New"
+                fill = "#B7791F"
+                listening = false
+            }).asDynamic())
+        }
+        connectorLayer.batchDraw()
     }
 
     // ---- "Add Repository" dialog logic ----
@@ -352,6 +398,7 @@ fun startApp() {
             updateBranchSelects(activeGraph.getBranches())
             updateTagSelects(activeGraph.getTags())
             updateAddRepoButtonState()
+            refreshRemoteLinks()
         }, { _: dynamic ->
             console.warn("URL state decompression failed; falling back to blank canvas.")
             setupDefaultGraph()
@@ -467,6 +514,7 @@ fun startApp() {
         clone.remoteRepoId = source.repoId
         graphs.add(clone)
         updateAddRepoButtonState()
+        refreshRemoteLinks()
         activeGraph.isActive = false
         activeGraph = clone
         activeGraph.isActive = true
@@ -490,6 +538,7 @@ fun startApp() {
             }
             else -> {
                 activeGraph.renameRepository(name)
+                refreshRemoteLinks()
                 updateActiveRepoLabel(activeGraph)
             }
         }

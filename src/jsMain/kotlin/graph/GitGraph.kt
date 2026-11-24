@@ -84,6 +84,18 @@ class GitGraph(
     /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
     fun containsPoint(x: Double, y: Double): Boolean = repoRegion.containsPoint(x, y)
 
+    /** Region rectangle (left, top, width, height) in canvas coordinates; used to draw remote connection lines. */
+    val regionBounds: List<Int> get() = listOf(repoRegion.left, repoRegion.top, repoRegion.width, repoRegion.height)
+
+    /** Called after the region bounds were recalculated, so connection lines can follow region growth. */
+    var onRegionBoundsChanged: (() -> Unit)? = null
+
+    /** Updates the remote cues of this repo's region: remote styling/badge and `origin -> <name>` on a clone. */
+    fun setRemoteLinks(isRemote: Boolean, originName: String?) {
+        repoRegion.setRemoteLinks(isRemote, originName)
+        layer.batchDraw()
+    }
+
     fun renameRepository(newName: String) {
         repoName = newName
         repoRegion.setName(newName)
@@ -113,6 +125,7 @@ class GitGraph(
         val newHeight = maxOf(regionBottom - newTop, regionInitialHeight)
 
         repoRegion.updateBounds(newTop, newWidth, newHeight)
+        onRegionBoundsChanged?.invoke()
     }
 
     private var initialized = false
