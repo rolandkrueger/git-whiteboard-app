@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:22 -- Task verified and completed: git-canvas-cdy8k - Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle
+
+**Type:** Work / Task completion
+**Task:** git-canvas-cdy8k - Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle
+**Summary:** free branch names with Git ref-name rules and per-branch short codes for commit IDs
+**Duration:** 7m
+**Verification:** PASS (iteration 1)
+**Files changed:** 12
+**Tests added:** 0
+**ADRs written:** none (ADR 0004 amended)
+
+---
+
 ## 2026-11-25 17:10 -- Capture / Captured: git-canvas-snjqw - Add interactive rebase (rebase -i) - squash/fixup, drop, reorder commits
 
 **Type:** Capture

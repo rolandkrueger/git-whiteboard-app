@@ -51,7 +51,9 @@ data class BranchSnapshot(
     val targetCommitId: String,
     val commitColor: String,
     /** Tracked remote ref such as "origin/main"; null when none. */
-    val upstream: String? = null
+    val upstream: String? = null,
+    /** Commit-ID prefix (ADR 0007); null for snapshots made before short codes, which get a derived one. */
+    val shortCode: String? = null
 )
 
 data class TagSnapshot(

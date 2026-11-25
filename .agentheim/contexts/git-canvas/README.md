@@ -16,6 +16,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **HEAD** — the pointer showing the current checkout state; can be attached to a branch (normal) or floating on a commit (detached)
 - **Branch label** — a named, movable pointer attached to a commit node
 - **Tag label** — an immutable named pointer attached to a commit node
+- **Branch short code** — 1-2 lowercase chars (`[a-z0-9]`, unique per repo, `Branch.shortCode`) prefixing the IDs of new commits on that branch (`fl123`); optional input in Add branch, otherwise derived from the name; stored in `BranchSnapshot.shortCode` (older snapshots get a derived one). Detached-HEAD commits use the uppercase `H` (ADR 0007)
 - **Detached HEAD** — state where HEAD points directly at a commit, not a branch
 - **Lost commit** — a commit no longer reachable from any branch or tag (visible in reflog, removable by GC)
 - **Merge commit** — a commit with two parent lines (commit edges are GitKraken-style: straight in a lane, one short Bezier bend where they change lanes; path logic in `components/CommitEdgePath.kt`)
@@ -34,7 +35,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **Multi-repo canvas** — a canvas view showing two or more repos simultaneously
 
 ## Aggregates
-- **GitGraph** — owns one repo's full commit history, branch/tag set, HEAD state, and swimlane layout; enforces branch name uniqueness by first letter
+- **GitGraph** — owns one repo's full commit history, branch/tag set, HEAD state, and swimlane layout; enforces Git ref-name rules for branch names and unique branch short codes (ADR 0007)
 
 ## Key events
 - CommitAdded
@@ -71,7 +72,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **Clone placement:** Clones are auto-placed below their origin (ADR 0001 amendment); two clones of one origin form a triangle (first clone shifts left, second sits right); a clone of a clone goes below its own origin. "Add repository" still places to the right. Both x and y offsets are persisted in snapshots.
 - **Growth re-layout:** After any operation that grows a region, regions are automatically pushed apart (ADR 0001 amendment, git-canvas-wcbec): of a colliding pair only the lower / right region moves (down to `cloneVerticalGap` below the upper one, or right to `regionHorizontalClearance` beside the left one), never up or left, cascading until nothing conflicts. The moved graph is rebuilt instantly at the new offsets (snapshot + restore); the resolution also runs once after a Share-URL restore.
 - **Active repo selection:** Click anywhere in a repo region to make it active; all control-panel commands are routed to the active repo only.
-- **Commit IDs:** One app-wide `CommitIdAllocator` (ADR 0004) numbers all new commits as `<branch first letter><n>`; the same ID in two repos means the same commit. Rebased copies keep `<id>*`. `globalCommitNumber` is only the per-graph vertical layout slot, not an ID source.
+- **Commit IDs:** One app-wide `CommitIdAllocator` (ADR 0004) numbers all new commits as `<branch short code><n>` (detached HEAD: `H<n>`, ADR 0007); the same ID in two repos means the same commit. Rebased copies keep `<id>*`. `globalCommitNumber` is only the per-graph vertical layout slot, not an ID source.
 
 ## Open questions
 

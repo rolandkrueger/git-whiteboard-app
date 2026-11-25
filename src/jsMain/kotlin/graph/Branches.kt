@@ -48,8 +48,15 @@ abstract class AbstractBranch(val id: String, var swimlane: Int, var counter: In
     }
 }
 
-open class Branch(id: String, swimlane: Int, counter: Int = 1, commit: Commit, commitColor: String) :
-    AbstractBranch(id, swimlane, counter, commit, commitColor) {
+open class Branch(
+    id: String,
+    swimlane: Int,
+    counter: Int = 1,
+    commit: Commit,
+    commitColor: String,
+    /** 1-2 char lowercase prefix of the IDs of new commits made on this branch (ADR 0007). */
+    val shortCode: String
+) : AbstractBranch(id, swimlane, counter, commit, commitColor) {
 
     private val branchLabel = BranchLabel(
         id,

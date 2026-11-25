@@ -165,7 +165,7 @@ class GitGraph(
         branches.add(head)
 
         initialCommit.render(layer)
-        addBranch("main", 2, branchColor)
+        addBranch("main", 2, branchColor, "m")
         head.render(layer)
         updateRegionBounds()
         layer.batchDraw()
@@ -445,7 +445,7 @@ class GitGraph(
 
     /** Creates a local branch label at [commit] without checking it out (used by push into this repo). */
     fun createBranchAt(name: String, commit: Commit, color: String) {
-        val branch = Branch(name, commit.swimlane, commit = commit, commitColor = color)
+        val branch = Branch(name, commit.swimlane, commit = commit, commitColor = color, shortCode = deriveShortCode(name))
         branches.add(branch)
         branches.sortBy { it.id }
         branch.onDoubleClick(labelCheckoutHandler { name })
@@ -490,14 +490,17 @@ class GitGraph(
         }
     }
 
-    fun addBranch(id: String): Branch {
-        return addBranch(id, 1, BranchColors.nextColor())
+    /** Adds a branch; an empty [shortCode] is derived from the name (ADR 0007). */
+    fun addBranch(id: String, shortCode: String = ""): Branch {
+        return addBranch(id, 1, BranchColors.nextColor(), shortCode.ifEmpty { deriveShortCode(id) })
     }
 
-    private fun addBranch(id: String, counter: Int, commitColor: String): Branch {
-        console.log("Adding branch $id")
-        val branch =
-            Branch(id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor)
+    private fun addBranch(id: String, counter: Int, commitColor: String, shortCode: String): Branch {
+        console.log("Adding branch $id (short code $shortCode)")
+        val branch = Branch(
+            id, globalSwimlaneCounter++, commit = head.commit, counter = counter, commitColor = commitColor,
+            shortCode = shortCode
+        )
         branches.add(branch)
         branches.sortBy { it.id }
         head.commit.removeBranch(head)
@@ -569,10 +572,9 @@ class GitGraph(
             // DWIM: <name> without a local branch but with origin/<name> creates a local tracking branch
             val remote = remoteBranches.find { it.name == id }
             if (remote != null) {
-                if (!isBranchNameValid(id)) {
-                    GitGraph.onCheckoutRefused?.invoke(
-                        "Cannot create branch '$id' to track origin/$id: its first letter is already used by another branch."
-                    )
+                val problem = branchNameProblem(id)
+                if (problem != null) {
+                    GitGraph.onCheckoutRefused?.invoke("Cannot create branch '$id' to track origin/$id: $problem")
                     return
                 }
                 createBranchAt(id, remote.commit, BranchColors.nextColor())
@@ -929,7 +931,9 @@ class GitGraph(
         traverseHistory(head.commit, resetLostInReflog)
     }
 
-    private fun calcCommitId(branch: AbstractBranch) = "${branch.id.substringAfter('/').first()}${idAllocator.next()}"
+    // Detached HEAD commits get the uppercase prefix H; branch short codes are always lowercase (ADR 0007).
+    private fun calcCommitId(branch: AbstractBranch) =
+        "${(branch as? Branch)?.shortCode ?: "H"}${idAllocator.next()}"
     override fun toString(): String = commits.reversed().joinToString("\n")
 
     fun runGarbageCollection() {
@@ -962,11 +966,66 @@ class GitGraph(
     fun deleteBranch(branchName: String) = deleteRef(branchName, branches)
 
     fun isBranchCheckedOut(branchName: String): Boolean = findBranch(branchName)?.isCheckedOut() ?: false
-    fun isBranchNameValid(branchName: String): Boolean {
-        return branchName.first() != 'H' &&
-                branches
-                    .map { it.id.substringAfter('/') }
-                    .none { it.startsWith(branchName.substringAfter('/').first()) }
+
+    /** Returns why [branchName] cannot be used as a new branch name (Git ref-name rules, ADR 0007), or null if it is fine. */
+    fun branchNameProblem(branchName: String): String? {
+        if (branchName.isEmpty()) return "The branch name must not be empty."
+        if (branchName == "HEAD") return "'HEAD' is reserved and cannot be used as a branch name."
+        if (branches.any { it.id == branchName }) return "A branch named '$branchName' already exists."
+        if (branchName.any { it.isWhitespace() || it.code < 32 || it.code == 127 }) {
+            return "A branch name must not contain whitespace or control characters."
+        }
+        if (".." in branchName) return "A branch name must not contain '..'."
+        branchName.firstOrNull { it in "~^:?*[\\" }?.let { return "A branch name must not contain '$it'." }
+        if ("@{" in branchName) return "A branch name must not contain '@{'."
+        if (branchName == "@") return "'@' cannot be used as a branch name."
+        if (branchName.startsWith("-")) return "A branch name must not start with '-'."
+        if (branchName.startsWith("/") || branchName.endsWith("/") || "//" in branchName) {
+            return "A branch name must not start or end with '/' or contain '//'."
+        }
+        if (branchName.endsWith(".")) return "A branch name must not end with '.'."
+        val segments = branchName.split('/')
+        if (segments.any { it.startsWith(".") }) return "No part of a branch name may start with '.'."
+        if (segments.any { it.endsWith(".lock") }) return "No part of a branch name may end with '.lock'."
+        localBranches().forEach {
+            if (branchName.startsWith(it.id + "/")) {
+                return "Branch '${it.id}' already exists, so '$branchName' cannot be created (Git cannot store both)."
+            }
+            if (it.id.startsWith("$branchName/")) {
+                return "Branch '${it.id}' already exists, so '$branchName' cannot be created (Git cannot store both)."
+            }
+        }
+        return null
+    }
+
+    /** Returns why [code] cannot be used as a short code of a new branch (ADR 0007), or null if it is fine. */
+    fun shortCodeProblem(code: String): String? {
+        if (code.length !in 1..2) return "A short code must have 1 or 2 characters."
+        if (!code.all { it in 'a'..'z' || it in '0'..'9' }) {
+            return "A short code may only contain the characters a-z and 0-9."
+        }
+        localBranches().firstOrNull { it.shortCode == code }?.let {
+            return "The short code '$code' is already used by branch '${it.id}'."
+        }
+        return null
+    }
+
+    private fun localBranches(): List<Branch> = branches.filterIsInstance<Branch>()
+
+    /** Derives a repo-unique short code from a branch name (ADR 0007). */
+    private fun deriveShortCode(name: String, taken: Set<String> = localBranches().map { it.shortCode }.toSet()): String {
+        val segments = name.split('/')
+        val last = segments.last().lowercase().filter { it in 'a'..'z' || it in '0'..'9' }.ifEmpty { "x" }
+        val first = segments.first().lowercase().filter { it in 'a'..'z' || it in '0'..'9' }
+        val candidates = buildList {
+            add(last.take(1))
+            if (segments.size > 1 && first.isNotEmpty()) add(first.take(1) + last.take(1))
+            if (last.length >= 2) add(last.take(2))
+            ('0'..'9').forEach { add(last.take(1) + it) }
+            ('a'..'z').forEach { c -> add(last.take(1) + c) }
+            ('a'..'z').forEach { a -> ('a'..'z').forEach { b -> add("$a$b") } }
+        }
+        return candidates.firstOrNull { it !in taken } ?: last.take(1)
     }
 
     private fun deleteRef(refName: String, refList: MutableList<AbstractBranch>) {
@@ -1078,7 +1137,8 @@ class GitGraph(
                     swimlane = branch.swimlane,
                     targetCommitId = branch.commit.id,
                     commitColor = branch.commitColor,
-                    upstream = (branch as? Branch)?.upstream
+                    upstream = (branch as? Branch)?.upstream,
+                    shortCode = (branch as? Branch)?.shortCode
                 )
             }
         val tagSnapshots = tags.map { tag ->
@@ -1160,13 +1220,16 @@ class GitGraph(
         }
 
         // Restore branches (non-HEAD)
+        val usedShortCodes = snapshot.branches.mapNotNull { it.shortCode }.toMutableSet()
         for (bs in snapshot.branches) {
             val targetCommit = commitMap[bs.targetCommitId] ?: continue
+            val shortCode = bs.shortCode ?: deriveShortCode(bs.id, usedShortCodes).also { usedShortCodes.add(it) }
             val branch = Branch(
                 id = bs.id,
                 swimlane = bs.swimlane,
                 commit = targetCommit,
-                commitColor = bs.commitColor
+                commitColor = bs.commitColor,
+                shortCode = shortCode
             )
             branch.upstream = bs.upstream
             branch.onDoubleClick(labelCheckoutHandler { bs.id })

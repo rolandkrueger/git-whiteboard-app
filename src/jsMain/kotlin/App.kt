@@ -725,15 +725,16 @@ fun startApp() {
     }
 
     doWhenGuardedButtonClicked("addBranchButton") {
-        val branchName = getUserInput("addBranchInput").replace(" ", "_")
-        if (!activeGraph.isBranchNameValid(branchName)) {
-            ConfirmationDialog.showMessageDialog(
-                "Branch name '$branchName' is invalid",
-                "The name of the branch starts with a letter that is already used by another branch or " +
-                        "by the HEAD reference as first letter. Namespaces (feature/*, bugfix/*) are not considered. "
-            )
+        val branchName = getUserInput("addBranchInput")
+        val shortCode = getUserInput("addBranchShortCodeInput").lowercase()
+        val problem = activeGraph.branchNameProblem(branchName)
+            ?: if (shortCode.isNotEmpty()) activeGraph.shortCodeProblem(shortCode) else null
+        if (problem != null) {
+            val title = if (activeGraph.branchNameProblem(branchName) != null) "Branch name '$branchName' is invalid"
+            else "Short code '$shortCode' is invalid"
+            ConfirmationDialog.showMessageDialog(title, problem)
         } else {
-            activeGraph.addBranch(branchName)
+            activeGraph.addBranch(branchName, shortCode)
             updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
         }
     }

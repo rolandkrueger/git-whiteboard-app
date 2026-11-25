@@ -26,12 +26,7 @@ class CommitCircle(
 
     private var circle: Circle = createCircle()
 
-    private var idLabel: CommitIdLabel = CommitIdLabel(
-        id, Point(
-            centerPosition.x - CommitLabel.calcLabelWidth(id) / 2,
-            centerPosition.y - GitGraphConfiguration.labelHeight / 2
-        )
-    )
+    private var idLabel: CommitIdLabel = CommitIdLabel(id, centerPosition)
 
     /** Warning badge for a conflicting change (ADR 0006); null for unmarked commits. */
     private val badge: Circle? = if (conflicting) createBadge() else null

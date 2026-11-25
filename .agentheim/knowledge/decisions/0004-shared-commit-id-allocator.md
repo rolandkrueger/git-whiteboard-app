@@ -4,7 +4,7 @@ title: Shared commit ID allocator across repos (same ID == same commit)
 status: accepted
 date: 2026-11-23
 scope: git-canvas
-related_tasks: [git-canvas-j2m8z, git-canvas-wv6va, git-canvas-w3ndg, git-canvas-bdecz]
+related_tasks: [git-canvas-j2m8z, git-canvas-wv6va, git-canvas-w3ndg, git-canvas-bdecz, git-canvas-cdy8k]
 related_research: []
 ---
 
@@ -35,3 +35,7 @@ Remote operations (clone/push/fetch/pull) move commits between repos on the shar
 
 - Single-repo users see the same IDs as before only until a second repo exists; IDs inside one repo are still increasing, but no longer per-branch contiguous (`f2` may be followed by `f5`). Accepted.
 - Snapshot restore must restore the allocator, otherwise new commits could collide with restored ones.
+
+## Amendment
+
+The ID prefix is no longer the branch's first letter but its per-branch short code; see ADR 0007. The allocator itself is unchanged.

@@ -124,7 +124,7 @@ object ScenarioSerializer {
         val swimlane = (obj.swimlane as? Int) ?: jsIntOrNull(obj.swimlane) ?: return null
         val targetCommitId = obj.targetCommitId as? String ?: return null
         val commitColor = obj.commitColor as? String ?: ""
-        return BranchSnapshot(id, swimlane, targetCommitId, commitColor, obj.upstream as? String)
+        return BranchSnapshot(id, swimlane, targetCommitId, commitColor, obj.upstream as? String, obj.shortCode as? String)
     }
 
     private fun dynamicToTagSnapshot(obj: dynamic): TagSnapshot? {
@@ -192,6 +192,7 @@ object ScenarioSerializer {
         obj.targetCommitId = branch.targetCommitId
         obj.commitColor = branch.commitColor
         if (branch.upstream != null) obj.upstream = branch.upstream
+        if (branch.shortCode != null) obj.shortCode = branch.shortCode
         return obj
     }
 

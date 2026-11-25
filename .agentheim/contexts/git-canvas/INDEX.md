@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 4
 - **Todo:** 0
-- **Doing:** 1
-- **Done:** 28
+- **Doing:** 0
+- **Done:** 29
 <!-- task-counts:end -->
 
 ### Todo
@@ -22,11 +22,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-cdy8k** — Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle (feature) — `doing/git-canvas-cdy8k-branch-short-codes-and-git-ref-names.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-cdy8k** — Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle (feature) — `done/git-canvas-cdy8k-branch-short-codes-and-git-ref-names.md`
 - **git-canvas-pjz9w** — Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM) (feature) — `done/git-canvas-pjz9w-checkout-remote-branches.md`
 - **git-canvas-sxqsj** — Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes (feature) — `done/git-canvas-sxqsj-gitkraken-style-commit-edges.md`
 - **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `done/git-canvas-kngx5-larger-repo-header-labels.md`
