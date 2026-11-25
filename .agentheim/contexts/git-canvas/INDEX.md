@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 2
-- **Doing:** 2
-- **Done:** 23
+- **Doing:** 1
+- **Done:** 24
 <!-- task-counts:end -->
 
 ### Todo
@@ -24,12 +24,12 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-xt4ch** — Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges (feature) — `doing/git-canvas-xt4ch-label-connector-arrows.md`
 - **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort (feature) — `doing/git-canvas-nymhr-rebase-conflict-pause.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-xt4ch** — Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges (feature) — `done/git-canvas-xt4ch-label-connector-arrows.md`
 - **git-canvas-q38zx** — Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size (feature) — `done/git-canvas-q38zx-control-panel-text-size.md`
 - **git-canvas-r3dq7** — Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches (feature) — `done/git-canvas-r3dq7-remote-label-dark-red.md`
 - **git-canvas-c35ww** — Merge and pull (merge) stop on a conflict until Continue or Abort (feature) — `done/git-canvas-c35ww-merge-conflict-pause.md`

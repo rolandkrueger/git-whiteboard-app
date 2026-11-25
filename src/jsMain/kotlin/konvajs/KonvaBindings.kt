@@ -105,6 +105,15 @@ external interface LineConfig : ShapeConfig {
         set(value) = definedExternally
 }
 
+external interface ArrowConfig : LineConfig {
+    var pointerLength: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var pointerWidth: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+}
+
 external interface TextConfig : ShapeConfig {
     var text: String?
         get() = definedExternally

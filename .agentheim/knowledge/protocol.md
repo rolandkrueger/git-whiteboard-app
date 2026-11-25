@@ -5,6 +5,41 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:34 -- Task verified and completed: git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges
+
+**Type:** Work / Task completion
+**Task:** git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges
+**Summary:** draw label connectors as thin blue Bezier arrows pointing toward the commit
+**Duration:** 8m
+**Verification:** PASS (iteration 2)
+**Files changed:** 4
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-11-25 08:32 -- Verification failed: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+**Iteration:** 1 of 3
+**Reasons:** a rebase from a detached HEAD never stops on a conflict (guard skips detached HEAD; pending state cannot record a detached original), contradicting ADR 0006 decision 2/4 without a recorded exception
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
+## 2026-11-25 08:28 -- Verification failed: git-canvas-xt4ch - Label connector arrows
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit
+**Iteration:** 1 of 3
+**Reasons:** arrowhead drawn at the label end instead of the commit / previous-label end (Konva Arrow puts the head on the last point; CommitLabel passes the commit dock as start)
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-25 10:20 -- Modeling / Captured: git-canvas-sxqsj - Draw commit edges GitKraken-style
 
 **Type:** Modeling / Capture

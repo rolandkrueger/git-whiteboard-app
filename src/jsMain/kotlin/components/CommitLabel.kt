@@ -21,7 +21,7 @@ abstract class CommitLabel protected constructor(
 
     private var rectangle: Rect = createRect(position, labelWidth, color, labelOpacity, dashed)
     private var textObject: Text = createText(text, position, textColor)
-    private var line = Line(Point(0, 0), Point(0, 0))
+    private var line = LabelConnector(Point(0, 0), Point(0, 0))
     private var lineRendered = false
 
     override fun render(layer: Layer) {
@@ -60,19 +60,19 @@ abstract class CommitLabel protected constructor(
                     + GitGraphConfiguration.labelOffset
                     + Point(0, (commit.branches.size - 1) * GitGraphConfiguration.labelYOffset)
         )
-        setLinePosition(layer, commit.commitCircle.getRightDockPoint(), getLeftDockPoint())
+        setLinePosition(layer, getLeftDockPoint(), commit.commitCircle.getRightDockPoint())
     }
 
     fun attachToLabel(commitLabel: CommitLabel, layer: Layer) {
         setPosition(commitLabel.position + Point(commitLabel.labelWidth + 25, 0))
-        setLinePosition(layer, commitLabel.getRightDockPoint(), getLeftDockPoint())
+        setLinePosition(layer, getLeftDockPoint(), commitLabel.getRightDockPoint())
     }
 
     private fun setLinePosition(layer: Layer, start: Point, end: Point) {
         if (lineRendered) {
             line.removeFrom(layer)
         }
-        line = Line(start, end)
+        line = LabelConnector(start, end)
         line.render(layer)
         lineRendered = true
     }
