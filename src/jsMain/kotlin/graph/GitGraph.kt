@@ -676,13 +676,107 @@ class GitGraph(
                 }
                 addCommit(source, "${currentBranch().commit.id}${source.id}")
             }
-            PendingKind.REBASE -> Unit // replayed step by step by the rebase (git-canvas-nymhr)
+            PendingKind.REBASE -> replayRebase(
+                op.rebaseBranchId, op.rebaseOriginalHeadId ?: return, op.rebaseOriginalIds, op.rebaseNext, op.rebaseLane,
+                op.rebaseUpstreamIds, resuming = true
+            )
         }
     }
 
-    /** Drops the pending operation and leaves the graph as it was before it started. */
+    /**
+     * Drops the pending operation. A merge leaves the graph as it was; a rebase restores branch and HEAD
+     * (refs only: the replayed copies become lost commits, the layout is not rolled back).
+     */
     fun abortPending() {
-        if (pending != null) clearPending()
+        val op = pending ?: return
+        clearPending()
+        if (op.kind != PendingKind.REBASE) return
+        val copyCommit = head.commit
+        if (op.rebaseBranchId == null) {
+            // Detached HEAD: put it back on the commit it started from.
+            val original = findCommitFor(op.rebaseOriginalHeadId ?: return) ?: return
+            moveBranch(head, copyCommit, original)
+            copyCommit.repositionBranches(layer)
+            original.repositionBranches(layer)
+            calculateLostCommits()
+            showLostCommits(showLostCommits)
+            return
+        }
+        val branch = findBranch(op.rebaseBranchId) ?: return
+        copyCommit.removeBranch(head)
+        head.targetBranch = branch
+        branch.checkedOut(head)
+        head.attachToBranch(branch, layer)
+        copyCommit.repositionBranches(layer)
+        branch.commit.repositionBranches(layer)
+        calculateLostCommits()
+        showLostCommits(showLostCommits)
+    }
+
+    /**
+     * Replays [originalIds] from [from] on the detached HEAD. Stops with a REBASE [pending] operation at a
+     * marked commit while the upstream side has marked commits; [resuming] replays the stopped commit anyway.
+     */
+    private fun replayRebase(
+        branchId: String?, originalHeadId: String, originalIds: List<String>, from: Int, lane: Int,
+        upstreamIds: List<String>, resuming: Boolean
+    ) {
+        val originals = originalIds.mapNotNull { findCommitFor(it) }
+        var i = from
+        while (i < originals.size) {
+            val orig = originals[i]
+            if (orig.conflicting && upstreamIds.isNotEmpty() && !(resuming && i == from)) {
+                startPending(
+                    PendingOperation(
+                        PendingKind.REBASE,
+                        "REBASING ${i + 1}/${originals.size} - CONFLICT",
+                        "CONFLICT while replaying ${orig.id}. Continue or Abort.",
+                        listOf(orig.id) + upstreamIds,
+                        rebaseBranchId = branchId,
+                        rebaseOriginalHeadId = originalHeadId,
+                        rebaseOriginalIds = originalIds,
+                        rebaseNext = i,
+                        rebaseLane = lane,
+                        rebaseUpstreamIds = upstreamIds
+                    )
+                )
+                return
+            }
+            head.swimlane = lane
+            addCommit(
+                newCommitId = "${orig.id}*",
+                commitColor = orig.commitColor,
+                conflicting = orig.conflicting,
+                parentCommit = head.commit,
+                swimlane = lane,
+                linePosition = globalCommitNumber++
+            )
+            i++
+        }
+        finishRebase(branchId, originals.first(), lane)
+    }
+
+    /** Moves the rebased branch to the last replayed copy and re-attaches HEAD to it (detached HEAD just stays on the new tip). */
+    private fun finishRebase(branchId: String?, firstOriginal: Commit, lane: Int) {
+        if (branchId == null) {
+            firstOriginal.rerender(layer)
+            calculateLostCommits()
+            showLostCommits(showLostCommits)
+            return
+        }
+        val branch = findBranch(branchId) ?: return
+        val newTip = head.commit
+        val originalTip = branch.commit
+        branch.swimlane = lane
+        newTip.removeBranch(head)
+        head.targetBranch = branch
+        branch.checkedOut(head)
+        moveBranch(branch, originalTip, newTip)
+        originalTip.repositionBranches(layer)
+        newTip.repositionBranches(layer)
+        firstOriginal.rerender(layer)
+        calculateLostCommits()
+        showLostCommits(showLostCommits)
     }
 
     companion object {
@@ -705,8 +799,10 @@ class GitGraph(
             }
             console.log("Rebase ${currentBranch().id} onto ${targetBranch.id}")
             val newSwimlaneForRebasedBranch = targetBranch.swimlane
+            val upstreamIds = ancestorIds(targetBranch.commit)
+            val ownIds = ancestorIds(currentBranch().commit)
+            val markedUpstream = commits.filter { it.conflicting && it.id in upstreamIds && it.id !in ownIds }.map { it.id }
             shiftCommitsToTheRight(targetBranch.swimlane)
-            currentBranch().swimlane = newSwimlaneForRebasedBranch
 
             val commitsToBeRebased = ArrayList<Commit>()
             var commit: Commit? = currentBranch().commit
@@ -716,6 +812,26 @@ class GitGraph(
                     commit = commit.parent
                 }
             } while (commit != commonBaseCommit)
+
+            if (markedUpstream.isNotEmpty() && commitsToBeRebased.any { it.conflicting }) {
+                // Step-wise replay on a detached HEAD: the branch label stays on the original tip until the end.
+                commitsToBeRebased.reverse()
+                val originalHeadCommit = head.commit
+                val rebasedBranchId = if (head.isDetached) null else currentBranch().id
+                head.targetBranch?.headRemoved()
+                head.targetBranch = null
+                head.swimlane = -1
+                moveBranch(head, head.commit, targetBranch.commit)
+                head.attachToCommit(targetBranch.commit, layer)
+                originalHeadCommit.repositionBranches(layer)
+                replayRebase(
+                    rebasedBranchId, originalHeadCommit.id, commitsToBeRebased.map { it.id },
+                    0, newSwimlaneForRebasedBranch, markedUpstream, resuming = false
+                )
+                layer.batchDraw()
+                return true
+            }
+            currentBranch().swimlane = newSwimlaneForRebasedBranch
 
             moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
             commitsToBeRebased.reverse()

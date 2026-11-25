@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:35 -- Task verified and completed: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+
+**Type:** Work / Task completion
+**Task:** git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+**Summary:** rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+**Duration:** 15m
+**Verification:** PASS (iteration 2)
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-25 08:34 -- Task verified and completed: git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges
 
 **Type:** Work / Task completion

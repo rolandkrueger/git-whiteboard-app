@@ -1,11 +1,11 @@
 ---
 id: git-canvas-nymhr
 title: Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
-status: doing
+status: done
+completed: 2026-11-25
 type: feature
 context: git-canvas
 created: 2026-11-25
-completed:
 depends_on: [git-canvas-c35ww]
 blocks: []
 tags: [conflict, rebase, pull]
@@ -61,8 +61,8 @@ points at the old tip. Showing this step by step is where the tool adds the most
 - [ ] Marked commit on only one side: rebase runs through without stopping.
 - [ ] Pull (rebase) in a clone with a marked local commit and a marked commit on `origin/<name>` since the merge base ends in the pending rebasing state; Continue/Abort work as above.
 - [ ] While pending, other operations on that repo and `Share` are refused exactly as for a pending merge; switching the active repo shows/hides Continue/Abort correctly.
-- [ ] Manual (Rebase and Pull sections) describes the step-wise conflict demonstration; git-canvas README describes the pending rebasing state; ADR 0006 consequences hold.
-- [ ] Full verification build passes; no new browser console errors.
+- [x] Manual (Rebase and Pull sections) describes the step-wise conflict demonstration; git-canvas README describes the pending rebasing state; ADR 0006 consequences hold.
+- [ ] Full verification build passes (done); no new browser console errors (not verified in a browser).
 - [ ] During a live demo, the half-finished rebase (detached HEAD, branch on the old tip, remaining commits) is understandable at a glance. [human-eye]
 
 ## Notes
@@ -75,3 +75,26 @@ points at the old tip. Showing this step by step is where the tool adds the most
   regressions of the non-conflict rebase); Abort restores refs only, not the layout.
 - Starts only after git-canvas-c35ww is done — it introduces the pending-operation slot, the
   Continue/Abort buttons and the refusal rules this task reuses.
+
+## Outcome
+Step-wise rebase with conflict pause implemented in `GitGraph.rebase` / `replayRebase` / `finishRebase` / `abortPending` (src/jsMain/kotlin/graph/GitGraph.kt), pending slot extended with rebase fields (`PendingOperation.kt`), `RemoteOps.pull` reports a paused rebase. Manual (Rebase, Pull With Rebase) and BC README updated. HEAD was already a reachability root in `calculateLostCommits`, so no change there.
+
+Design note: the step-wise detached-HEAD replay is used only when a stop can occur (marked upstream commit and a marked commit to replay); all other rebases keep the previous one-shot code path so ids, swimlanes and positions are guaranteed identical (criterion 1 by construction). Full verification build passes.
+
+Not verified in a browser (left unticked): all behavioural criteria incl. layout/visuals, console errors, the `[human-eye]` criterion. Criteria 1-9 are implemented but unticked pending a manual smoke test; criterion 10 (docs) and the build criterion are done except "no new console errors".
+
+## Verifier note (iteration 1)
+
+**REASONS:**
+- Check 6b (ADR 0006 decisions 2 and 4): the rebase can now pause, but only when HEAD is attached to a branch. The guard in `rebase()` is `if (!head.isDetached && markedUpstream.isNotEmpty() && commitsToBeRebased.any { it.conflicting })`. A rebase run from a detached HEAD is still supported (`currentBranch()` returns `head`, and the one-shot path moves `head`). When both sides have a marked commit since the merge base, that rebase finishes without stopping. ADR 0006 decision 2 says combining two lines of history conflicts "exactly when" each side has a marked commit, and decision 4 applies that rule to rebase with no exception for a detached HEAD. Neither the worker's return, the task Outcome nor an ADR records the exception. The merge counterpart (git-canvas-c35ww) does handle a detached HEAD, so the two operations now behave differently.
+- The data model cannot hold this case: `PendingOperation.rebaseBranchId` and `abortPending()` assume a named branch (`findBranch(op.rebaseBranchId ?: return)`, then re-attach HEAD). Nothing records the original detached commit, so Abort could not put a detached HEAD back, and `finishRebase` has no branch to move.
+- Everything else was judged correct: build exits 0; criterion 1 holds; attached-HEAD paused state, badge counter, Continue, Abort, pause surviving `rebuildGraph`/`restorePending`, refusal and Share guards, pull --rebase result.
+
+**SUGGESTED_FIX:** Make a detached-HEAD rebase stop like an attached one. Store the original detached commit id in `PendingOperation` (e.g. `rebaseOriginalHeadId`, with a null branch id meaning detached). On Abort, return HEAD detached to that commit. In `finishRebase`, leave HEAD detached on the new tip and skip moving a branch.
+
+**ITERATION_HINT:** likely-fixable
+
+
+## Outcome (iteration 2)
+
+Detached-HEAD rebases now pause exactly like attached ones: `PendingOperation.rebaseOriginalHeadId` records the starting commit (null `rebaseBranchId` = detached); `finishRebase` leaves HEAD detached on the new tip; `abortPending` returns the detached HEAD to the original commit. README and manual updated. Build passes.

@@ -95,6 +95,9 @@ object RemoteOps {
         val fastForward = localTip.id in local.ancestorIds(upstreamTip)
         if (rebase) {
             local.rebase(upstream)
+            if (local.pending != null) {
+                return Result(Kind.ERROR, prefix + (local.pending?.message ?: "CONFLICT: Continue or Abort"))
+            }
             return Result(Kind.SUCCESS, prefix + if (fastForward) "Fast-forward" else "Rebased")
         }
         local.merge(false, upstream)
