@@ -108,7 +108,7 @@ abstract class CommitLabel protected constructor(
                     this.width = width
                     height = GitGraphConfiguration.labelHeight
                     if (dashed) {
-                        // Unfilled pill with a dashed border in the branch colour (remote-tracking label)
+                        // Unfilled pill with a dashed border in the given colour (remote-tracking label)
                         fill = "rgba(255,255,255,0.01)"
                         stroke = color
                         dash = arrayOf(6, 4)
@@ -146,6 +146,6 @@ class TagLabel(tagName: String, position: Point) : CommitLabel(tagName, "#FFE068
 
 class BranchLabel(branchName: String, position: Point) : CommitLabel(branchName, "#6ECC84", position)
 
-/** Remote-tracking label: outlined, dashed, grey-ish text. [color] is the branch colour used for the border. */
-class RemoteBranchLabel(text: String, color: String, position: Point) :
-    CommitLabel(text, color.ifEmpty { "#888888" }, position, textColor = "#777", dashed = true)
+/** Remote-tracking label: unfilled dashed pill; text and border share one dark red (the usual remote-branch colour). */
+class RemoteBranchLabel(text: String, position: Point) :
+    CommitLabel(text, "#B71C1C", position, textColor = "#B71C1C", dashed = true)

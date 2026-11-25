@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:26 -- Task verified and completed: git-canvas-r3dq7 - Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches
+
+**Type:** Work / Task completion
+**Task:** git-canvas-r3dq7 - Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches
+**Summary:** render remote-tracking labels in dark red
+**Duration:** 6m
+**Verification:** PASS (iteration 1)
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** 0005 (amended)
+
+---
+
 ## 2026-11-25 08:20 -- Batch started: [git-canvas-nymhr, git-canvas-r3dq7, git-canvas-q38zx]
 
 **Type:** Work / Batch start

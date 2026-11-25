@@ -93,7 +93,6 @@ class RemoteBranch(val name: String, swimlane: Int, commit: Commit, commitColor:
 
     private val remoteLabel = RemoteBranchLabel(
         id,
-        commitColor,
         commit.commitCircle.getRightDockPoint() + GitGraphConfiguration.labelOffset + Point(
             0,
             GitGraphConfiguration.labelYOffset * commit.branches.size

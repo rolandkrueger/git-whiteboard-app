@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 2
-- **Doing:** 3
-- **Done:** 21
+- **Doing:** 2
+- **Done:** 22
 <!-- task-counts:end -->
 
 ### Todo
@@ -25,12 +25,12 @@ research touching this BC, and concept synthesis pages.
 ### Doing
 <!-- doing-list:start -->
 - **git-canvas-q38zx** — Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size (feature) — `doing/git-canvas-q38zx-control-panel-text-size.md`
-- **git-canvas-r3dq7** — Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches (feature) — `doing/git-canvas-r3dq7-remote-label-dark-red.md`
 - **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort (feature) — `doing/git-canvas-nymhr-rebase-conflict-pause.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-r3dq7** — Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches (feature) — `done/git-canvas-r3dq7-remote-label-dark-red.md`
 - **git-canvas-c35ww** — Merge and pull (merge) stop on a conflict until Continue or Abort (feature) — `done/git-canvas-c35ww-merge-conflict-pause.md`
 - **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) (feature) — `done/git-canvas-mrfrh-conflict-demonstration.md`
 - **git-canvas-vj6gr** — Sync the user manual with the current app (chore) — `done/git-canvas-vj6gr-sync-user-manual.md`
