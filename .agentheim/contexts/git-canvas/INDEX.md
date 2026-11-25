@@ -11,19 +11,19 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 2
-- **Doing:** 1
+- **Todo:** 1
+- **Doing:** 2
 - **Done:** 23
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
 - **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `todo/git-canvas-kngx5-larger-repo-header-labels.md`
-- **git-canvas-xt4ch** — Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges (feature) — `todo/git-canvas-xt4ch-label-connector-arrows.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-xt4ch** — Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges (feature) — `doing/git-canvas-xt4ch-label-connector-arrows.md`
 - **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort (feature) — `doing/git-canvas-nymhr-rebase-conflict-pause.md`
 <!-- doing-list:end -->
 

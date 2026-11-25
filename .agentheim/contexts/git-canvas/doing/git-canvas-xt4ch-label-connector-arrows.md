@@ -1,7 +1,7 @@
 ---
 id: git-canvas-xt4ch
 title: Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25

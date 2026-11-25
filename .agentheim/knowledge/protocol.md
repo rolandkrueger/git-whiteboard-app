@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:26 -- Batch started: [git-canvas-xt4ch]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges
+**Parallel:** yes (joins running nymhr; kngx5 held until nymhr is merged — both touch RepoRegion/App.kt)
+
+---
+
 ## 2026-11-25 08:26 -- Task verified and completed: git-canvas-q38zx - Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size
 
 **Type:** Work / Task completion
