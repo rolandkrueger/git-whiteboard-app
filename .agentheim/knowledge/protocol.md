@@ -5,6 +5,17 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:02 -- Modeling / Refined: git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+
+**Type:** Modeling / Refine
+**BC:** git-canvas
+**Status after:** todo
+**Summary:** Builder decided on a lean conflict demonstration: show what happens in the graph during a conflict, not how a concrete conflict is resolved. Commits get a "conflicting change" marker; a merge/pull or rebase whose two sides both contain a marked commit since the merge base stops until Continue or Abort; rebase stops mid-way on a detached HEAD.
+**Split into:** git-canvas-mrfrh (marker), git-canvas-c35ww (merge/pull pause), git-canvas-nymhr (rebase/pull-rebase pause)
+**ADRs written:** 0006
+
+---
+
 ## 2026-11-24 16:15 -- Work session ended
 
 **Type:** Work / Session end

@@ -10,7 +10,7 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 1
+- **Backlog:** 3
 - **Todo:** 0
 - **Doing:** 0
 - **Done:** 19
@@ -49,12 +49,15 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
-- **git-canvas-mrfrh** — Conflict demonstration for pull, merge and rebase — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
+- **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort — `backlog/git-canvas-nymhr-rebase-conflict-pause.md`
+- **git-canvas-c35ww** — Merge and pull (merge) stop on a conflict until Continue or Abort — `backlog/git-canvas-c35ww-merge-conflict-pause.md`
+- **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- backlog-list:end -->
 
 ## ADRs scoped to this BC
 
 <!-- adr-local:start -->
+- **0006** — Conflict demonstration without file contents: a commit-level conflict marker; merge/pull and rebase stop on a conflict until Continue or Abort — `knowledge/decisions/0006-conflict-demonstration-without-file-contents.md`
 - **0001** — Multi-repo canvas layout strategy — `knowledge/decisions/0001-multi-repo-canvas-layout.md`
 - **0004** — Shared commit ID allocator across repos — `knowledge/decisions/0004-shared-commit-id-allocator.md`
 - **0005** — Remote operations model — `knowledge/decisions/0005-remote-operations-model.md`
