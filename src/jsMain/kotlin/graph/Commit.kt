@@ -1,7 +1,8 @@
 package graph
 
 import components.CommitCircle
-import components.Line
+import components.CommitEdge
+import components.EdgeKind
 import components.Point
 import components.Renderable
 import config.GitGraphConfiguration
@@ -30,8 +31,8 @@ class Commit(
     var mergedCommit: Commit? = null
     val branches = mutableSetOf<AbstractBranch>()
     var commitCircle = createCommitCircle()
-    var parentLine: Line? = null
-    var mergedParentLine: Line? = null
+    var parentLine: CommitEdge? = null
+    var mergedParentLine: CommitEdge? = null
     var childCommit: Commit? = null
 
     fun addBranch(branch: AbstractBranch) = branches.add(branch)
@@ -52,14 +53,25 @@ class Commit(
         // draw line to parent commit(s)
         if (parent != null) {
             val dockPoint: Point = parent.commitCircle.getUpperDockPoint()
-            parentLine = Line(
+            // The parent is always our own branch tip (also for merge commits). If the child sits in
+            // another lane, it was placed in a free lane, so the straight run belongs in the child's
+            // lane (bend near the parent) and never cuts through commits in the parent's lane.
+            parentLine = CommitEdge(
                 dockPoint,
-                commitCircle.getLowerDockPoint()
+                commitCircle.getLowerDockPoint(),
+                EdgeKind.BRANCH_OFF,
+                config.commitDistance
             )
             parentLine?.render(layer)
             val mergedCommit = mergedCommit
             if (mergedCommit != null) {
-                mergedParentLine = Line(mergedCommit.commitCircle.getUpperDockPoint(), commitCircle.getLowerDockPoint())
+                // Merged side branch: straight in its own lane, bend just below the merge commit
+                mergedParentLine = CommitEdge(
+                    mergedCommit.commitCircle.getUpperDockPoint(),
+                    commitCircle.getLowerDockPoint(),
+                    EdgeKind.MERGE,
+                    config.commitDistance
+                )
                 mergedParentLine?.render(layer)
             }
         }

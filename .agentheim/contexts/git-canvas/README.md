@@ -18,7 +18,7 @@ core — this is the unique value the tool provides; everything else is support 
 - **Tag label** — an immutable named pointer attached to a commit node
 - **Detached HEAD** — state where HEAD points directly at a commit, not a branch
 - **Lost commit** — a commit no longer reachable from any branch or tag (visible in reflog, removable by GC)
-- **Merge commit** — a commit with two parent lines
+- **Merge commit** — a commit with two parent lines (commit edges are GitKraken-style: straight in a lane, one short Bezier bend where they change lanes; path logic in `components/CommitEdgePath.kt`)
 - **Remote-tracking branch** — a label representing the last known state of a branch on a remote repo (e.g. origin/main). Rendered as an unfilled pill with a dashed border and text `origin/<name>`, both in dark red `#B71C1C`; held in its own list, not draggable, not checkout-able, ignored by branch-name uniqueness and pickers (ADR 0005)
 - **Push** — transfers the commits the remote lacks (same IDs, receiver-chosen layout via `GitGraph.receiveCommits`) and moves the remote branch to the local tip; allowed only as fast-forward, otherwise rejected with `rejected: non-fast-forward - fetch first` and a brief red flash of the remote region. A branch without upstream gets `origin/<same name>` as upstream on first push. Orchestrated by `RemoteOps.push` (ADR 0005)
 - **Fetch** — copies the commits missing locally from all branches of the remote (same `receiveCommits` primitive, placed on the lane of the tracking ref) and creates, moves or removes the `origin/<name>` labels to match; local branches and HEAD never move. Reports `Already up to date` when nothing changed. Orchestrated by `RemoteOps.fetch`
