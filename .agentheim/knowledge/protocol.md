@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 09:45 -- Modeling / Captured: git-canvas-q38zx - Raise the small info texts in the control panel to the standard font size
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** All control-panel texts using Bulma `help` or `is-size-7` (status lines, hints, error and result messages like "Fast-forward") move to the standard body font size; colour modifiers stay intact.
+
+---
+
 ## 2026-11-25 09:30 -- Modeling / Captured: git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label
 
 **Type:** Modeling / Capture
