@@ -5,6 +5,26 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 10:00 -- Modeling / Refined: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+
+**Type:** Modeling / Refine
+**BC:** git-canvas
+**Status after:** todo
+**Summary:** Kept as one task. Abort restores refs and HEAD attachment only (layout shift may remain, lost copies keep positions). Added: detached HEAD counts as a reachability root while a rebase is paused, so replayed copies are not greyed out as lost.
+
+---
+
+## 2026-11-25 08:17 -- Verification failed: git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
+**Iteration:** 1 of 3
+**Reasons:** double-click checkout on branch and tag labels bypasses the pending guard (five handlers in GitGraph.kt, including the restore path), so HEAD can move while a merge is pending and Continue would build the wrong merge commit
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-25 09:45 -- Modeling / Captured: git-canvas-q38zx - Raise the small info texts in the control panel to the standard font size
 
 **Type:** Modeling / Capture
