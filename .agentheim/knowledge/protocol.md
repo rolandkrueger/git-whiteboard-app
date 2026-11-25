@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:14 -- Task verified and completed: git-canvas-pjz9w - Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM)
+
+**Type:** Work / Task completion
+**Task:** git-canvas-pjz9w - Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM)
+**Summary:** check out remote-tracking branches like real Git (detached HEAD on origin/<name>, DWIM local tracking branch)
+**Duration:** 14m
+**Verification:** PASS (iteration 2)
+**Files changed:** 5
+**Tests added:** 0
+**ADRs written:** none (ADR 0005 amended)
+
+---
+
 ## 2026-11-25 16:40 -- Modeling / Captured: git-canvas-cdy8k - Free branch names with Git ref-name rules and per-branch short codes
 
 **Type:** Modeling / Capture
@@ -12,6 +25,17 @@ Newest entries on top.
 **Filed to:** todo
 **Summary:** The first-letter uniqueness rule for branch names is replaced by Git's ref-name rules; commit IDs use a 1-2 char per-branch short code (auto-derived or entered) and the ID label shrinks to fit the commit circle. Also switches the DWIM checkout of git-canvas-pjz9w (in flight) to the new rules.
 **ADRs written:** 0007
+
+---
+
+## 2026-11-25 16:03 -- Verification failed: git-canvas-pjz9w - Check out remote-tracking branches like real Git
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-pjz9w - Check out remote-tracking branches like real Git
+**Iteration:** 1 of 3
+**Reasons:** build passes, but no browser smoke test was run, so the "no new console errors" criterion and all behavioural criteria lack runtime evidence (code reading looked correct)
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
 
 ---
 

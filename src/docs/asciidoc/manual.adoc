@@ -114,6 +114,8 @@ Select a repository and click `Clone repository`. A new repository region appear
 
 Repository regions grow upward and to the right as you add commits and branches. If a region would come too close to another one, the app automatically moves the lower or right-hand repository further down or to the right so that regions never overlap. Regions never move back, and the new positions are part of the Share URL.
 
+Remote-tracking branches can be checked out like in Git. Double-clicking an `origin/<name>` label (or selecting `origin/<name>` in the `Check out branch` list, or typing it into the `Check out` input) detaches `HEAD` on that commit; no branch is created. Checking out a plain `<name>` that has no local branch but an `origin/<name>` (the `Check out branch` list offers such names) creates the local branch `<name>` at the same commit, with `origin/<name>` as its upstream, and attaches `HEAD` to it. An existing local branch of that name is always preferred. If the new branch name's first letter is already used by another branch, the checkout is refused with a message.
+
 The remote relationship is visible on the canvas. As soon as a repository has a clone, its region gets a dashed border, a light tinted background and a `REMOTE` badge next to its name (dashed means remote, like the remote-tracking labels). Each clone shows `origin -> <remote name>` in its header, and a line labelled `origin` connects the clone to its origin. A clone of a clone shows both cues.
 
 === Remote Tab Status

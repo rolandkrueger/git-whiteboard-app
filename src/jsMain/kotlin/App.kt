@@ -2,6 +2,7 @@ import config.GitGraphConfiguration
 import graph.AbstractBranch
 import graph.CommitIdAllocator
 import graph.GitGraph
+import graph.RemoteBranch
 import konvajs.Layer
 import konvajs.Line
 import konvajs.LineConfig
@@ -153,6 +154,7 @@ fun startApp() {
         ConfirmationDialog.showMessageDialog("Conflict pending", graph.RemoteOps.RESOLVE_FIRST)
         return true
     }
+    GitGraph.onCheckoutRefused = { ConfirmationDialog.showMessageDialog("Cannot check out", it) }
     GitGraph.onPendingRefused = { ConfirmationDialog.showMessageDialog("Conflict pending", graph.RemoteOps.RESOLVE_FIRST) }
     fun doWhenGuardedButtonClicked(buttonId: String, handler: () -> Unit) {
         doWhenButtonClicked(buttonId) { if (!refuseWhilePending(activeGraph)) handler() }
@@ -431,6 +433,7 @@ fun startApp() {
         }
         updateRemoteTab(activeGraph)
         updatePendingControls(activeGraph)
+        updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
     }
 
     document.getElementById("pushButton")?.addEventListener("click", {
@@ -458,7 +461,7 @@ fun startApp() {
         activeGraph = initialGraph
         initialGraph.isActive = true
         updateActiveRepoLabel(activeGraph)
-        updateBranchSelects(activeGraph.getBranches())
+        updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
         updateTagSelects(activeGraph.getTags())
         updateAddRepoButtonState()
     }
@@ -496,7 +499,7 @@ fun startApp() {
             activeGraph = graphs.first()
             activeGraph.isActive = true
             updateActiveRepoLabel(activeGraph)
-            updateBranchSelects(activeGraph.getBranches())
+            updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
             updateTagSelects(activeGraph.getTags())
             updateAddRepoButtonState()
             refreshRemoteLinks()
@@ -545,7 +548,7 @@ fun startApp() {
                 activeGraph = clickedGraph
                 activeGraph.isActive = true
                 updateActiveRepoLabel(activeGraph)
-                updateBranchSelects(activeGraph.getBranches())
+                updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
                 updateTagSelects(activeGraph.getTags())
             }
         }
@@ -585,7 +588,7 @@ fun startApp() {
             activeGraph = newGraph
             activeGraph.isActive = true
             updateActiveRepoLabel(activeGraph)
-            updateBranchSelects(activeGraph.getBranches())
+            updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
             updateTagSelects(activeGraph.getTags())
         }
     }
@@ -616,7 +619,7 @@ fun startApp() {
         activeGraph = clone
         activeGraph.isActive = true
         updateActiveRepoLabel(activeGraph)
-        updateBranchSelects(activeGraph.getBranches())
+        updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
         updateTagSelects(activeGraph.getTags())
     }
 
@@ -680,7 +683,7 @@ fun startApp() {
             "Do you really want to reset the active repo graph and start over?"
         ) {
             activeGraph.clearGraph()
-            updateBranchSelects(activeGraph.getBranches())
+            updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
             updateTagSelects(activeGraph.getTags())
         }
     }
@@ -718,6 +721,7 @@ fun startApp() {
 
     doWhenGuardedButtonClicked("checkoutCommitButton") {
         activeGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
+        updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
     }
 
     doWhenGuardedButtonClicked("addBranchButton") {
@@ -730,7 +734,7 @@ fun startApp() {
             )
         } else {
             activeGraph.addBranch(branchName)
-            updateBranchSelects(activeGraph.getBranches())
+            updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
         }
     }
 
@@ -739,6 +743,7 @@ fun startApp() {
             getSelectedOption("checkoutBranchInput"),
             isCheckboxChecked("showLostCommitsCheckbox")
         )
+        updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
     }
 
     doWhenGuardedButtonClicked("deleteBranchButton") {
@@ -750,7 +755,7 @@ fun startApp() {
             )
         } else {
             activeGraph.deleteBranch(branchName)
-            updateBranchSelects(activeGraph.getBranches())
+            updateBranchSelects(activeGraph.getBranches(), activeGraph.getRemoteBranches())
         }
     }
 
@@ -813,12 +818,16 @@ fun startApp() {
     doWhenCheckboxClicked("showLostCommitsCheckbox") { activeGraph.showLostCommits(it) }
 }
 
-fun updateBranchSelects(branches: List<AbstractBranch>) {
+fun updateBranchSelects(branches: List<AbstractBranch>, remoteBranches: List<AbstractBranch> = emptyList()) {
     val branchNames = branches
         .map { it.id }
         .filter { it != "HEAD" }
 
-    UiControl.setSelectOptions("checkoutBranchInput", branchNames)
+    // Like `git checkout <TAB>`: local branches, remote-only names (DWIM), then origin/<name> (detached)
+    val remoteOnly = remoteBranches
+        .map { (it as RemoteBranch).name }
+        .filter { it !in branchNames }
+    UiControl.setSelectOptions("checkoutBranchInput", branchNames + remoteOnly + remoteBranches.map { it.id })
     UiControl.setSelectOptions("deleteBranchInput", branchNames)
     UiControl.setSelectOptions("mergeBranchInput", branchNames)
     UiControl.setSelectOptions("rebaseBranchInput", branchNames)

@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 1
-- **Doing:** 1
-- **Done:** 27
+- **Doing:** 0
+- **Done:** 28
 <!-- task-counts:end -->
 
 ### Todo
@@ -23,11 +23,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-pjz9w** — Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM) (feature) — `doing/git-canvas-pjz9w-checkout-remote-branches.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-pjz9w** — Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM) (feature) — `done/git-canvas-pjz9w-checkout-remote-branches.md`
 - **git-canvas-sxqsj** — Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes (feature) — `done/git-canvas-sxqsj-gitkraken-style-commit-edges.md`
 - **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `done/git-canvas-kngx5-larger-repo-header-labels.md`
 - **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort (feature) — `done/git-canvas-nymhr-rebase-conflict-pause.md`

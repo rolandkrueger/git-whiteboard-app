@@ -1,11 +1,11 @@
 ---
 id: git-canvas-pjz9w
 title: Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM)
-status: doing
+status: done
 type: feature
 context: git-canvas
 created: 2026-11-25
-completed:
+completed: 2026-11-25
 depends_on: []
 blocks: []
 tags: [checkout, remote, branches, detached-head]
@@ -80,3 +80,29 @@ commit as `origin/feature`, HEAD is attached to it and the Remote tab shows
   the checkout dropdown needs its own option list.
 - Upstream setup can reuse `setBranchUpstream`; the DWIM branch gets a normal branch colour.
 - The remote repo (bare, no tracking refs) is unaffected.
+
+## Outcome
+`GitGraph.checkout` now resolves local branch, tag, commit, `origin/<name>` (detached HEAD), then DWIM (creates local branch with upstream, refused via `GitGraph.onCheckoutRefused` dialog on name clash). Remote labels got the double-click handler (also on restore). The checkout dropdown lists local, remote-only and `origin/` names (`updateBranchSelects` in `App.kt`). README, manual and ADR 0005 amended. Full build passes.
+
+### Runtime evidence (iteration 2)
+Driven in headless Chrome via CDP against `sh gradlew run` (PORT=9191) from the worktree; Konva stage inspected via a draw hook, real mouse events for double-clicks.
+- Smoke test: title `Git Whiteboard App`, panel renders, initial `my-repo` with m1/main/HEAD, add commit works, clone creates and activates `my-repo-clone`, region click switches active repo.
+- Remote has `feature`, `hotfix`; clone fetched. Checkout dropdown = main, feature, hotfix, origin/feature, origin/hotfix, origin/main (local, remote-only, tracking); delete/merge/rebase dropdowns list local branches only.
+- Double-click `origin/feature`: HEAD detached on its commit, no local branch created, label unmoved.
+- Dropdown `feature` (DWIM): local `feature` on origin/feature commit, HEAD attached, Remote tab `feature -> origin/feature`, ahead 0 behind 0. New commit: only `feature` moves, `origin/feature` stays, ahead 1. Local `feature` wins when it already exists.
+- Free-text `origin/main` gives detached HEAD; free-text `hotfix` (DWIM) gives `hotfix -> origin/hotfix`, ahead 0 behind 0.
+- Name clash (local `hat` vs remote-only `hotfix`): dialog `Cannot create branch hotfix to track origin/hotfix: its first letter is already used by another branch.`, graph unchanged.
+- Pending conflict (merge main into feature): double-click `origin/main` shows `Resolve the conflict first: Continue or Abort`, HEAD unchanged.
+- Share then reload: DWIM branches restored with upstream (`hotfix -> origin/hotfix`); double-click on restored `origin/feature` detaches HEAD; push of upstream-configured branch needs no extra setup (rejected non-fast-forward only because the test had advanced the remote).
+- Console: no new errors. Only the favicon 404 and a pre-existing `Cannot read properties of undefined (reading isDragging)` Konva pointermove exception (also reproduced on the unmodified server on port 9090 after any click followed by mouse moves; unrelated to this task).
+- Dev server on 9191 and headless Chrome stopped; the other server on 9090 was left untouched.
+
+## Verifier note (iteration 1)
+
+**REASONS:**
+- Acceptance criterion "Full verification build passes ... and the CLAUDE.md smoke test shows no new console errors" is only half covered. The build passes (exit 0), but there is no smoke-test evidence at all; the BC declares no runtime surface, so nothing stands in for it.
+- Every behavioural criterion is backed only by code reading, never by running the app. Code reading suggests the logic is right (checkout lookup order local -> tag -> commit -> origin/<name> -> DWIM; DWIM returns early before createBranchAt on a name clash; RemoteBranch labels get labelCheckoutHandler in setRemoteBranch and the restore path; delete/merge/rebase dropdowns list local branches only), but the task asks for runtime evidence.
+
+**SUGGESTED_FIX:** Start the dev server from the worktree (`sh gradlew run`), run the CLAUDE.md smoke test, and exercise the new paths in the browser: clone, add a branch on the remote, fetch, double-click the `origin/<name>` label, DWIM via dropdown and free-text input, add a commit, Share/restore. Check the console shows no new errors, stop the server, record the results in `## Outcome`. No code changes look necessary unless the smoke test reveals a problem.
+
+**ITERATION_HINT:** likely-fixable

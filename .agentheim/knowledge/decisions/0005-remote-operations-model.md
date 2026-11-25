@@ -4,7 +4,7 @@ title: Remote operations model (clone, remote-tracking labels, push/fetch/pull, 
 status: accepted
 date: 2026-11-23
 scope: git-canvas
-related_tasks: [git-canvas-b5f0r, git-canvas-wv6va, git-canvas-r6szj, git-canvas-w3ndg, git-canvas-rx1y3, git-canvas-sz7p8, git-canvas-ktja3, git-canvas-bdecz, git-canvas-r3dq7]
+related_tasks: [git-canvas-b5f0r, git-canvas-wv6va, git-canvas-r6szj, git-canvas-w3ndg, git-canvas-rx1y3, git-canvas-sz7p8, git-canvas-ktja3, git-canvas-bdecz, git-canvas-r3dq7, git-canvas-pjz9w]
 related_research: []
 ---
 
@@ -29,6 +29,10 @@ The vision requires push/pull/clone between repos on the shared canvas (ADR 0001
 7. **Pull** = fetch + (merge | rebase of the current branch onto its `origin/<name>`), reusing the existing merge (ff or merge commit) and rebase code paths. Fetch never touches local branches or the working HEAD.
 8. **Unrelated histories** (e.g. two separately created blank repos) cannot be connected because remotes only come from clone; no handling needed.
 9. **Snapshot (version 2).** `MultiRepoSnapshot` gains `nextCommitId`; `RepoSnapshot` gains `remoteRepoIndex: Int?` (index in `repos`), `remoteBranches: List<RemoteBranchSnapshot>(name, targetCommitId)`; `BranchSnapshot` gains `upstream: String?`. Missing fields on decode default to null/empty so version-1 URLs still open.
+
+## Amendment 2026-11-25 (git-canvas-pjz9w)
+
+Decision 3 said tracking labels are not checkout-able. Now they are, like in real Git: checking out `origin/<name>` (double-click on the label, "Check out branch" dropdown or the free-text Check out input) detaches HEAD onto the label's commit; no branch is created and the label does not move. Checking out `<name>` with no local `<name>` but an `origin/<name>` (DWIM) creates local branch `<name>` there with upstream `origin/<name>` and attaches HEAD, refused if `isBranchNameValid` fails. Tracking refs still stay out of the delete, merge and rebase dropdowns, first-letter uniqueness, drag and reset; they appear only in the checkout dropdown (as `<name>` for remote-only names, then as `origin/<name>`).
 
 ## Alternatives rejected
 

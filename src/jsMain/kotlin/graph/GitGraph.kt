@@ -536,6 +536,7 @@ class GitGraph(
             val remote = RemoteBranch(name, commit.swimlane, commit, commit.commitColor)
             remoteBranches.add(remote)
             remoteBranches.sortBy { it.name }
+            remote.onDoubleClick(labelCheckoutHandler { remote.id })
             remote.render(layer)
             remote.attachToCommit(commit, layer)
         }
@@ -558,7 +559,27 @@ class GitGraph(
         console.log("Checking out $id")
         val oldHeadCommit = head.commit
 
-        val targetBranch = findBranch(id)
+        var targetBranch = findBranch(id)
+        var targetCommit = if (targetBranch == null) findTag(id)?.commit ?: commits.find { it.id == id } else null
+        if (targetBranch == null && targetCommit == null) {
+            // origin/<name>: detached HEAD on the tracking label's commit
+            targetCommit = remoteBranches.find { it.id == id }?.commit
+        }
+        if (targetBranch == null && targetCommit == null) {
+            // DWIM: <name> without a local branch but with origin/<name> creates a local tracking branch
+            val remote = remoteBranches.find { it.name == id }
+            if (remote != null) {
+                if (!isBranchNameValid(id)) {
+                    GitGraph.onCheckoutRefused?.invoke(
+                        "Cannot create branch '$id' to track origin/$id: its first letter is already used by another branch."
+                    )
+                    return
+                }
+                createBranchAt(id, remote.commit, BranchColors.nextColor())
+                setBranchUpstream(id, remote.id)
+                targetBranch = findBranch(id)
+            }
+        }
         if (targetBranch != null) {
             // checking out a branch
             head.targetBranch?.headRemoved()
@@ -566,19 +587,15 @@ class GitGraph(
             targetBranch.checkedOut(head)
             head.commit.removeBranch(head)
             head.attachToBranch(targetBranch, layer)
-        } else {
-            // try to check out a tag or commit directly
-            val targetCommit = findTag(id)?.commit ?: commits.find { it.id == id }
-            if (targetCommit != null) {
-                // a commit id was given to check out: create a detached HEAD
-                if (!head.isDetached) {
-                    head.targetBranch?.headRemoved()
-                    head.targetBranch = null
-                }
-                head.swimlane = -1 // calculate new swimlane as soon as a new commit is added
-                moveBranch(head, head.commit, targetCommit)
-                head.attachToCommit(targetCommit, layer)
+        } else if (targetCommit != null) {
+            // a commit id, tag or tracking ref was given to check out: create a detached HEAD
+            if (!head.isDetached) {
+                head.targetBranch?.headRemoved()
+                head.targetBranch = null
             }
+            head.swimlane = -1 // calculate new swimlane as soon as a new commit is added
+            moveBranch(head, head.commit, targetCommit)
+            head.attachToCommit(targetCommit, layer)
         }
         oldHeadCommit.repositionBranches(layer)
         calculateLostCommits()
@@ -782,6 +799,9 @@ class GitGraph(
     companion object {
         /** Called when an operation is attempted on a repo with a [pending] conflict; set once by the app. */
         var onPendingRefused: (() -> Unit)? = null
+
+        /** Called with a message when a checkout is refused (e.g. DWIM branch name clash). */
+        var onCheckoutRefused: ((String) -> Unit)? = null
     }
 
     fun rebase(targetBranchName: String): Boolean {
@@ -1174,6 +1194,7 @@ class GitGraph(
             remoteBranches.add(remote)
             remote.render(layer)
             remote.attachToCommit(targetCommit, layer)
+            remote.onDoubleClick(labelCheckoutHandler { remote.id })
         }
         remoteBranches.sortBy { it.name }
 
