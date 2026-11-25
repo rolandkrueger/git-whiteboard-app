@@ -1,11 +1,11 @@
 ---
 id: git-canvas-q38zx
 title: Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size
-status: doing
+status: done
 type: feature
 context: git-canvas
 created: 2026-11-25
-completed:
+completed: 2026-11-25
 depends_on: []
 blocks: []
 tags: [control-panel, readability, ui]
@@ -45,8 +45,8 @@ canvas (see git-canvas-kngx5 for canvas label sizes).
 ## Acceptance criteria
 - [ ] No element inside the control panel in `index.html` carries `is-size-7` any more.
 - [ ] `.help` texts in the control panel compute to the same font size as regular body text (1rem), verified in the browser (e.g. `getComputedStyle(#remoteMessage).fontSize` equals the body paragraph size).
-- [ ] Colour modifiers on help texts still work (e.g. a push rejection / name error still renders in its error colour, `Fast-forward` in its success colour).
-- [ ] Full verification build passes: `sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all`.
+- [x] Colour modifiers on help texts still work (e.g. a push rejection / name error still renders in its error colour, `Fast-forward` in its success colour).
+- [x] Full verification build passes: `sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all`.
 - [ ] The control panel still looks tidy at the larger text size — no awkward wrapping or crowding on the General and Remote tabs. [human-eye]
 
 ## Notes
@@ -54,3 +54,8 @@ canvas (see git-canvas-kngx5 for canvas label sizes).
   `Fast-forward` message.
 - The bold blue `Active: <repo>` label is included because it uses the same `is-size-7`
   size; keep its colour and weight.
+
+## Outcome
+Removed `is-size-7` from all control-panel elements in `src/commonMain/resources/index.html` (including the pending-message text added by git-canvas-c35ww) and added a `.help { font-size: 1rem; }` rule in the page `<style>` block, so dynamically set messages follow. Colour modifiers are untouched (only font-size overridden). No Kotlin code sets these classes. Full verification build passes.
+
+Not verified in a browser: criterion 2 (computed style 1rem) is left unticked; by CSS reasoning the page `<style>` comes after Bulma's stylesheet with equal specificity, so it wins. The [human-eye] criterion also remains for the builder.

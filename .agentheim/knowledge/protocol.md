@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:26 -- Task verified and completed: git-canvas-q38zx - Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size
+
+**Type:** Work / Task completion
+**Task:** git-canvas-q38zx - Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size
+**Summary:** raise control panel info texts to the standard font size
+**Duration:** 6m
+**Verification:** PASS (iteration 1)
+**Files changed:** 1
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-25 08:26 -- Task verified and completed: git-canvas-r3dq7 - Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches
 
 **Type:** Work / Task completion

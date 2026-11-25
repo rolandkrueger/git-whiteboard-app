@@ -52,6 +52,11 @@
         .hidden {
             display: none;
         }
+
+        /* Bulma's .help is 0.75rem; use the standard body size (colour modifiers are untouched). */
+        .help {
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -108,7 +113,7 @@
                 <div class="media-content">
                     <div class="content">
                         <h1 class="title is-5">Control Panel</h1>
-                        <p class="is-size-7" id="activeRepoLabel" style="color: #2196F3; font-weight: bold;">Active: my-repo</p>
+                        <p id="activeRepoLabel" style="color: #2196F3; font-weight: bold;">Active: my-repo</p>
                     </div>
                 </div>
             </article>
@@ -130,7 +135,7 @@
                     Zoom with Ctrl+Mouse Wheel, move with click and drag.
                 </div>
                 <div class="field">
-                    <label class="label is-size-7" for="repoNameInput">Repository name</label>
+                    <label class="label" for="repoNameInput">Repository name</label>
                     <div class="field has-addons">
                         <div class="control is-expanded">
                             <input id="repoNameInput" class="input" type="text" value="my-repo">
@@ -356,7 +361,7 @@
 
             <div id="mergeTab" class="hidden">
                 <div id="pendingControls" class="notification is-danger is-light hidden">
-                    <p id="pendingMessage" class="is-size-7 has-text-weight-bold"></p>
+                    <p id="pendingMessage" class="has-text-weight-bold"></p>
                     <div class="buttons mt-2">
                         <button id="pendingContinueButton" class="button is-success is-small">Continue</button>
                         <button id="pendingAbortButton" class="button is-danger is-small">Abort</button>
@@ -404,9 +409,9 @@
 
             <div id="remoteTab" class="hidden">
                 <div class="field">
-                    <p class="is-size-7"><strong>Remote:</strong> <span id="remoteStatus">no remote</span></p>
-                    <p class="is-size-7"><strong>Upstream:</strong> <span id="upstreamStatus">no upstream</span></p>
-                    <p class="is-size-7"><strong>Ahead/behind:</strong> <span id="aheadBehindStatus">-</span></p>
+                    <p><strong>Remote:</strong> <span id="remoteStatus">no remote</span></p>
+                    <p><strong>Upstream:</strong> <span id="upstreamStatus">no upstream</span></p>
+                    <p><strong>Ahead/behind:</strong> <span id="aheadBehindStatus">-</span></p>
                 </div>
                 <div class="field">
                     <button id="cloneRepoButton" class="button is-outlined is-fullwidth" title="Clone the active repository">
@@ -423,7 +428,7 @@
                     <button id="pullButton" class="button is-outlined" disabled>Pull</button>
                 </div>
                 <div class="field">
-                    <label class="checkbox is-size-7"><input id="pullRebaseCheckbox" type="checkbox" disabled> rebase</label>
+                    <label class="checkbox"><input id="pullRebaseCheckbox" type="checkbox" disabled> rebase</label>
                 </div>
                 <p id="remoteMessage" class="help"></p>
             </div>
