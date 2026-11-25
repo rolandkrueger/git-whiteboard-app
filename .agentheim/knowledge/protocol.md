@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:35 -- Batch started: [git-canvas-kngx5, git-canvas-sxqsj]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label; repo name and connector label bold, git-canvas-sxqsj - Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes
+**Parallel:** yes (2 workers — no file overlap: kngx5 RepoRegion/App.kt, sxqsj Commit.kt/line components)
+
+---
+
 ## 2026-11-25 08:35 -- Task verified and completed: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
 
 **Type:** Work / Task completion

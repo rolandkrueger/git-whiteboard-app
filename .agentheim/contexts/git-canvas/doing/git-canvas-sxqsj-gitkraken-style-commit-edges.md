@@ -1,7 +1,7 @@
 ---
 id: git-canvas-sxqsj
 title: Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25

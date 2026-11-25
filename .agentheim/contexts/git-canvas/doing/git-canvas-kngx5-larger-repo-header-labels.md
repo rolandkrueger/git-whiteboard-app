@@ -1,7 +1,7 @@
 ---
 id: git-canvas-kngx5
 title: Double the font size of repo header labels and the origin connector label; repo name and connector label bold
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25
