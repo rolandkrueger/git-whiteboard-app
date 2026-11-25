@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 09:30 -- Modeling / Captured: git-canvas-r3dq7 - Render remote-tracking labels in dark red instead of light grey
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Remote-tracking labels (origin/<name>) use light grey text that is hard to read. Text and dashed border switch to dark red #B71C1C, matching the common red convention for remote branches; the pill stays unfilled and dashed.
+
+---
+
 ## 2026-11-25 09:00 -- Modeling / Captured: git-canvas-xt4ch - Draw label connectors as thin blue arrows pointing toward the commit
 
 **Type:** Modeling / Capture

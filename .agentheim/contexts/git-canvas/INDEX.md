@@ -11,13 +11,14 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 2
-- **Todo:** 1
+- **Todo:** 2
 - **Doing:** 1
 - **Done:** 19
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-r3dq7** — Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches (feature) — `todo/git-canvas-r3dq7-remote-label-dark-red.md`
 - **git-canvas-xt4ch** — Draw label connectors as thin blue arrows pointing toward the commit, so they no longer look like commit edges (feature) — `todo/git-canvas-xt4ch-label-connector-arrows.md`
 <!-- todo-list:end -->
 
