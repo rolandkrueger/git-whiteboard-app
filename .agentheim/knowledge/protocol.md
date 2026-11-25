@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:10 -- Modeling / Captured: git-canvas-pjz9w - Check out remote-tracking branches like real Git
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Remote-tracking branches become checkout-able with real Git semantics: double-click or `origin/<name>` detaches HEAD; `<name>` without a local branch creates a local branch tracking `origin/<name>` (DWIM), offered in the checkout dropdown and free-text input. Uniqueness conflicts are refused with a message.
+
+---
+
 ## 2026-11-25 15:46 -- Work session ended
 
 **Type:** Work / Session end
