@@ -5,6 +5,22 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:22 -- Work session ended
+
+**Type:** Work / Session end
+**Duration:** 23m (16:00 first batch start to session end)
+**Completed:** 2 (first-try PASS: 1, re-dispatched: 1, skipped: 0)
+**Bounced:** 0
+**Failed:** 0
+**Escalated after verification:** 0
+**Dispatches:** pjz9w: 2, cdy8k: 1
+**Commits:** 5 (2 batch starts, 2 task commits, 1 session end)
+**Vision-conformance:** none — batch aligns with vision (both tasks make the whiteboard behave like real Git for training: remote-branch checkout/DWIM and realistic branch names)
+**Batch mix:** 100% product-facing / 0% harness / 0% bookkeeping (2 tasks)
+**Carry-over:** .agentheim/.dashboard/: left behind (owner: Agentheim dashboard, runtime state of the running /dashboard server)
+
+---
+
 ## 2026-11-25 16:22 -- Task verified and completed: git-canvas-cdy8k - Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle
 
 **Type:** Work / Task completion
