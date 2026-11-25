@@ -1,7 +1,7 @@
 ---
 id: git-canvas-nymhr
 title: Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
-status: backlog
+status: todo
 type: feature
 context: git-canvas
 created: 2026-11-25

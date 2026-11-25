@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:20 -- Modeling / Promoted: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
+
+**Type:** Modeling / Promote
+**BC:** git-canvas
+**From → To:** backlog → todo
+
+---
+
 ## 2026-11-25 08:20 -- Task verified and completed: git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
 
 **Type:** Work / Task completion

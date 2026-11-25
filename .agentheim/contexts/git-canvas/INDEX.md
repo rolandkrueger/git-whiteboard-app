@@ -10,14 +10,15 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 1
-- **Todo:** 4
+- **Backlog:** 0
+- **Todo:** 5
 - **Doing:** 0
 - **Done:** 21
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort (feature) — `todo/git-canvas-nymhr-rebase-conflict-pause.md`
 - **git-canvas-q38zx** — Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size (feature) — `todo/git-canvas-q38zx-control-panel-text-size.md`
 - **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `todo/git-canvas-kngx5-larger-repo-header-labels.md`
 - **git-canvas-r3dq7** — Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches (feature) — `todo/git-canvas-r3dq7-remote-label-dark-red.md`
@@ -55,7 +56,6 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
-- **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort — `backlog/git-canvas-nymhr-rebase-conflict-pause.md`
 <!-- backlog-list:end -->
 
 ## ADRs scoped to this BC
