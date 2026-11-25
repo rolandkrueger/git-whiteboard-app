@@ -10,7 +10,7 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 3
+- **Backlog:** 4
 - **Todo:** 0
 - **Doing:** 1
 - **Done:** 28
@@ -59,6 +59,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
+- **git-canvas-snjqw** — Add interactive rebase (rebase -i) - squash/fixup, drop, reorder commits — `backlog/git-canvas-snjqw-interactive-rebase.md`
 - **git-canvas-m7z8d** — Add merge --squash - a single commit without a second parent — `backlog/git-canvas-m7z8d-merge-squash.md`
 - **git-canvas-vbxva** — Add force push, both plain --force and --force-with-lease — `backlog/git-canvas-vbxva-force-push-with-and-without-lease.md`
 - **git-canvas-maf17** — Add git revert - a new commit that undoes an earlier one — `backlog/git-canvas-maf17-revert.md`
