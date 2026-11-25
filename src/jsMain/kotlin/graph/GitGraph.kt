@@ -61,7 +61,7 @@ class GitGraph(
     val currentRegionHeight: Int get() {
         val minCommitY = commits.minOfOrNull { config.bottomOffset - it.linePosition * config.commitDistance }
             ?: return regionInitialHeight
-        val neededTop = minCommitY - config.commitRadius - 60
+        val neededTop = minCommitY - config.commitRadius - 90
         return maxOf(regionBottom - minOf(neededTop, regionInitialTop), regionInitialHeight)
     }
 
@@ -128,7 +128,7 @@ class GitGraph(
         if (commits.isEmpty()) return
 
         val PADDING_RIGHT = 80
-        val PADDING_TOP = 60
+        val PADDING_TOP = 90
 
         // Compute maximum x (rightward growth as swimlanes increase)
         val maxCommitX = commits.maxOf { config.leftOffset + it.swimlane * config.swimlaneDistance }

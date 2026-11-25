@@ -205,10 +205,11 @@ fun startApp() {
                 listening = false
             }).asDynamic())
             connectorLayer.add(Text(jso<TextConfig> {
-                x = (pts[0].toInt() + pts[2].toInt()) / 2 + 8
-                y = (pts[1].toInt() + pts[3].toInt()) / 2 - 10
+                x = (pts[0].toInt() + pts[2].toInt()) / 2 + 10
+                y = (pts[1].toInt() + pts[3].toInt()) / 2 - 38
                 text = "origin"
-                fontSize = 16
+                fontSize = 32
+                fontStyle = "bold"
                 fontFamily = "Courier New"
                 fill = "#B7791F"
                 listening = false

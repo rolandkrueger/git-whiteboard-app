@@ -52,9 +52,10 @@ class RepoRegion(
     private val nameLabel = Text(
         jso<TextConfig> {
             x = regionLeft + 12
-            y = initialTop + 8
+            y = initialTop + NAME_Y
             text = repoName
-            fontSize = 18
+            fontSize = 36
+            fontStyle = "bold"
             fontFamily = "Courier New"
             fill = "#888888"
             listening = false
@@ -64,8 +65,22 @@ class RepoRegion(
     private val BADGE_COLOR = "#B7791F"
     private val PENDING_COLOR = "#D7263D"
     private val REMOTE_TINT = "rgba(255, 193, 7, 0.10)"
-    private val CHAR_WIDTH_NAME = 11
-    private val CHAR_WIDTH_BADGE = 8
+    private companion object {
+        // Courier New is monospaced: advance width is about 0.6 x font size (bold has the same advance).
+        const val CHAR_WIDTH_NAME = 22
+        const val CHAR_WIDTH_BADGE = 17
+        const val CHAR_WIDTH_REMOTE_PILL = 16
+        const val CHAR_WIDTH_PENDING = 8
+
+        // Header y offsets from the region top; badges are vertically centered on the 36pt name line.
+        // Compile-time constants so they are defined regardless of property initialization order.
+        const val NAME_Y = 8
+        const val REMOTE_RECT_Y = 9
+        const val REMOTE_TEXT_Y = 15
+        const val ORIGIN_Y = 13
+        const val PENDING_RECT_Y = 18
+        const val PENDING_TEXT_Y = 22
+    }
 
     private var currentName: String = repoName
     private var isRemote = false
@@ -74,20 +89,20 @@ class RepoRegion(
     // Header badges: a "REMOTE" pill on the remote and "origin -> <name>" on a clone. Never listening.
     private val remoteBadgeRect = Rect(
         jso<RectConfig> {
-            y = initialTop + 8
+            y = initialTop + REMOTE_RECT_Y
             width = 0
-            height = 22
+            height = 40
             fill = BADGE_COLOR
-            cornerRadius = 11
+            cornerRadius = 20
             listening = false
             visible = false
         }
     )
     private val remoteBadgeText = Text(
         jso<TextConfig> {
-            y = initialTop + 12
+            y = initialTop + REMOTE_TEXT_Y
             text = "REMOTE"
-            fontSize = 13
+            fontSize = 26
             fontStyle = "bold"
             fontFamily = "Courier New"
             fill = "#FFFFFF"
@@ -97,9 +112,9 @@ class RepoRegion(
     )
     private val originBadge = Text(
         jso<TextConfig> {
-            y = initialTop + 11
+            y = initialTop + ORIGIN_Y
             text = ""
-            fontSize = 14
+            fontSize = 28
             fontFamily = "Courier New"
             fill = BADGE_COLOR
             listening = false
@@ -110,7 +125,7 @@ class RepoRegion(
     private var pendingText: String? = null
     private val pendingBadgeRect = Rect(
         jso<RectConfig> {
-            y = initialTop + 8
+            y = initialTop + PENDING_RECT_Y
             width = 0
             height = 22
             fill = PENDING_COLOR
@@ -121,7 +136,7 @@ class RepoRegion(
     )
     private val pendingBadgeText = Text(
         jso<TextConfig> {
-            y = initialTop + 12
+            y = initialTop + PENDING_TEXT_Y
             text = ""
             fontSize = 13
             fontStyle = "bold"
@@ -196,10 +211,10 @@ class RepoRegion(
         remoteBadgeRect.visible(isRemote)
         remoteBadgeText.visible(isRemote)
         if (isRemote) {
-            val w = "REMOTE".length * CHAR_WIDTH_BADGE + 16
+            val w = "REMOTE".length * CHAR_WIDTH_REMOTE_PILL + 20
             remoteBadgeRect.x(x.toDouble())
             remoteBadgeRect.width(w.toDouble())
-            remoteBadgeText.x((x + 8).toDouble())
+            remoteBadgeText.x((x + 10).toDouble())
             x += w + 12
         }
         val origin = originName
@@ -215,7 +230,7 @@ class RepoRegion(
         if (pending != null) {
             pendingBadgeText.text(pending)
             pendingBadgeRect.x(x.toDouble())
-            pendingBadgeRect.width((pending.length * CHAR_WIDTH_BADGE + 16).toDouble())
+            pendingBadgeRect.width((pending.length * CHAR_WIDTH_PENDING + 16).toDouble())
             pendingBadgeText.x((x + 8).toDouble())
         }
     }
@@ -257,12 +272,12 @@ class RepoRegion(
         if (newTop < currentTop) {
             currentTop = newTop
             borderRect.y(newTop.toDouble())
-            nameLabel.y((newTop + 8).toDouble())
-            remoteBadgeRect.y((newTop + 8).toDouble())
-            remoteBadgeText.y((newTop + 12).toDouble())
-            originBadge.y((newTop + 11).toDouble())
-            pendingBadgeRect.y((newTop + 8).toDouble())
-            pendingBadgeText.y((newTop + 12).toDouble())
+            nameLabel.y((newTop + NAME_Y).toDouble())
+            remoteBadgeRect.y((newTop + REMOTE_RECT_Y).toDouble())
+            remoteBadgeText.y((newTop + REMOTE_TEXT_Y).toDouble())
+            originBadge.y((newTop + ORIGIN_Y).toDouble())
+            pendingBadgeRect.y((newTop + PENDING_RECT_Y).toDouble())
+            pendingBadgeText.y((newTop + PENDING_TEXT_Y).toDouble())
         }
         if (newWidth > currentWidth) {
             currentWidth = newWidth

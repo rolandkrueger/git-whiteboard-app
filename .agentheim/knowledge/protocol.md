@@ -5,6 +5,41 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 15:44 -- Task verified and completed: git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label; repo name and connector label bold
+
+**Type:** Work / Task completion
+**Task:** git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label; repo name and connector label bold
+**Summary:** double the font size of repo header labels and the origin connector label
+**Duration:** 429m
+**Verification:** PASS (iteration 2)
+**Files changed:** 3
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
+## 2026-11-25 15:42 -- Verification failed: git-canvas-sxqsj - GitKraken-style commit edges
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-sxqsj - Draw commit edges GitKraken-style
+**Iteration:** 1 of 3
+**Reasons:** parent edge of a merge commit is classified as MERGE whenever mergedCommit is set, so the straight run lands in the busy parent lane and cuts through other commits (reset-then-merge and no-ff-merge-into-fresh-branch cases)
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
+## 2026-11-25 15:41 -- Verification failed: git-canvas-kngx5 - Larger repo header labels
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label
+**Iteration:** 1 of 3
+**Reasons:** initialization-order bug in RepoRegion: nameLabel reads NAME_Y before it is initialized, so every new region (start, clone, restore, rebuild) draws the repo name at y = 0
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-25 08:35 -- Batch started: [git-canvas-kngx5, git-canvas-sxqsj]
 
 **Type:** Work / Batch start

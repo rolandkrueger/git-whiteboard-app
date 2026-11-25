@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 0
 - **Todo:** 0
-- **Doing:** 2
-- **Done:** 25
+- **Doing:** 1
+- **Done:** 26
 <!-- task-counts:end -->
 
 ### Todo
@@ -23,11 +23,11 @@ research touching this BC, and concept synthesis pages.
 ### Doing
 <!-- doing-list:start -->
 - **git-canvas-sxqsj** — Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes (feature) — `doing/git-canvas-sxqsj-gitkraken-style-commit-edges.md`
-- **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `doing/git-canvas-kngx5-larger-repo-header-labels.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `done/git-canvas-kngx5-larger-repo-header-labels.md`
 - **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort (feature) — `done/git-canvas-nymhr-rebase-conflict-pause.md`
 - **git-canvas-xt4ch** — Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges (feature) — `done/git-canvas-xt4ch-label-connector-arrows.md`
 - **git-canvas-q38zx** — Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size (feature) — `done/git-canvas-q38zx-control-panel-text-size.md`
