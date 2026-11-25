@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 17:10 -- Capture / Captured: git-canvas-m7z8d - Add merge --squash - a single commit without a second parent
+
+**Type:** Capture
+**BC:** git-canvas
+**Filed to:** backlog
+**Summary:** Add merge --squash - a single commit without a second parent.
+
+---
+
 ## 2026-11-25 17:10 -- Capture / Captured: git-canvas-vbxva - Add force push, both plain --force and --force-with-lease
 
 **Type:** Capture
