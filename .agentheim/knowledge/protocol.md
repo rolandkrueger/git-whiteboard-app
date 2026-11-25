@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:00 -- Batch started: [git-canvas-pjz9w]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-pjz9w - Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM)
+**Parallel:** no (1 worker)
+
+---
+
 ## 2026-11-25 16:10 -- Modeling / Captured: git-canvas-pjz9w - Check out remote-tracking branches like real Git
 
 **Type:** Modeling / Capture

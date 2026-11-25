@@ -1,7 +1,7 @@
 ---
 id: git-canvas-pjz9w
 title: Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM)
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25

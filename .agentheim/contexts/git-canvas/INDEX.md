@@ -11,18 +11,18 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 1
-- **Doing:** 0
+- **Todo:** 0
+- **Doing:** 1
 - **Done:** 27
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
-- **git-canvas-pjz9w** — Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM) (feature) — `todo/git-canvas-pjz9w-checkout-remote-branches.md`
 <!-- todo-list:end -->
 
 ### Doing
 <!-- doing-list:start -->
+- **git-canvas-pjz9w** — Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM) (feature) — `doing/git-canvas-pjz9w-checkout-remote-branches.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
