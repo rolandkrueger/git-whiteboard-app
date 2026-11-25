@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:02 -- Batch started: [git-canvas-mrfrh]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+**Parallel:** no (1 worker — c35ww and nymhr chained behind it)
+
+---
+
 ## 2026-11-25 08:02 -- Modeling / Promoted: git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
 
 **Type:** Modeling / Promote
