@@ -5,12 +5,28 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 15:46 -- Work session ended
+
+**Type:** Work / Session end
+**Duration:** from 08:02 (first batch start) to 15:46; wall time includes a ~7h interruption after a network failure (worker for git-canvas-kngx5 aborted before any change, re-dispatched)
+**Completed:** 8 (first-try PASS: 2, re-dispatched: 6, skipped: 0)
+**Bounced:** 0
+**Failed:** 0 (one worker aborted by a network error, re-dispatched fresh; not counted as a task failure)
+**Escalated after verification:** 0
+**Dispatches:** mrfrh: 2, c35ww: 2, nymhr: 2, r3dq7: 1, q38zx: 1, xt4ch: 2, kngx5: 2 (+1 aborted), sxqsj: 2
+**Commits:** 14 (5 batch starts, 8 task commits, 1 session end; plus 4 modeling commits for the mrfrh refinement and promotions)
+**Vision-conformance:** none — batch aligns with vision (delivers "Conflict resolution scenarios can be demonstrated without leaving the tool"; readability tasks serve projector demos)
+**Batch mix:** 100% product-facing / 0% harness / 0% bookkeeping (8 tasks)
+**Carry-over:** .agentheim/.dashboard/: left behind (owner: Agentheim dashboard, runtime state of the running /dashboard server)
+
+---
+
 ## 2026-11-25 15:45 -- Task verified and completed: git-canvas-sxqsj - Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes
 
 **Type:** Work / Task completion
 **Task:** git-canvas-sxqsj - Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes
 **Summary:** draw commit edges GitKraken-style
-**Duration:** 430m
+**Duration:** 430m (wall time; includes a ~7h interruption after a network failure, actual work ~15m)
 **Verification:** PASS (iteration 2)
 **Files changed:** 4
 **Tests added:** 0
@@ -23,7 +39,7 @@ Newest entries on top.
 **Type:** Work / Task completion
 **Task:** git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label; repo name and connector label bold
 **Summary:** double the font size of repo header labels and the origin connector label
-**Duration:** 429m
+**Duration:** 429m (wall time; includes a ~7h interruption after a network failure, actual work ~12m)
 **Verification:** PASS (iteration 2)
 **Files changed:** 3
 **Tests added:** 0
