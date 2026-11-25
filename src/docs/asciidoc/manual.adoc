@@ -50,6 +50,10 @@ To simulate amending commits, click button `Amend commit` on the `Commits` tab. 
 
 The old commit is still available as a lost commit (see <<lost_commits,below>> for more about lost commits).
 
+=== Conflicting Changes
+
+The app has no files, so a conflict is demonstrated with a marker: a commit marked as `Conflicting change` touches the one shared imaginary spot. To mark a new commit, tick the checkbox `Conflicting change` on the `Commits` tab before clicking `Add commit` or `Amend commit`. To mark or unmark an existing commit, enter its id in the section `Toggle conflict marker` and click the icon button. A marked commit shows an orange `!` badge. The marker is kept when the graph is shared, cloned, pushed, fetched, cherry-picked or rebased. See ADR 0006 for the background.
+
 === Cherry-pick Commits
 
 To cherry-pick a commit, enter the id of the commit to be cherry-picked in the text field on the section `Cherry-pick commit` on the `Commits` tab and click the icon button on the text field. This will add a new commit to the current branch with the same color as the cherry-picked commit. The new commit gets a regular id with the cherry-picked commit's id appended in parentheses. For example, if you cherry-pick commit `f2` onto the `main` branch as the fourth commit, the new commit gets the id `m4(f2)`.

@@ -186,12 +186,33 @@
                 </div>
 
                 <div class="field">
+                    <label class="checkbox">
+                        <input id="conflictingChangeCheckbox" type="checkbox">
+                        Conflicting change
+                    </label>
+                </div>
+
+                <div class="field">
                     <button id="amendCommitButton" class="button is-outlined is-fullwidth">
                         <span class="icon">
                             <i class="fas fa-band-aid"></i>
                         </span>
                         <span>Amend commit</span>
                     </button>
+                </div>
+
+                <label for="toggleConflictMarkerInput" class="label">Toggle conflict marker</label>
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input id="toggleConflictMarkerInput" class="input" type="text" placeholder="Commit ID">
+                    </p>
+                    <p class="control">
+                        <button id="toggleConflictMarkerButton" class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </span>
+                        </button>
+                    </p>
                 </div>
 
                 <label for="cherryPickInput" class="label">Cherry-pick commit</label>

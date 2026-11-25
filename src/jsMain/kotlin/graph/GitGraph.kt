@@ -167,13 +167,15 @@ class GitGraph(
         mergedParentCommit: Commit? = null,
         newCommitId: String? = null,
         commitIdSuffix: String = "",
-        commitColor: String? = null
+        commitColor: String? = null,
+        conflicting: Boolean = false
     ) {
         addCommit(
             mergedParentCommit,
             newCommitId,
             commitIdSuffix,
             commitColor,
+            conflicting,
             head.commit,
             head.targetBranch?.swimlane
                 ?: if (head.isDetached && head.swimlane == -1) globalSwimlaneCounter++ else head.swimlane,
@@ -186,6 +188,7 @@ class GitGraph(
         newCommitId: String? = null,
         commitIdSuffix: String = "",
         commitColor: String? = null,
+        conflicting: Boolean = false,
         parentCommit: Commit?,
         swimlane: Int,
         linePosition: Int
@@ -214,7 +217,7 @@ class GitGraph(
             commitColor ?: if (head.isDetached) head.commitColor else head.targetBranch?.commitColor ?: ""
         val commit = Commit(
             id, linePosition, newSwimlane, parentCommit,
-            newCommitColor, config
+            newCommitColor, config, conflicting
         )
         parentCommit?.childCommit = commit
         mergedParentCommit?.childCommit = commit
@@ -255,18 +258,29 @@ class GitGraph(
         return true
     }
 
-    fun amendCommit() {
+    fun amendCommit(conflicting: Boolean = false) {
         val amendedCommitSwimlane = head.commit.swimlane + 1
         shiftCommitsToTheRight(amendedCommitSwimlane)
         addCommit(
             newCommitId = "${head.commit.id}*",
             commitColor = head.commit.commitColor,
+            conflicting = conflicting,
             parentCommit = head.commit.parent,
             swimlane = amendedCommitSwimlane,
             linePosition = head.commit.linePosition
         )
         calculateLostCommits()
         layer.batchDraw()
+    }
+
+    /** Toggles the conflict marker of an existing commit; false when the id is unknown. */
+    fun toggleConflictMarker(id: String): Boolean {
+        val commit = findCommitFor(id) ?: return false
+        commit.setConflicting(!commit.conflicting, layer)
+        // Rerendering the commit and its descendants rebuilds their circles; restore lost/hidden state.
+        calculateLostCommits()
+        showLostCommits(showLostCommits)
+        return true
     }
 
     private fun shiftCommitsToTheRight(swimlaneStart: Int) {
@@ -327,7 +341,13 @@ class GitGraph(
     }
 
     /** What a receiver needs to recreate a commit: identity, colour and parent links (ADR 0004/0005). */
-    class CommitDescription(val id: String, val commitColor: String, val parentId: String?, val mergedParentId: String?)
+    class CommitDescription(
+        val id: String,
+        val commitColor: String,
+        val parentId: String?,
+        val mergedParentId: String?,
+        val conflicting: Boolean = false
+    )
 
     /**
      * Describes the commits reachable from [tip] that the receiver lacks ([receiverHas] is false), parents first.
@@ -341,7 +361,7 @@ class GitGraph(
         while (stack.isNotEmpty()) {
             val (c, expanded) = stack.removeAt(stack.size - 1)
             if (expanded) {
-                result.add(CommitDescription(c.id, c.commitColor, c.parent?.id, c.mergedCommit?.id))
+                result.add(CommitDescription(c.id, c.commitColor, c.parent?.id, c.mergedCommit?.id, c.conflicting))
                 continue
             }
             if (receiverHas(c.id) || !seen.add(c.id)) continue
@@ -378,7 +398,7 @@ class GitGraph(
         for (d in missing) {
             val parent = d.parentId?.let { findCommitFor(it) }
             val merged = d.mergedParentId?.let { findCommitFor(it) }
-            val commit = Commit(d.id, globalCommitNumber++, lane, parent, d.commitColor, config)
+            val commit = Commit(d.id, globalCommitNumber++, lane, parent, d.commitColor, config, d.conflicting)
             parent?.childCommit = commit
             merged?.childCommit = commit
             commit.mergedCommit = merged
@@ -611,6 +631,7 @@ class GitGraph(
                 addCommit(
                     newCommitId = "${it.id}*",
                     commitColor = it.commitColor,
+                    conflicting = it.conflicting,
                     parentCommit = head.commit,
                     swimlane = newSwimlaneForRebasedBranch,
                     linePosition = globalCommitNumber++
@@ -817,7 +838,8 @@ class GitGraph(
                 parentId = commit.parent?.id,
                 mergedParentId = commit.mergedCommit?.id,
                 commitColor = commit.commitColor,
-                isLostInReflog = commit.isLostInReflog
+                isLostInReflog = commit.isLostInReflog,
+                conflicting = commit.conflicting
             )
         }
         val branchSnapshots = branches
@@ -878,7 +900,8 @@ class GitGraph(
                 swimlane = cs.swimlane,
                 parent = parent,
                 commitColor = cs.commitColor,
-                config = config
+                config = config,
+                conflicting = cs.conflicting
             )
             commit.isLostInReflog = cs.isLostInReflog
             // Wire childCommit on parent

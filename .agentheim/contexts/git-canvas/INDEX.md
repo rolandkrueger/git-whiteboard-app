@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 2
 - **Todo:** 2
-- **Doing:** 1
-- **Done:** 19
+- **Doing:** 0
+- **Done:** 20
 <!-- task-counts:end -->
 
 ### Todo
@@ -24,11 +24,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) (feature) — `doing/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) (feature) — `done/git-canvas-mrfrh-conflict-demonstration.md`
 - **git-canvas-vj6gr** — Sync the user manual with the current app (chore) — `done/git-canvas-vj6gr-sync-user-manual.md`
 - **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `done/git-canvas-wcbec-relayout-repos-on-growth.md`
 - **git-canvas-nywqs** — Grey out the remote repo's HEAD label to hint at a bare repository (feature) — `done/git-canvas-nywqs-remote-as-bare-repo.md`

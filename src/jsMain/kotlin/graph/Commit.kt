@@ -13,8 +13,13 @@ class Commit(
     var swimlane: Int,
     val parent: Commit? = null,
     val commitColor: String = "",
-    val config: GitGraphConfiguration = GitGraphConfiguration()
+    val config: GitGraphConfiguration = GitGraphConfiguration(),
+    /** Conflicting change marker (ADR 0006): the commit touches the one shared imaginary spot. */
+    conflicting: Boolean = false
 ) : Renderable {
+    var conflicting = conflicting
+        private set
+
     var isLostInReflog = false
         set(value) {
             commitCircle.isLostInReflog = value
@@ -37,7 +42,8 @@ class Commit(
             config.leftOffset + swimlane * config.swimlaneDistance,
             config.bottomOffset - linePosition * config.commitDistance
         ),
-        commitColor
+        commitColor,
+        conflicting
     )
 
     override fun render(layer: Layer) {
@@ -69,6 +75,14 @@ class Commit(
             it.attachToCommit(this, layer)
         }
         repositionBranches(layer)
+    }
+
+    fun setConflicting(value: Boolean, layer: Layer) {
+        if (conflicting == value) return
+        val lost = isLostInReflog
+        conflicting = value
+        rerender(layer)
+        isLostInReflog = lost
     }
 
     fun rerender(layer: Layer) {

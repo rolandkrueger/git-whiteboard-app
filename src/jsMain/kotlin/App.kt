@@ -657,11 +657,21 @@ fun startApp() {
     }
 
     doWhenButtonClicked("addCommitButton") {
-        activeGraph.addCommit()
+        activeGraph.addCommit(conflicting = isCheckboxChecked("conflictingChangeCheckbox"))
     }
 
     doWhenButtonClicked("amendCommitButton") {
-        activeGraph.amendCommit()
+        activeGraph.amendCommit(conflicting = isCheckboxChecked("conflictingChangeCheckbox"))
+    }
+
+    doWhenButtonClicked("toggleConflictMarkerButton") {
+        val commitId = getUserInput("toggleConflictMarkerInput")
+        if (!activeGraph.toggleConflictMarker(commitId)) {
+            ConfirmationDialog.showMessageDialog(
+                "Commit does not exist",
+                "Unable to toggle the conflict marker of '$commitId': commit does not exist."
+            )
+        }
     }
 
     doWhenButtonClicked("cherryPickButton") {
@@ -672,7 +682,8 @@ fun startApp() {
                 "Unable to cherry-pick '$commitId': commit does not exist."
             )
         } else {
-            activeGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = activeGraph.findCommitFor(commitId)?.commitColor)
+            activeGraph.addCommit(commitIdSuffix = "($commitId)", commitColor = activeGraph.findCommitFor(commitId)?.commitColor,
+                conflicting = activeGraph.findCommitFor(commitId)?.conflicting ?: false)
         }
     }
 

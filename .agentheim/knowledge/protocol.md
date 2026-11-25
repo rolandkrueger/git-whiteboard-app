@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:10 -- Task verified and completed: git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+
+**Type:** Work / Task completion
+**Task:** git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+**Summary:** conflict marker on commits
+**Duration:** 8m
+**Verification:** PASS (iteration 2)
+**Files changed:** 9
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-25 09:15 -- Modeling / Refined: git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit
 
 **Type:** Modeling / Refine

@@ -114,7 +114,8 @@ object ScenarioSerializer {
         val mergedParentId = obj.mergedParentId as? String
         val commitColor = obj.commitColor as? String ?: ""
         val isLostInReflog = obj.isLostInReflog as? Boolean ?: false
-        return CommitSnapshot(id, linePosition, swimlane, parentId, mergedParentId, commitColor, isLostInReflog)
+        val conflicting = obj.conflicting as? Boolean ?: false
+        return CommitSnapshot(id, linePosition, swimlane, parentId, mergedParentId, commitColor, isLostInReflog, conflicting)
     }
 
     private fun dynamicToBranchSnapshot(obj: dynamic): BranchSnapshot? {
@@ -180,6 +181,7 @@ object ScenarioSerializer {
         obj.mergedParentId = commit.mergedParentId
         obj.commitColor = commit.commitColor
         obj.isLostInReflog = commit.isLostInReflog
+        obj.conflicting = commit.conflicting
         return obj
     }
 

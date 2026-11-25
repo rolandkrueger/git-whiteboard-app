@@ -40,7 +40,9 @@ data class CommitSnapshot(
     val parentId: String?,
     val mergedParentId: String?,
     val commitColor: String,
-    val isLostInReflog: Boolean
+    val isLostInReflog: Boolean,
+    /** Conflicting change marker (ADR 0006); false for older snapshots. */
+    val conflicting: Boolean = false
 )
 
 data class BranchSnapshot(
