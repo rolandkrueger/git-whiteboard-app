@@ -1,7 +1,7 @@
 ---
 id: git-canvas-q38zx
 title: Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25

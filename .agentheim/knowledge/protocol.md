@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:20 -- Batch started: [git-canvas-nymhr, git-canvas-r3dq7, git-canvas-q38zx]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort, git-canvas-r3dq7 - Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches, git-canvas-q38zx - Raise the small info texts in the control panel (Bulma help / is-size-7) to the standard body font size
+**Parallel:** yes (3 workers — kngx5 and xt4ch held to next wave: kngx5 overlaps nymhr in RepoRegion/App.kt, xt4ch overlaps r3dq7 in CommitLabel.kt)
+
+---
+
 ## 2026-11-25 08:20 -- Modeling / Promoted: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
 
 **Type:** Modeling / Promote

@@ -1,7 +1,7 @@
 ---
 id: git-canvas-r3dq7
 title: Render remote-tracking labels in dark red instead of light grey, so they are readable and match the common red convention for remote branches
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25
