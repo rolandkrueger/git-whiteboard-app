@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:10 -- Batch started: [git-canvas-c35ww]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
+**Parallel:** no (1 worker — nymhr chained behind it)
+
+---
+
 ## 2026-11-25 08:10 -- Modeling / Promoted: git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
 
 **Type:** Modeling / Promote
