@@ -1,7 +1,7 @@
 ---
 id: git-canvas-c35ww
 title: Merge and pull (merge) stop on a conflict until Continue or Abort
-status: backlog
+status: todo
 type: feature
 context: git-canvas
 created: 2026-11-25
