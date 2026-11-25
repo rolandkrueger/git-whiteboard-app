@@ -1,7 +1,7 @@
 ---
 id: git-canvas-mrfrh
 title: Conflict marker on commits (set, render, share, transfer)
-status: backlog
+status: todo
 type: feature
 context: git-canvas
 created: 2026-11-23

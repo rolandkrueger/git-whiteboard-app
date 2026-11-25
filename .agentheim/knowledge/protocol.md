@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:02 -- Modeling / Promoted: git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+
+**Type:** Modeling / Promote
+**BC:** git-canvas
+**From → To:** backlog → todo
+
+---
+
 ## 2026-11-25 08:02 -- Modeling / Refined: git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
 
 **Type:** Modeling / Refine

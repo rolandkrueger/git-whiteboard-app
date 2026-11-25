@@ -10,14 +10,15 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 3
-- **Todo:** 0
+- **Backlog:** 2
+- **Todo:** 1
 - **Doing:** 0
 - **Done:** 19
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) (feature) — `todo/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -51,7 +52,6 @@ research touching this BC, and concept synthesis pages.
 <!-- backlog-list:start -->
 - **git-canvas-nymhr** — Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort — `backlog/git-canvas-nymhr-rebase-conflict-pause.md`
 - **git-canvas-c35ww** — Merge and pull (merge) stop on a conflict until Continue or Abort — `backlog/git-canvas-c35ww-merge-conflict-pause.md`
-- **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) — `backlog/git-canvas-mrfrh-conflict-demonstration.md`
 <!-- backlog-list:end -->
 
 ## ADRs scoped to this BC
