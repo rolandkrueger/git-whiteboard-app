@@ -1,6 +1,6 @@
 ---
 id: git-canvas-xt4ch
-title: Draw label connectors as thin blue arrows pointing toward the commit, so they no longer look like commit edges
+title: Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit, so they no longer look like commit edges
 status: todo
 type: feature
 context: git-canvas
@@ -35,6 +35,15 @@ Every label connector becomes a thin blue arrow whose head points toward the com
   blue `#2196F3`); keep it as a named constant.
 - Commit edges (`Commit.parentLine`, `Commit.mergedParentLine`) stay unchanged: black, 3px,
   no arrowhead.
+- **Curved connector:** the arrow is drawn as a cubic Bezier curve (Konva `bezier: true`,
+  points = start, control 1, control 2, end). Both control points sit at the y of their own
+  end point, roughly halfway along x, so the curve leaves the label horizontally and enters
+  the commit (or previous label) horizontally — an S-curve for vertically offset labels
+  (e.g. stacked branch / remote-tracking labels), a straight line for labels without
+  vertical offset. Use the curve for all label connectors; no special cases.
+- If the S-curve becomes too steep for stacked labels (vertical step `labelYOffset` = 29px vs.
+  horizontal gap `labelOffset.x` = 20px), increase the horizontal gap (e.g. 35-40px) —
+  tune in the browser.
 
 Implementation hint: Konva ships an `Arrow` shape (`konva/lib/shapes/Arrow`, a `Line`
 subclass with `pointerLength`, `pointerWidth`, `pointerAtEnding`/`pointerAtBeginning`).
@@ -48,14 +57,18 @@ Keep the connector non-listening and drawn below labels and commits, as today.
 - [ ] A Kotlin external binding for Konva's `Arrow` shape exists under `src/jsMain/kotlin/konvajs/` and loads at runtime without console errors.
 - [ ] `CommitLabel.attachToCommit` and `CommitLabel.attachToLabel` render the new arrow connector; `components.Line` is no longer used by `CommitLabel`.
 - [ ] Label connectors use a blue stroke/fill defined as a named constant, a stroke width below the commit-edge width of 3, and the arrowhead at the commit end (or the previous-label end for chained labels).
+- [ ] Label connectors are drawn as cubic Bezier curves whose control points lie at the y of their respective end points, so the arrowhead points horizontally into the commit (or previous label); a connector without vertical offset is a straight line.
 - [ ] Commit parent and merge-parent edges are unchanged (black, 3px, no arrowhead).
 - [ ] Arrows follow labels correctly after the usual relayout triggers: new commit, branch move/checkout, tag creation, fetch/pull updating `origin/<name>` labels, clone, and snapshot restore — no stale connectors left behind (removal still destroys the arrow).
 - [ ] Full verification build passes: `sh gradlew jsBrowserProductionWebpack jvmJar asciidoctor --warning-mode all`.
 - [ ] In the running app, label connectors are clearly distinguishable from commit edges, and the arrowheads are small enough not to overlap the commit circle or label pill. [human-eye]
+- [ ] Curved connectors to vertically offset labels look smooth and elegant, not cramped or kinked. [human-eye]
 
 ## Notes
 - Builder decisions (2026-11-25): all label connectors get the arrow (not only label -> commit);
-  connectors are thinner than commit edges.
+  connectors are thinner than commit edges; connectors are drawn as horizontal-entry Bezier
+  curves (decided after capture, same day). Verify in the browser that Konva 10.3's `Arrow`
+  orients the head along the last control point -> end segment when `bezier` is set.
 - Remote-link lines between repo regions (`RepoRegion.setRemoteLinks`) are out of scope.
 - If the manual describes or shows label connectors, update `src/docs/asciidoc/manual.adoc`
   accordingly.

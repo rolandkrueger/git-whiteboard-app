@@ -5,6 +5,26 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 09:15 -- Modeling / Refined: git-canvas-xt4ch - Draw label connectors as thin blue Bezier-curved arrows pointing toward the commit
+
+**Type:** Modeling / Refine
+**BC:** git-canvas
+**Status after:** todo
+**Summary:** Label connectors are drawn as cubic Bezier curves entering commit/label horizontally (S-curve for vertically offset labels, straight otherwise); horizontal label gap may be widened. Added machine-checkable and human-eye criteria.
+
+---
+
+## 2026-11-25 08:06 -- Verification failed: git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+
+**Type:** Work / Verification failure
+**Task:** git-canvas-mrfrh - Conflict marker on commits (set, render, share, transfer)
+**Iteration:** 1 of 3
+**Reasons:** toggling the marker rerenders the child chain and wipes their lost-in-reflog state (lost commits reappear, also in snapshots); toggling a hidden lost commit makes it visible
+**Iteration hint:** likely-fixable
+**Next:** re-dispatched worker
+
+---
+
 ## 2026-11-25 09:30 -- Modeling / Captured: git-canvas-r3dq7 - Render remote-tracking labels in dark red instead of light grey
 
 **Type:** Modeling / Capture
