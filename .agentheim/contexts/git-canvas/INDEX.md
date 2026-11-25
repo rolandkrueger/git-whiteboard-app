@@ -11,13 +11,14 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 0
+- **Todo:** 1
 - **Doing:** 1
 - **Done:** 27
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-cdy8k** — Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle (feature) — `todo/git-canvas-cdy8k-branch-short-codes-and-git-ref-names.md`
 <!-- todo-list:end -->
 
 ### Doing
@@ -63,6 +64,7 @@ research touching this BC, and concept synthesis pages.
 ## ADRs scoped to this BC
 
 <!-- adr-local:start -->
+- **0007** — Branch short codes for commit IDs and Git ref-name rules instead of first-letter uniqueness — `knowledge/decisions/0007-branch-short-codes-and-git-ref-name-rules.md`
 - **0006** — Conflict demonstration without file contents: a commit-level conflict marker; merge/pull and rebase stop on a conflict until Continue or Abort — `knowledge/decisions/0006-conflict-demonstration-without-file-contents.md`
 - **0001** — Multi-repo canvas layout strategy — `knowledge/decisions/0001-multi-repo-canvas-layout.md`
 - **0004** — Shared commit ID allocator across repos — `knowledge/decisions/0004-shared-commit-id-allocator.md`

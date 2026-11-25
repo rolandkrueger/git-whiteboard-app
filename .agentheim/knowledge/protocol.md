@@ -5,6 +5,16 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:40 -- Modeling / Captured: git-canvas-cdy8k - Free branch names with Git ref-name rules and per-branch short codes
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** The first-letter uniqueness rule for branch names is replaced by Git's ref-name rules; commit IDs use a 1-2 char per-branch short code (auto-derived or entered) and the ID label shrinks to fit the commit circle. Also switches the DWIM checkout of git-canvas-pjz9w (in flight) to the new rules.
+**ADRs written:** 0007
+
+---
+
 ## 2026-11-25 16:00 -- Batch started: [git-canvas-pjz9w]
 
 **Type:** Work / Batch start
