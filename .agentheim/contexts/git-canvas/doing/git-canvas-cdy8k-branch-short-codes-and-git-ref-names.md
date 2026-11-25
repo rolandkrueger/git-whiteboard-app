@@ -1,7 +1,7 @@
 ---
 id: git-canvas-cdy8k
 title: Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle
-status: todo
+status: doing
 type: feature
 context: git-canvas
 created: 2026-11-25

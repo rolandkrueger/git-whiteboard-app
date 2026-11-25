@@ -5,6 +5,14 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 16:15 -- Batch started: [git-canvas-cdy8k]
+
+**Type:** Work / Batch start
+**Tasks:** git-canvas-cdy8k - Free branch names - replace first-letter uniqueness with Git ref-name rules and per-branch short codes (1-2 chars) for commit IDs that fit the commit circle
+**Parallel:** no (1 worker)
+
+---
+
 ## 2026-11-25 16:14 -- Task verified and completed: git-canvas-pjz9w - Check out remote-tracking branches like real Git - origin/<name> gives a detached HEAD, <name> without a local branch creates a local tracking branch (DWIM)
 
 **Type:** Work / Task completion
