@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 17:10 -- Capture / Captured: git-canvas-maf17 - Add git revert - a new commit that undoes an earlier one
+
+**Type:** Capture
+**BC:** git-canvas
+**Filed to:** backlog
+**Summary:** Add git revert - a new commit that undoes an earlier one.
+
+---
+
 ## 2026-11-25 16:15 -- Batch started: [git-canvas-cdy8k]
 
 **Type:** Work / Batch start

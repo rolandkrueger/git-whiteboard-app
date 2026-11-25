@@ -10,7 +10,7 @@ research touching this BC, and concept synthesis pages.
 ## Tasks by status
 
 <!-- task-counts:start -->
-- **Backlog:** 0
+- **Backlog:** 1
 - **Todo:** 0
 - **Doing:** 1
 - **Done:** 28
@@ -59,6 +59,7 @@ research touching this BC, and concept synthesis pages.
 
 ### Backlog
 <!-- backlog-list:start -->
+- **git-canvas-maf17** — Add git revert - a new commit that undoes an earlier one — `backlog/git-canvas-maf17-revert.md`
 <!-- backlog-list:end -->
 
 ## ADRs scoped to this BC
