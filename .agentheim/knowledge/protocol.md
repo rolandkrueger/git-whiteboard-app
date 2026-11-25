@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 09:30 -- Modeling / Captured: git-canvas-kngx5 - Double the font size of repo header labels and the origin connector label
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Repo name (bold), `origin -> <name>` badge, REMOTE pill and the bold `origin` connector label get twice the font size for readability; header layout offsets and connector label offset are adjusted accordingly.
+
+---
+
 ## 2026-11-25 08:10 -- Batch started: [git-canvas-c35ww]
 
 **Type:** Work / Batch start
