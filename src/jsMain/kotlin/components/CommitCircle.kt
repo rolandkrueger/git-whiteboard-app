@@ -119,6 +119,7 @@ class CommitCircle(
         badgeMark?.destroy()
     }
 
+    fun center() = centerPosition
     fun getUpperDockPoint() = Point(centerPosition.x, centerPosition.y - GitGraphConfiguration.commitRadius)
     fun getLowerDockPoint() = Point(centerPosition.x, centerPosition.y + GitGraphConfiguration.commitRadius)
     fun getRightDockPoint() = Point(centerPosition.x + GitGraphConfiguration.commitRadius, centerPosition.y)

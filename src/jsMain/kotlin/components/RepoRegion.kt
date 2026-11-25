@@ -62,6 +62,7 @@ class RepoRegion(
     )
 
     private val BADGE_COLOR = "#B7791F"
+    private val PENDING_COLOR = "#D7263D"
     private val REMOTE_TINT = "rgba(255, 193, 7, 0.10)"
     private val CHAR_WIDTH_NAME = 11
     private val CHAR_WIDTH_BADGE = 8
@@ -106,13 +107,42 @@ class RepoRegion(
         }
     )
 
+    private var pendingText: String? = null
+    private val pendingBadgeRect = Rect(
+        jso<RectConfig> {
+            y = initialTop + 8
+            width = 0
+            height = 22
+            fill = PENDING_COLOR
+            cornerRadius = 11
+            listening = false
+            visible = false
+        }
+    )
+    private val pendingBadgeText = Text(
+        jso<TextConfig> {
+            y = initialTop + 12
+            text = ""
+            fontSize = 13
+            fontStyle = "bold"
+            fontFamily = "Courier New"
+            fill = "#FFFFFF"
+            listening = false
+            visible = false
+        }
+    )
+
     override fun render(layer: Layer) {
         layer.add(borderRect.asDynamic())
+        layer.add(pendingBadgeRect.asDynamic())
+        layer.add(pendingBadgeText.asDynamic())
         layer.add(nameLabel.asDynamic())
         layer.add(remoteBadgeRect.asDynamic())
         layer.add(remoteBadgeText.asDynamic())
         layer.add(originBadge.asDynamic())
         // Reverse order so the border ends up at the very bottom
+        pendingBadgeText.moveToBottom()
+        pendingBadgeRect.moveToBottom()
         originBadge.moveToBottom()
         remoteBadgeText.moveToBottom()
         remoteBadgeRect.moveToBottom()
@@ -127,6 +157,14 @@ class RepoRegion(
         remoteBadgeRect.destroy()
         remoteBadgeText.destroy()
         originBadge.destroy()
+        pendingBadgeRect.destroy()
+        pendingBadgeText.destroy()
+    }
+
+    /** Shows a red header badge (e.g. `MERGING - CONFLICT`) while an operation waits for the user; null hides it. */
+    fun setPendingBadge(text: String?) {
+        pendingText = text
+        layoutHeader()
     }
 
     fun setName(name: String) {
@@ -169,6 +207,16 @@ class RepoRegion(
         if (origin != null) {
             originBadge.text("origin -> $origin")
             originBadge.x(x.toDouble())
+            x += ("origin -> $origin".length * CHAR_WIDTH_BADGE) + 12
+        }
+        val pending = pendingText
+        pendingBadgeRect.visible(pending != null)
+        pendingBadgeText.visible(pending != null)
+        if (pending != null) {
+            pendingBadgeText.text(pending)
+            pendingBadgeRect.x(x.toDouble())
+            pendingBadgeRect.width((pending.length * CHAR_WIDTH_BADGE + 16).toDouble())
+            pendingBadgeText.x((x + 8).toDouble())
         }
     }
 
@@ -213,6 +261,8 @@ class RepoRegion(
             remoteBadgeRect.y((newTop + 8).toDouble())
             remoteBadgeText.y((newTop + 12).toDouble())
             originBadge.y((newTop + 11).toDouble())
+            pendingBadgeRect.y((newTop + 8).toDouble())
+            pendingBadgeText.y((newTop + 12).toDouble())
         }
         if (newWidth > currentWidth) {
             currentWidth = newWidth

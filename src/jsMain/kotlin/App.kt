@@ -143,8 +143,20 @@ fun startApp() {
     }
 
     var nextRepoId = 1
+
     // Holds the currently active graph
     lateinit var activeGraph: GitGraph
+
+    // A repo waiting on a conflict refuses every other graph operation (ADR 0006).
+    fun refuseWhilePending(g: GitGraph): Boolean {
+        if (g.pending == null) return false
+        ConfirmationDialog.showMessageDialog("Conflict pending", graph.RemoteOps.RESOLVE_FIRST)
+        return true
+    }
+    GitGraph.onPendingRefused = { ConfirmationDialog.showMessageDialog("Conflict pending", graph.RemoteOps.RESOLVE_FIRST) }
+    fun doWhenGuardedButtonClicked(buttonId: String, handler: () -> Unit) {
+        doWhenButtonClicked(buttonId) { if (!refuseWhilePending(activeGraph)) handler() }
+    }
     // Forward reference: resolveRegionOverlaps is defined after refreshRemoteLinks, which schedules it.
     var resolveRegionOverlapsRef: () -> Unit = {}
     var layoutResolutionPending = false
@@ -214,6 +226,8 @@ fun startApp() {
         moved.remoteRepoId = old.remoteRepoId
         moved.wasCleared = old.wasCleared
         moved.showLostCommits(old.lostCommitsShown)
+        // The snapshot does not carry a pending conflict; a growth re-layout must not drop it.
+        old.pending?.let { moved.restorePending(it) }
         val wasActive = activeGraph === old
         old.destroy()
         graphs[index] = moved
@@ -390,7 +404,16 @@ fun startApp() {
     activeGraph = initialGraph
 
     // Graph changes come from many places (buttons, canvas double-click, restore); a cheap poll keeps the tab current.
-    window.setInterval({ updateRemoteTab(activeGraph) }, 300)
+    // Continue/Abort are shown only while the active repo has a pending conflict.
+    fun updatePendingControls(g: GitGraph) {
+        val pending = g.pending
+        document.getElementById("pendingControls")?.classList?.toggle("hidden", pending == null)
+        val msg = document.getElementById("pendingMessage")
+        val text = pending?.message ?: ""
+        if (msg != null && msg.textContent != text) msg.textContent = text
+    }
+
+    window.setInterval({ updateRemoteTab(activeGraph); updatePendingControls(activeGraph) }, 300)
 
     fun showRemoteResult(result: graph.RemoteOps.Result) {
         val msg = document.getElementById("remoteMessage")
@@ -406,6 +429,7 @@ fun startApp() {
             else msg.classList.remove("has-text-weight-bold")
         }
         updateRemoteTab(activeGraph)
+        updatePendingControls(activeGraph)
     }
 
     document.getElementById("pushButton")?.addEventListener("click", {
@@ -528,6 +552,10 @@ fun startApp() {
 
     // ---- Share button: encode current canvas state to URL fragment and clipboard ----
     doWhenButtonClicked("shareButton") {
+        if (graphs.any { it.pending != null }) {
+            ConfirmationDialog.showMessageDialog("Conflict pending", graph.RemoteOps.RESOLVE_FIRST)
+            return@doWhenButtonClicked
+        }
         val snapshot = MultiRepoSnapshot(
             version = 2,
             nextCommitId = commitIdAllocator.peekLast() + 1,
@@ -561,8 +589,8 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("cloneRepoButton") {
-        if (graphs.size >= 3) return@doWhenButtonClicked
+    doWhenGuardedButtonClicked("cloneRepoButton") {
+        if (graphs.size >= 3) return@doWhenGuardedButtonClicked
         val source = activeGraph
         var cloneName = "${source.repoName}-clone"
         var suffix = 2
@@ -641,11 +669,11 @@ fun startApp() {
         activateTab("aboutTab", "generalTab", "commitTab", "mergeTab", "refsTab", "remoteTab")
     }
 
-    doWhenButtonClicked("runGCButton") {
+    doWhenGuardedButtonClicked("runGCButton") {
         activeGraph.runGarbageCollection()
     }
 
-    doWhenButtonClicked("clearGraphButton") {
+    doWhenGuardedButtonClicked("clearGraphButton") {
         ConfirmationDialog.showConfirmationDialog(
             "Are you sure?",
             "Do you really want to reset the active repo graph and start over?"
@@ -656,15 +684,15 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("addCommitButton") {
+    doWhenGuardedButtonClicked("addCommitButton") {
         activeGraph.addCommit(conflicting = isCheckboxChecked("conflictingChangeCheckbox"))
     }
 
-    doWhenButtonClicked("amendCommitButton") {
+    doWhenGuardedButtonClicked("amendCommitButton") {
         activeGraph.amendCommit(conflicting = isCheckboxChecked("conflictingChangeCheckbox"))
     }
 
-    doWhenButtonClicked("toggleConflictMarkerButton") {
+    doWhenGuardedButtonClicked("toggleConflictMarkerButton") {
         val commitId = getUserInput("toggleConflictMarkerInput")
         if (!activeGraph.toggleConflictMarker(commitId)) {
             ConfirmationDialog.showMessageDialog(
@@ -674,7 +702,7 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("cherryPickButton") {
+    doWhenGuardedButtonClicked("cherryPickButton") {
         val commitId = getUserInput("cherryPickInput")
         if (!activeGraph.doesCommitExist(commitId)) {
             ConfirmationDialog.showMessageDialog(
@@ -687,11 +715,11 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("checkoutCommitButton") {
+    doWhenGuardedButtonClicked("checkoutCommitButton") {
         activeGraph.checkout(getUserInput("checkoutCommitInput"), isCheckboxChecked("showLostCommitsCheckbox"))
     }
 
-    doWhenButtonClicked("addBranchButton") {
+    doWhenGuardedButtonClicked("addBranchButton") {
         val branchName = getUserInput("addBranchInput").replace(" ", "_")
         if (!activeGraph.isBranchNameValid(branchName)) {
             ConfirmationDialog.showMessageDialog(
@@ -705,14 +733,14 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("checkoutBranchButton") {
+    doWhenGuardedButtonClicked("checkoutBranchButton") {
         activeGraph.checkout(
             getSelectedOption("checkoutBranchInput"),
             isCheckboxChecked("showLostCommitsCheckbox")
         )
     }
 
-    doWhenButtonClicked("deleteBranchButton") {
+    doWhenGuardedButtonClicked("deleteBranchButton") {
         val branchName = getSelectedOption("deleteBranchInput")
         if (activeGraph.isBranchCheckedOut(branchName)) {
             ConfirmationDialog.showMessageDialog(
@@ -725,11 +753,11 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("resetBranchButton") {
+    doWhenGuardedButtonClicked("resetBranchButton") {
         activeGraph.resetBranch(getUserInput("resetBranchInput"))
     }
 
-    doWhenButtonClicked("addTagButton") {
+    doWhenGuardedButtonClicked("addTagButton") {
         val tagName = getUserInput("addTagInput").replace(" ", "_")
         if (activeGraph.doesTagExist(tagName)) {
             ConfirmationDialog.showMessageDialog(
@@ -742,19 +770,19 @@ fun startApp() {
         }
     }
 
-    doWhenButtonClicked("checkoutTagButton") {
+    doWhenGuardedButtonClicked("checkoutTagButton") {
         activeGraph.checkout(
             getSelectedOption("checkoutTagInput"),
             isCheckboxChecked("showLostCommitsCheckbox")
         )
     }
 
-    doWhenButtonClicked("deleteTagButton") {
+    doWhenGuardedButtonClicked("deleteTagButton") {
         activeGraph.deleteTag(getSelectedOption("deleteTagInput"))
         updateTagSelects(activeGraph.getTags())
     }
 
-    doWhenButtonClicked("mergeBranchButton") {
+    doWhenGuardedButtonClicked("mergeBranchButton") {
         if (!activeGraph.merge(
                 isCheckboxChecked("noFFCheckbox"),
                 getSelectedOption("mergeBranchInput")
@@ -762,9 +790,20 @@ fun startApp() {
         ) {
             ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch does not need to be merged.")
         }
+        updatePendingControls(activeGraph)
     }
 
-    doWhenButtonClicked("rebaseBranchButton") {
+    doWhenButtonClicked("pendingContinueButton") {
+        activeGraph.continuePending()
+        updatePendingControls(activeGraph)
+    }
+
+    doWhenButtonClicked("pendingAbortButton") {
+        activeGraph.abortPending()
+        updatePendingControls(activeGraph)
+    }
+
+    doWhenGuardedButtonClicked("rebaseBranchButton") {
         if (!activeGraph.rebase(getSelectedOption("rebaseBranchInput"))) {
             ConfirmationDialog.showMessageDialog("Already up-to-date.", "Branch cannot be rebased.")
         }

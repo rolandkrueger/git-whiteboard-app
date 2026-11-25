@@ -12,8 +12,8 @@ research touching this BC, and concept synthesis pages.
 <!-- task-counts:start -->
 - **Backlog:** 1
 - **Todo:** 4
-- **Doing:** 1
-- **Done:** 20
+- **Doing:** 0
+- **Done:** 21
 <!-- task-counts:end -->
 
 ### Todo
@@ -26,11 +26,11 @@ research touching this BC, and concept synthesis pages.
 
 ### Doing
 <!-- doing-list:start -->
-- **git-canvas-c35ww** — Merge and pull (merge) stop on a conflict until Continue or Abort (feature) — `doing/git-canvas-c35ww-merge-conflict-pause.md`
 <!-- doing-list:end -->
 
 ### Done (most recent first)
 <!-- done-list:start -->
+- **git-canvas-c35ww** — Merge and pull (merge) stop on a conflict until Continue or Abort (feature) — `done/git-canvas-c35ww-merge-conflict-pause.md`
 - **git-canvas-mrfrh** — Conflict marker on commits (set, render, share, transfer) (feature) — `done/git-canvas-mrfrh-conflict-demonstration.md`
 - **git-canvas-vj6gr** — Sync the user manual with the current app (chore) — `done/git-canvas-vj6gr-sync-user-manual.md`
 - **git-canvas-wcbec** — Re-layout repo regions when they grow into each other (feature) — `done/git-canvas-wcbec-relayout-repos-on-growth.md`

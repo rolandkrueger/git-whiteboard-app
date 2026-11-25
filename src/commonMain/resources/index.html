@@ -355,6 +355,13 @@
             </div>
 
             <div id="mergeTab" class="hidden">
+                <div id="pendingControls" class="notification is-danger is-light hidden">
+                    <p id="pendingMessage" class="is-size-7 has-text-weight-bold"></p>
+                    <div class="buttons mt-2">
+                        <button id="pendingContinueButton" class="button is-success is-small">Continue</button>
+                        <button id="pendingAbortButton" class="button is-danger is-small">Abort</button>
+                    </div>
+                </div>
                 <label for="mergeBranchInput" class="label">Merge branch</label>
                 <div class="field has-addons is-expanded">
                     <div class="select is-fullwidth">

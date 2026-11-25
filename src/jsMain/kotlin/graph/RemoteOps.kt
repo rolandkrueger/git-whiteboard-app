@@ -6,11 +6,14 @@ object RemoteOps {
 
     class Result(val kind: Kind, val message: String)
 
+    const val RESOLVE_FIRST = "Resolve the conflict first: Continue or Abort"
+
     /** Single availability check (reused by fetch): a remote is unavailable when missing or cleared. */
     fun isAvailable(remote: GitGraph?): Boolean = remote != null && !remote.wasCleared
 
     /** Pushes [local]'s current branch to its upstream (or `origin/<same name>`) in [remote]; no force push. */
     fun push(local: GitGraph, remote: GitGraph?): Result {
+        if (local.pending != null || remote?.pending != null) return Result(Kind.ERROR, RESOLVE_FIRST)
         if (remote == null || !isAvailable(remote)) return Result(Kind.ERROR, "remote not available")
         val status = local.upstreamStatus()
         if (status.detached) return Result(Kind.ERROR, "Cannot push: HEAD is detached")
@@ -45,6 +48,7 @@ object RemoteOps {
 
     /** Updates all tracking labels (origin/...) of [local] from [remote]; local branches and HEAD are untouched. */
     fun fetch(local: GitGraph, remote: GitGraph?): Result {
+        if (local.pending != null) return Result(Kind.ERROR, RESOLVE_FIRST)
         if (remote == null || !isAvailable(remote)) return Result(Kind.ERROR, "remote not available")
         val changes = mutableListOf<String>()
         val remoteBranches = remote.getBranches().filterIsInstance<Branch>()
@@ -70,6 +74,7 @@ object RemoteOps {
 
     /** Pull = fetch, then merge the upstream tracking ref into the current branch (fast-forward when possible). */
     fun pull(local: GitGraph, remote: GitGraph?, rebase: Boolean = false): Result {
+        if (local.pending != null) return Result(Kind.ERROR, RESOLVE_FIRST)
         if (remote == null || !isAvailable(remote)) return Result(Kind.ERROR, "remote not available")
         val status = local.upstreamStatus()
         if (status.detached) return Result(Kind.ERROR, "Cannot pull: HEAD is detached")
@@ -93,6 +98,9 @@ object RemoteOps {
             return Result(Kind.SUCCESS, prefix + if (fastForward) "Fast-forward" else "Rebased")
         }
         local.merge(false, upstream)
+        if (local.pending != null) {
+            return Result(Kind.ERROR, prefix + (local.pending?.message ?: "CONFLICT: Continue or Abort"))
+        }
         return Result(Kind.SUCCESS, prefix + if (fastForward) "Fast-forward" else "Merge made")
     }
 }

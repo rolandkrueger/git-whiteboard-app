@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 08:20 -- Task verified and completed: git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
+
+**Type:** Work / Task completion
+**Task:** git-canvas-c35ww - Merge and pull (merge) stop on a conflict until Continue or Abort
+**Summary:** merge and pull (merge) stop on a conflict until Continue or Abort
+**Duration:** 10m
+**Verification:** PASS (iteration 2)
+**Files changed:** 10
+**Tests added:** 0
+**ADRs written:** none
+
+---
+
 ## 2026-11-25 10:00 -- Modeling / Refined: git-canvas-nymhr - Rebase and pull (rebase) stop mid-way on a conflict until Continue or Abort
 
 **Type:** Modeling / Refine

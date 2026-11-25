@@ -3,7 +3,10 @@ package graph
 import components.RepoRegion
 import config.GitGraphConfiguration
 import kotlinx.browser.window
+import konvajs.Circle
+import konvajs.CircleConfig
 import konvajs.Layer
+import components.jso
 import scenario.BranchSnapshot
 import scenario.CommitSnapshot
 import scenario.HeadSnapshot
@@ -85,7 +88,12 @@ class GitGraph(
 
     init {
         head = Head(Commit("", 0, 0, config = config))
-        checkoutHandler = { commit -> { checkout(commit.id, showLostCommits) } }
+        checkoutHandler = { commit -> { if (pending != null) GitGraph.onPendingRefused?.invoke() else checkout(commit.id, showLostCommits) } }
+    }
+
+    /** Double-click handler for branch/tag labels; refused while a conflict is pending, like [checkoutHandler]. */
+    private fun labelCheckoutHandler(target: () -> String): () -> Unit = {
+        if (pending != null) GitGraph.onPendingRefused?.invoke() else checkout(target(), showLostCommits)
     }
 
     /** Returns true if the given canvas-absolute coordinates fall within this repo's region. */
@@ -440,7 +448,7 @@ class GitGraph(
         val branch = Branch(name, commit.swimlane, commit = commit, commitColor = color)
         branches.add(branch)
         branches.sortBy { it.id }
-        branch.onDoubleClick { checkout(name, showLostCommits) }
+        branch.onDoubleClick(labelCheckoutHandler { name })
         branch.render(layer)
         branch.attachToCommit(commit, layer)
         calculateLostCommits()
@@ -493,7 +501,7 @@ class GitGraph(
         branches.add(branch)
         branches.sortBy { it.id }
         head.commit.removeBranch(head)
-        branch.onDoubleClick { checkout(id, showLostCommits) }
+        branch.onDoubleClick(labelCheckoutHandler { id })
         branch.attachToCommit(head.commit, layer)
         branch.render(layer)
         checkout(id, showLostCommits)
@@ -506,9 +514,7 @@ class GitGraph(
         val tag = Tag(id, head.commit)
 
         tag.render(layer)
-        tag.onDoubleClick {
-            checkout(tag.commit.id, showLostCommits)
-        }
+        tag.onDoubleClick(labelCheckoutHandler { tag.commit.id })
         tags.add(tag)
         tags.sortBy { it.id }
     }
@@ -580,6 +586,16 @@ class GitGraph(
         layer.batchDraw()
     }
 
+    /** The operation stopped on a conflict (ADR 0006), or null. While set, other graph operations are refused. */
+    var pending: PendingOperation? = null
+        private set
+    private val pendingRings = mutableListOf<Circle>()
+
+    /**
+     * Merges [targetBranchId] into the current branch. Returns false when there is nothing to merge.
+     * A non-fast-forward merge where both sides carry a marked commit since the merge base does not
+     * create the merge commit but leaves a MERGE [pending] operation (check [pending] after the call).
+     */
     fun merge(noFF: Boolean, targetBranchId: String): Boolean {
         // Source may also be a tracking ref (origin/<name>), used by pull; those are not listed in dropdowns.
         val targetBranch = findBranch(targetBranchId) ?: remoteBranches.find { it.id == targetBranchId }
@@ -588,14 +604,90 @@ class GitGraph(
             return false
         }
         return if (noFF || !currentBranch().commit.isAncestorOf(targetBranch.commit)) {
-            val mergeCommitId = "${currentBranch().commit.id}${targetBranch.commit.id}"
-            addCommit(targetBranch.commit, mergeCommitId)
+            val ours = ancestorIds(currentBranch().commit)
+            val theirs = ancestorIds(targetBranch.commit)
+            val markedOurs = commits.filter { it.conflicting && it.id in ours && it.id !in theirs }
+            val markedTheirs = commits.filter { it.conflicting && it.id in theirs && it.id !in ours }
+            if (markedOurs.isNotEmpty() && markedTheirs.isNotEmpty()) {
+                startPending(
+                    PendingOperation(
+                        PendingKind.MERGE,
+                        "MERGING - CONFLICT",
+                        "CONFLICT: ${currentBranch().id} and $targetBranchId both changed the same spot. Continue or Abort.",
+                        (markedOurs + markedTheirs).map { it.id },
+                        targetBranch.commit.id,
+                        currentBranch().id
+                    )
+                )
+            } else {
+                addCommit(targetBranch.commit, "${currentBranch().commit.id}${targetBranch.commit.id}")
+            }
             true
         } else {
             // fast-forward current branch to target branch's commit
             moveBranch(currentBranch(), currentBranch().commit, targetBranch.commit)
             true
         }
+    }
+
+    /** Enters the pending state: badge in the region header and a red ring around each highlighted commit. */
+    private fun startPending(op: PendingOperation) {
+        pending = op
+        val r = config.commitRadius
+        op.highlightIds.mapNotNull { findCommitFor(it) }.forEach {
+            val c = it.commitCircle.center()
+            val ring = Circle(jso<CircleConfig> {
+                x = c.x
+                y = c.y
+                radius = r + 7
+                stroke = "#D7263D"
+                strokeWidth = 4
+                listening = false
+            })
+            layer.add(ring.asDynamic())
+            pendingRings.add(ring)
+        }
+        repoRegion.setPendingBadge(op.badge)
+        layer.batchDraw()
+    }
+
+    /** Re-establishes a pending state on a rebuilt graph (the snapshot does not carry it). */
+    fun restorePending(op: PendingOperation) = startPending(op)
+
+    private fun clearPending() {
+        pending = null
+        pendingRings.forEach { it.destroy() }
+        pendingRings.clear()
+        repoRegion.setPendingBadge(null)
+        layer.batchDraw()
+    }
+
+    /** Finishes the pending operation: a merge creates its (unmarked) merge commit. */
+    fun continuePending() {
+        val op = pending ?: return
+        clearPending()
+        when (op.kind) {
+            PendingKind.MERGE -> {
+                val source = findCommitFor(op.mergeSourceCommitId ?: return) ?: return
+                // Build the merge commit on the branch that was checked out when the merge stopped.
+                val ontoId = op.mergeOntoBranchId
+                if (ontoId != null && ontoId != currentBranch().id && findBranch(ontoId) != null) {
+                    checkout(ontoId, showLostCommits)
+                }
+                addCommit(source, "${currentBranch().commit.id}${source.id}")
+            }
+            PendingKind.REBASE -> Unit // replayed step by step by the rebase (git-canvas-nymhr)
+        }
+    }
+
+    /** Drops the pending operation and leaves the graph as it was before it started. */
+    fun abortPending() {
+        if (pending != null) clearPending()
+    }
+
+    companion object {
+        /** Called when an operation is attempted on a repo with a [pending] conflict; set once by the app. */
+        var onPendingRefused: (() -> Unit)? = null
     }
 
     fun rebase(targetBranchName: String): Boolean {
@@ -941,7 +1033,7 @@ class GitGraph(
                 commitColor = bs.commitColor
             )
             branch.upstream = bs.upstream
-            branch.onDoubleClick { checkout(bs.id, showLostCommits) }
+            branch.onDoubleClick(labelCheckoutHandler { bs.id })
             branches.add(branch)
             targetCommit.addBranch(branch)
             branch.render(layer)
@@ -954,7 +1046,7 @@ class GitGraph(
             val targetCommit = commitMap[ts.targetCommitId] ?: continue
             val tag = Tag(ts.id, targetCommit)
             tag.render(layer)
-            tag.onDoubleClick { checkout(ts.id, showLostCommits) }
+            tag.onDoubleClick(labelCheckoutHandler { ts.id })
             tags.add(tag)
         }
         tags.sortBy { it.id }

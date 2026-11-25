@@ -92,6 +92,12 @@ To merge two branches with each other, you select the target branch to be merged
 
 The commit id for a merge commit consists of the concatenated ids of the merge commit's two parent commits. For example, if the two branches `foo` and `bar` with the respective most recent commit ids `f6` and `b3` are merged, the merge commit's id will become `f6b3`.
 
+==== Merge Conflicts
+
+A merge conflicts when, counted from the merge base, both branches contain at least one commit marked as `Conflicting change` (see <<Conflicting Changes>>). A fast-forward merge never conflicts, and neither does a merge where only one side or neither side has a marked commit. To set up a conflict, mark one commit on each branch and merge them. Instead of creating the merge commit, the repo stops: its header shows the red badge `MERGING - CONFLICT`, the marked commits of both sides are circled in red, and the `Merge/Rebase` tab shows a message with the buttons `Continue` and `Abort`. Click `Continue` to create the (unmarked) merge commit as usual, or `Abort` to leave the graph exactly as it was before the merge.
+
+While the conflict is pending, every other operation on that repo (commits, branches, tags, checkout, merge, rebase, reset, cherry-pick, garbage collection, clear, push, fetch, pull, clone) and `Share` are refused with `Resolve the conflict first: Continue or Abort`. Other repos can be activated and used normally; the buttons are shown only while the active repo has a pending conflict.
+
 === Rebase
 
 To rebase the currently checked out branch onto another branch, you select the target branch with the drop-down list on section `Rebase branch onto`. This will create new commits on the target branch for each commit on the rebased branch. The old commits will be lost in the reflog. The new commits are given the color and ids of the rebased commits with an additional asterisk appended. 
@@ -122,7 +128,7 @@ For the active repository the tab shows its remote (`origin: <repository name>`,
 
 === Pull
 
-`Pull` is a fetch followed by merging the upstream `origin/<name>` into the checked-out branch. The fetch summary (e.g. `Fetched: ...`) is shown in front of the pull result. If the branch already contains the upstream, nothing is merged and the message is `Already up to date`. If a fast-forward is possible it is performed (message `Fast-forward`); otherwise a merge commit is created (`Merge made`). Pull is not possible in detached HEAD state or for a branch without upstream.
+`Pull` is a fetch followed by merging the upstream `origin/<name>` into the checked-out branch. The fetch summary (e.g. `Fetched: ...`) is shown in front of the pull result. If the branch already contains the upstream, nothing is merged and the message is `Already up to date`. If a fast-forward is possible it is performed (message `Fast-forward`); otherwise a merge commit is created (`Merge made`). Pull is not possible in detached HEAD state or for a branch without upstream. If the local branch and `origin/<name>` both contain a marked commit since their merge base, the pull stops after the fetch with `MERGING - CONFLICT` exactly like a merge (see <<Merge Conflicts>>); use `Continue` or `Abort` on the `Merge/Rebase` tab. A typical demo: two clones each commit a marked change, the second push is rejected, and the pull then conflicts.
 
 === Pull With Rebase
 
