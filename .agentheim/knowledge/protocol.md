@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 09:00 -- Modeling / Captured: git-canvas-xt4ch - Draw label connectors as thin blue arrows pointing toward the commit
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Label connectors (branch, tag, HEAD, remote-tracking; label->commit and label->label) currently look identical to commit edges. They become thin blue arrows pointing toward the commit via a new Konva Arrow binding; commit edges stay black and 3px.
+
+---
+
 ## 2026-11-25 08:02 -- Batch started: [git-canvas-mrfrh]
 
 **Type:** Work / Batch start

@@ -11,13 +11,14 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 2
-- **Todo:** 0
+- **Todo:** 1
 - **Doing:** 1
 - **Done:** 19
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-xt4ch** — Draw label connectors as thin blue arrows pointing toward the commit, so they no longer look like commit edges (feature) — `todo/git-canvas-xt4ch-label-connector-arrows.md`
 <!-- todo-list:end -->
 
 ### Doing
