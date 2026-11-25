@@ -5,6 +5,15 @@ Newest entries on top.
 
 ---
 
+## 2026-11-25 10:20 -- Modeling / Captured: git-canvas-sxqsj - Draw commit edges GitKraken-style
+
+**Type:** Modeling / Capture
+**BC:** git-canvas
+**Filed to:** todo
+**Summary:** Cross-lane commit edges become straight vertical runs in the side branch's lane plus a short vertical-tangent Bezier bend near the branch-off or merge commit; edges stay black. Depends on git-canvas-xt4ch (shared Bezier helper).
+
+---
+
 ## 2026-11-25 08:26 -- Batch started: [git-canvas-xt4ch]
 
 **Type:** Work / Batch start

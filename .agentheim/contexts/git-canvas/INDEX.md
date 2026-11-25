@@ -11,13 +11,14 @@ research touching this BC, and concept synthesis pages.
 
 <!-- task-counts:start -->
 - **Backlog:** 0
-- **Todo:** 1
+- **Todo:** 2
 - **Doing:** 2
 - **Done:** 23
 <!-- task-counts:end -->
 
 ### Todo
 <!-- todo-list:start -->
+- **git-canvas-sxqsj** — Draw commit edges GitKraken-style - straight vertical runs in a lane with a short rounded bend where the edge changes lanes (feature) — `todo/git-canvas-sxqsj-gitkraken-style-commit-edges.md`
 - **git-canvas-kngx5** — Double the font size of repo header labels and the origin connector label; repo name and connector label bold (feature) — `todo/git-canvas-kngx5-larger-repo-header-labels.md`
 <!-- todo-list:end -->
 
